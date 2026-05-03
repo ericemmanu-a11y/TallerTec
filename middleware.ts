@@ -28,6 +28,8 @@ export async function middleware(request: NextRequest) {
     path === "/" ||
     path.startsWith("/login") ||
     path.startsWith("/register") ||
+    path.startsWith("/forgot-password") ||
+    path.startsWith("/reset-password") ||
     path.startsWith("/sobre-nosotros") ||
     path.startsWith("/ayuda") ||
     path.startsWith("/contacto");

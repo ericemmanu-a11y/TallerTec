@@ -1,5 +1,6 @@
 import { createClient } from "@/lib/supabase/server";
-import { Award, CheckCircle2, Clock, XCircle, AlertCircle, FileText } from "lucide-react";
+import { Award, CheckCircle2, Clock, XCircle, AlertCircle, FileText, ExternalLink } from "lucide-react";
+import Link from "next/link";
 import { solicitarConstancia } from "@/app/actions/constancias";
 import { redirect } from "next/navigation";
 
@@ -126,9 +127,17 @@ export default async function ConstanciasPage() {
                       )}
                     </div>
                   </div>
-                  <span className={`self-start sm:self-auto px-3 py-1.5 rounded-full text-xs font-bold border ${config.color}`}>
-                    {config.label}
-                  </span>
+                  <div className="flex flex-col sm:items-end gap-2">
+                    <span className={`px-3 py-1.5 rounded-full text-xs font-bold border ${config.color}`}>
+                      {config.label}
+                    </span>
+                    {(c.estado === "APROBADA" || c.estado === "GENERADA" || c.estado === "ENTREGADA") && (
+                      <Link href={`/constancia/${c.id}`}
+                        className="inline-flex items-center gap-1 text-xs text-primary hover:underline font-medium">
+                        <ExternalLink className="w-3 h-3" /> Ver constancia
+                      </Link>
+                    )}
+                  </div>
                 </div>
               );
             })}

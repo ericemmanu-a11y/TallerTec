@@ -1,6 +1,8 @@
 import { createClient } from "@/lib/supabase/server";
 import { redirect, notFound } from "next/navigation";
-import { Printer } from "lucide-react";
+import Link from "next/link";
+import { ArrowLeft } from "lucide-react";
+import PrintButton from "@/components/ui/print-button";
 
 export const metadata = { title: "Constancia de Actividad | TallerTec" };
 
@@ -12,7 +14,7 @@ export default async function ConstanciaPage({ params }: { params: Promise<{ id:
 
   const { data: constancia } = await supabase
     .from("constancias")
-    .select("*, usuarios(nombre_completo, numero_control, carrera, semestre, email), periodos(nombre, fecha_inicio, fecha_fin)")
+    .select("*, usuarios(nombre_completo, numero_control, carrera, semestre), periodos(nombre, fecha_inicio, fecha_fin)")
     .eq("id", id)
     .single();
 
@@ -22,14 +24,14 @@ export default async function ConstanciaPage({ params }: { params: Promise<{ id:
   const isOwner = constancia.estudiante_id === user.id;
   if (!isAdmin && !isOwner) redirect("/dashboard");
 
-  const alumno = constancia.usuarios as {
+  const alumno = constancia.usuarios as unknown as {
     nombre_completo: string;
     numero_control: string | null;
     carrera: string | null;
     semestre: number | null;
   } | null;
 
-  const periodo = constancia.periodos as {
+  const periodo = constancia.periodos as unknown as {
     nombre: string;
     fecha_inicio: string;
     fecha_fin: string;
@@ -39,21 +41,26 @@ export default async function ConstanciaPage({ params }: { params: Promise<{ id:
     day: "numeric", month: "long", year: "numeric",
   });
 
+  const backHref = isAdmin ? "/admin/constancias" : "/dashboard/constancias";
+
   return (
     <div className="min-h-screen bg-background flex flex-col items-center justify-center p-4">
-      {/* Botones de acción (no se imprimen) */}
+
+      {/* Barra de acciones — no se imprime */}
       <div className="no-print w-full max-w-2xl flex items-center justify-between mb-6">
-        <h1 className="text-lg font-bold">Vista Previa de Constancia</h1>
-        <button
-          onClick={() => window.print()}
-          className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-primary text-primary-foreground font-semibold hover:bg-primary/90 transition-colors text-sm"
-        >
-          <Printer className="w-4 h-4" /> Imprimir / Guardar PDF
-        </button>
+        <Link href={backHref}
+          className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors">
+          <ArrowLeft className="w-4 h-4" /> Volver
+        </Link>
+        <div className="flex items-center gap-3">
+          <span className="text-sm text-muted-foreground">Vista previa de constancia</span>
+          <PrintButton label="Imprimir / Guardar PDF" />
+        </div>
       </div>
 
-      {/* Constancia imprimible */}
+      {/* Documento imprimible */}
       <div className="print-document w-full max-w-2xl bg-white text-gray-900 rounded-2xl overflow-hidden shadow-2xl">
+
         {/* Encabezado institucional */}
         <div className="bg-[#003087] text-white px-10 py-8 text-center">
           <p className="text-xs font-semibold tracking-widest uppercase opacity-80 mb-1">
@@ -70,7 +77,7 @@ export default async function ConstanciaPage({ params }: { params: Promise<{ id:
           </div>
         </div>
 
-        {/* Título de constancia */}
+        {/* Título */}
         <div className="px-10 py-8 text-center border-b border-gray-200">
           <h1 className="text-2xl font-extrabold text-[#003087] uppercase tracking-wide">
             Constancia de Actividad Extracurricular
@@ -83,12 +90,12 @@ export default async function ConstanciaPage({ params }: { params: Promise<{ id:
         {/* Cuerpo */}
         <div className="px-10 py-8 space-y-6 text-sm leading-relaxed">
           <p className="text-gray-700 text-base">
-            La Oficina de Deportes y Actividades Culturales del Instituto Tecnológico de Matehuala hace
-            constar que:
+            La Oficina de Deportes y Actividades Culturales del Instituto Tecnológico de
+            Matehuala hace constar que:
           </p>
 
-          <div className="bg-gray-50 border border-gray-200 rounded-xl p-6 space-y-3">
-            <div className="grid grid-cols-2 gap-x-6 gap-y-2">
+          <div className="bg-gray-50 border border-gray-200 rounded-xl p-6">
+            <div className="grid grid-cols-2 gap-x-6 gap-y-4">
               <div>
                 <p className="text-xs text-gray-400 uppercase font-semibold">Nombre Completo</p>
                 <p className="font-bold text-gray-900">{alumno?.nombre_completo}</p>
@@ -110,31 +117,37 @@ export default async function ConstanciaPage({ params }: { params: Promise<{ id:
 
           <p className="text-gray-700">
             Ha cumplido satisfactoriamente con{" "}
-            <strong className="text-[#003087] text-lg">{constancia.horas_totales} horas</strong> de actividad
-            extracurricular durante el período <strong>{periodo?.nombre}</strong>
+            <strong className="text-[#003087] text-lg">{constancia.horas_totales} horas</strong> de
+            actividad extracurricular durante el período{" "}
+            <strong>{periodo?.nombre}</strong>
             {periodo?.fecha_inicio && periodo?.fecha_fin && (
-              <span> ({new Date(periodo.fecha_inicio).toLocaleDateString("es-MX")} al {new Date(periodo.fecha_fin).toLocaleDateString("es-MX")})</span>
-            )}, cumpliendo con el requisito establecido por el plan de estudios institucional.
+              <span>
+                {" "}
+                ({new Date(periodo.fecha_inicio).toLocaleDateString("es-MX")} al{" "}
+                {new Date(periodo.fecha_fin).toLocaleDateString("es-MX")})
+              </span>
+            )}
+            , cumpliendo con el requisito establecido por el plan de estudios institucional.
           </p>
 
           <p className="text-gray-500 text-xs">
-            Esta constancia se expide el día <strong>{fechaGeneracion}</strong> a petición del interesado,
-            para los fines que estime convenientes.
+            Esta constancia se expide el día <strong>{fechaGeneracion}</strong> a petición del
+            interesado, para los fines que estime convenientes.
           </p>
         </div>
 
-        {/* Sección de firmas */}
+        {/* Firmas */}
         <div className="px-10 py-10 border-t border-gray-200">
           <div className="grid grid-cols-2 gap-10">
             <div className="text-center">
-              <div className="border-t-2 border-gray-400 pt-3 mt-12">
+              <div className="border-t-2 border-gray-400 pt-3 mt-16">
                 <p className="font-semibold text-sm text-gray-800">Jefe de Deportes</p>
                 <p className="text-xs text-gray-500 mt-0.5">Oficina de Deportes y Actividades Culturales</p>
                 <p className="text-xs text-gray-400 mt-0.5">TecNM Campus Matehuala</p>
               </div>
             </div>
             <div className="text-center">
-              <div className="border-t-2 border-gray-400 pt-3 mt-12">
+              <div className="border-t-2 border-gray-400 pt-3 mt-16">
                 <p className="font-semibold text-sm text-gray-800">Director del Plantel</p>
                 <p className="text-xs text-gray-500 mt-0.5">Instituto Tecnológico de Matehuala</p>
                 <p className="text-xs text-gray-400 mt-0.5">TecNM</p>
@@ -143,7 +156,7 @@ export default async function ConstanciaPage({ params }: { params: Promise<{ id:
           </div>
         </div>
 
-        {/* Pie de constancia */}
+        {/* Pie */}
         <div className="bg-gray-50 px-10 py-4 text-center border-t border-gray-200">
           <p className="text-xs text-gray-400">
             Documento generado digitalmente por TallerTec • matehuala.tecnm.mx •{" "}

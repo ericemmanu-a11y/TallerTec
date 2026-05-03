@@ -2,7 +2,8 @@ import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
 import { QRCodeSVG } from "qrcode.react";
 import Link from "next/link";
-import { ArrowLeft, Download } from "lucide-react";
+import { ArrowLeft } from "lucide-react";
+import PrintButton from "@/components/ui/print-button";
 
 export const metadata = { title: "Mi Código QR | TallerTec" };
 
@@ -20,7 +21,8 @@ export default async function MiQRPage() {
       <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-96 h-96 bg-primary/10 rounded-full blur-[100px] pointer-events-none" />
 
       <div className="w-full max-w-sm relative z-10 text-center animate-slide-up">
-        <Link href="/dashboard" className="inline-flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors text-sm mb-8">
+        <Link href="/dashboard"
+          className="no-print inline-flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors text-sm mb-8">
           <ArrowLeft className="w-4 h-4" /> Volver al Dashboard
         </Link>
 
@@ -31,12 +33,7 @@ export default async function MiQRPage() {
 
         <div className="glass-card p-6 rounded-3xl mb-6">
           <div className="bg-white p-4 rounded-2xl mx-auto inline-block shadow-xl shadow-white/10 mb-4">
-            <QRCodeSVG
-              value={qrData}
-              size={220}
-              level="H"
-              includeMargin
-            />
+            <QRCodeSVG value={qrData} size={220} level="H" includeMargin />
           </div>
           <p className="font-bold">{nombre}</p>
           {control && <p className="text-sm text-muted-foreground font-mono mt-0.5">{control}</p>}
@@ -49,13 +46,17 @@ export default async function MiQRPage() {
           Este código es único e intransferible. No lo compartas con terceros.
         </p>
 
-        <button
-          onClick={() => window.print()}
-          className="w-full flex items-center justify-center gap-2 py-3 rounded-xl bg-primary/20 text-primary border border-primary/30 font-semibold text-sm hover:bg-primary/30 transition-colors"
-        >
-          <Download className="w-4 h-4" /> Guardar / Imprimir QR
-        </button>
+        <div className="no-print">
+          <PrintButton label="Guardar / Imprimir QR" />
+        </div>
       </div>
+
+      <style jsx global>{`
+        @media print {
+          .no-print { display: none !important; }
+          body { background: white !important; color: black !important; }
+        }
+      `}</style>
     </div>
   );
 }

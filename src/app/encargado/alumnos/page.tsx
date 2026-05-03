@@ -1,9 +1,9 @@
 import { createClient } from "@/lib/supabase/server";
-import { Users, CheckCircle2, Clock, ArrowLeft, AlertCircle } from "lucide-react";
+import { Users, CheckCircle2, Clock, ArrowLeft, AlertCircle, BookOpen } from "lucide-react";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 
-export const metadata = { title: "Lista de Alumnos | TallerTec" };
+export const metadata = { title: "Mis Alumnos | TallerTec" };
 
 export default async function AlumnosEncargadoPage({
   searchParams,
@@ -15,7 +15,46 @@ export default async function AlumnosEncargadoPage({
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) redirect("/login");
 
-  if (!tallerId) redirect("/encargado");
+  // Sin taller param: mostrar selector de talleres del encargado
+  if (!tallerId) {
+    const { data: misTalleres } = await supabase
+      .from("talleres")
+      .select("id, nombre, horario_texto, categoria")
+      .eq("responsable_id", user.id)
+      .eq("activo", true)
+      .order("nombre");
+
+    return (
+      <div className="container mx-auto p-4 md:p-8 space-y-6 animate-fade-in">
+        <div>
+          <h1 className="text-3xl font-extrabold tracking-tight">Mis Alumnos</h1>
+          <p className="text-muted-foreground mt-1">Selecciona un taller para ver su lista de inscritos.</p>
+        </div>
+        {misTalleres && misTalleres.length > 0 ? (
+          <div className="grid gap-4 md:grid-cols-2">
+            {misTalleres.map((t) => (
+              <Link key={t.id} href={`/encargado/alumnos?taller=${t.id}`}
+                className="glass-card p-5 rounded-2xl flex items-center gap-4 hover:border-primary/30 hover:bg-white/5 transition-all group">
+                <div className={`w-12 h-12 rounded-xl flex items-center justify-center ${t.categoria === "DEPORTIVO" ? "bg-primary/20 text-primary" : "bg-accent/20 text-accent"}`}>
+                  <BookOpen className="w-6 h-6" />
+                </div>
+                <div className="flex-1">
+                  <p className="font-bold group-hover:text-primary transition-colors">{t.nombre}</p>
+                  <p className="text-sm text-muted-foreground">{t.horario_texto}</p>
+                </div>
+                <Users className="w-5 h-5 text-muted-foreground group-hover:text-primary transition-colors" />
+              </Link>
+            ))}
+          </div>
+        ) : (
+          <div className="glass-card p-10 rounded-3xl text-center">
+            <BookOpen className="w-12 h-12 text-muted-foreground/30 mx-auto mb-3" />
+            <p className="text-muted-foreground">No tienes talleres asignados.</p>
+          </div>
+        )}
+      </div>
+    );
+  }
 
   const { data: taller } = await supabase
     .from("talleres")

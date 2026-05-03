@@ -1,5 +1,6 @@
 import { createClient } from "@/lib/supabase/server";
-import { Award, CheckCircle2, XCircle, Clock, FileText, AlertCircle } from "lucide-react";
+import { Award, CheckCircle2, XCircle, Clock, FileText, AlertCircle, ExternalLink } from "lucide-react";
+import Link from "next/link";
 import { aprobarConstancia, rechazarConstancia, marcarConstanciaEntregada } from "@/app/actions/constancias";
 
 export const metadata = { title: "Gestión de Constancias | Admin TallerTec" };
@@ -40,8 +41,8 @@ export default async function AdminConstanciasPage() {
           </h2>
           <div className="glass-card rounded-3xl overflow-hidden divide-y divide-border/50">
             {pendientes.map((c) => {
-              const alumno = c.usuarios as { nombre_completo: string; numero_control: string | null; carrera: string | null; email: string } | null;
-              const periodo = c.periodos as { nombre: string } | null;
+              const alumno = c.usuarios as unknown as { nombre_completo: string; numero_control: string | null; carrera: string | null; email: string } | null;
+              const periodo = c.periodos as unknown as { nombre: string } | null;
               return (
                 <div key={c.id} className="p-6 flex flex-col lg:flex-row lg:items-center justify-between gap-4">
                   <div className="flex items-start gap-4">
@@ -98,8 +99,8 @@ export default async function AdminConstanciasPage() {
                 </thead>
                 <tbody className="divide-y divide-border/50">
                   {resto.map((c) => {
-                    const alumno = c.usuarios as { nombre_completo: string; numero_control: string | null } | null;
-                    const periodo = c.periodos as { nombre: string } | null;
+                    const alumno = c.usuarios as unknown as { nombre_completo: string; numero_control: string | null } | null;
+                    const periodo = c.periodos as unknown as { nombre: string } | null;
                     const config = ESTADO_CONFIG[c.estado as keyof typeof ESTADO_CONFIG];
                     const Icon = config.icon;
                     return (
@@ -117,13 +118,19 @@ export default async function AdminConstanciasPage() {
                           </span>
                         </td>
                         <td className="px-5 py-4 text-center">
-                          {c.estado === "APROBADA" && (
-                            <form action={async () => { "use server"; await marcarConstanciaEntregada(c.id); }}>
-                              <button type="submit" className="text-xs text-purple-400 hover:underline font-medium">
-                                Marcar Entregada
-                              </button>
-                            </form>
-                          )}
+                          <div className="flex flex-col items-center gap-1.5">
+                            <Link href={`/constancia/${c.id}`}
+                              className="inline-flex items-center gap-1 text-xs text-primary hover:underline font-medium">
+                              <ExternalLink className="w-3 h-3" /> Ver PDF
+                            </Link>
+                            {c.estado === "APROBADA" && (
+                              <form action={async () => { "use server"; await marcarConstanciaEntregada(c.id); }}>
+                                <button type="submit" className="text-xs text-purple-400 hover:underline font-medium">
+                                  Marcar Entregada
+                                </button>
+                              </form>
+                            )}
+                          </div>
                         </td>
                       </tr>
                     );
