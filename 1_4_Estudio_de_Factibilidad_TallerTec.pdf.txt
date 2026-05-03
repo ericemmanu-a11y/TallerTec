@@ -1,0 +1,403 @@
+ 
+TecNM Campus Matehuala 
+Ingeniería de Software 
+  1.4   
+  Estudio de Factibilidad   
+  TallerTec — Análisis de Viabilidad del Proyecto   
+Proyecto: TallerTec 
+Sistema Integral de Gestión de Talleres Deportivos 
+Equipo de Desarrollo: Virgilio Power  |  Febrero 2025 
+ 
+ 
+1. Introducción 
+El presente Estudio de Factibilidad evalúa la viabilidad del desarrollo e implementación de TallerTec, 
+el Sistema Integral de Gestión de Talleres Deportivos para el TecNM Campus Matehuala. El análisis 
+responde a la pregunta fundamental: ¿Debería construirse esta solución? 
+El estudio examina cinco dimensiones de viabilidad: técnica, económica, operativa, legal y temporal, y 
+concluye con una recomendación fundamentada para la toma de decisión del equipo de desarrollo y 
+los stakeholders institucionales. 
+ 
+2. Resumen Ejecutivo 
+ 
+Dimensión de Factibilidad 
+Resultado 
+Nivel de Riesgo 
+Factibilidad Técnica 
+ALTA — Stack moderno y 
+dominado 
+Bajo 
+Factibilidad Económica 
+EXCELENTE — Costo $0 
+MXN 
+Muy Bajo 
+Factibilidad Operativa 
+ALTA — Usuarios con 
+smartphones 
+Medio (requiere capacitación) 
+Factibilidad Legal 
+ALTA — Cumplimiento 
+LFPDPPP garantizado 
+Bajo 
+Factibilidad Temporal 
+ALTA — 16 semanas con 
+metodología Scrum 
+Medio (alcance priorizado) 
+RECOMENDACIÓN GLOBAL 
+PROYECTO VIABLE — 
+Proceder con desarrollo 
+— 
+ 
+3. Factibilidad Técnica 
+La factibilidad técnica evalúa si el equipo de desarrollo cuenta con el conocimiento, las herramientas y 
+los recursos tecnológicos necesarios para construir TallerTec dentro del plazo establecido. 
+ 
+3.1 Stack Tecnológico Propuesto 
+Tecnología 
+Propósito 
+Madurez 
+Conocimiento 
+del Equipo 
+Riesgo 
+Next.js 14 
+Frontend web (PWA 
++ Dashboard + API 
+Routes) 
+Alta — Framework 
+líder 
+Intermedio 
+Bajo 
+TypeScript 
+Tipado estático y 
+calidad de código 
+Alta — Estándar 
+actual 
+Intermedio 
+Bajo 
+Tailwind CSS 
+Diseño responsive y 
+estilos 
+Alta — Muy 
+documentado 
+Intermedio-Alto 
+Muy Bajo 
+Tecnología 
+Propósito 
+Madurez 
+Conocimiento 
+del Equipo 
+Riesgo 
+Supabase 
+BD PostgreSQL + 
+Auth + Storage 
+Alta — Alternativa 
+consolidada a 
+Firebase 
+Básico-
+Intermedio 
+Bajo 
+qrcode.react / 
+html5-qrcode 
+Generación y 
+escaneo de QR 
+Alta — Librerías 
+maduras 
+Básico 
+Bajo 
+React-PDF / 
+jsPDF 
+Generación de 
+constancias PDF 
+Alta — Bien 
+documentado 
+Básico 
+Bajo 
+Vercel Hobby 
+Plan 
+Hosting, CI/CD y 
+SSL 
+Alta — Integración 
+nativa con Next.js 
+Básico 
+Muy Bajo 
+ 
+3.2 Evaluación de Infraestructura 
+• 
+Sin necesidad de adquirir hardware especial; el desarrollo se realiza en las computadoras del 
+equipo. 
+• 
+Supabase Free Tier: 500 MB de base de datos y 1 GB de storage — suficiente para el volumen 
+proyectado de 5,000 estudiantes. 
+• 
+Vercel Hobby Plan: hasta 100 GB de ancho de banda mensual — adecuado para la fase piloto. 
+• 
+No se requiere integración con sistemas legados del TecNM (SII, control escolar) en la versión 
+1.0. 
+• 
+La conectividad intermitente en instalaciones deportivas se mitiga mediante PWA con Service 
+Worker para funcionalidad offline. 
+Conclusión Técnica: Factibilidad ALTA. Todas las tecnologías son maduras, open source y con 
+comunidades activas. El equipo puede cubrir las brechas de conocimiento durante el Sprint 0 gracias a 
+la documentación extensa disponible. 
+ 
+4. Factibilidad Económica 
+La factibilidad económica evalúa si el proyecto puede financiarse y si los beneficios esperados 
+justifican la inversión. Para TallerTec, dado que es un proyecto académico con tecnologías open 
+source y plataformas de tier gratuito, el análisis se centra en los costos de oportunidad y los beneficios 
+cuantificables. 
+ 
+4.1 Estructura de Costos del Proyecto 
+Categoría 
+Concepto 
+Costo 
+Desarrollo — Personal 
+3 integrantes × 16 semanas × 20 hrs/sem × $0 
+(proyecto académico) 
+$0 MXN 
+Plataforma — Supabase 
+Free Tier: BD 500 MB, Auth ilimitada, Storage 1 
+GB 
+$0 MXN 
+Hosting — Vercel 
+Hobby Plan: 100 GB bandwidth, SSL, CI/CD 
+incluido 
+$0 MXN 
+Categoría 
+Concepto 
+Costo 
+Email — Resend 
+Plan gratuito: 3,000 emails/mes 
+$0 MXN 
+Librerías y herramientas 
+Next.js, Tailwind, qrcode.react, React-PDF — 
+todas open source 
+$0 MXN 
+Dominio (opcional) 
+Subdominio gratuito de Vercel disponible; 
+dominio personalizado opcional 
+$0 - $250 MXN/año 
+TOTAL DE INVERSIÓN 
+— 
+$0 MXN 
+ 
+4.2 Beneficios Económicos Cuantificables 
+Beneficio 
+Valor Estimado Anual 
+Base del Cálculo 
+Ahorro en tiempo de estudiantes 
+(inscripción) 
+$112,500 MXN 
+1,125 hrs/sem × 2 sem × 
+$50/hr 
+Ahorro en trabajo admin — 
+transcripción 
+~100 horas/año 
+50 hrs/sem × 2 semestres 
+Ahorro en trabajo admin — 
+constancias 
+~200 horas/año 
+100 hrs/sem × 2 semestres 
+Reducción de errores de datos 
+75-150 casos menos/año 
+5-10% de 1,500 registros × 2 
+Ahorro en consultas presenciales de 
+horas 
+150 horas/año admin 
+75 hrs/sem × 2 semestres 
+ 
+4.3 Beneficios Intangibles 
+• 
+Mejora significativa en la experiencia del estudiante y la imagen institucional del TecNM 
+Campus Matehuala. 
+• 
+Disponibilidad de datos en tiempo real para la toma de decisiones estratégicas de la 
+Coordinación de Deportes. 
+• 
+Reducción del estrés y la carga cognitiva del personal administrativo. 
+• 
+Potencial de escalamiento a los 254 campus del TecNM a nivel nacional. 
+Conclusión Económica: Factibilidad EXCELENTE. Con costo de desarrollo de $0 MXN y beneficios 
+cuantificables superiores a $112,500 MXN anuales solo en tiempo de estudiantes, el ROI es 
+prácticamente infinito desde el primer período de uso. 
+ 
+5. Factibilidad Operativa 
+La factibilidad operativa evalúa si el sistema será aceptado y utilizado efectivamente por sus usuarios 
+finales, y si la institución tiene la capacidad organizacional para adoptarlo. 
+ 
+5.1 Factores Favorables 
+• 
+Los ~5,000 estudiantes ya utilizan aplicaciones móviles y PWAs en su vida diaria; la curva de 
+aprendizaje es mínima. 
+• 
+Los responsables de taller cuentan con smartphones con cámara y acceso a internet, 
+suficientes para el escaneo de QR. 
+• 
+Existe frustración generalizada y documentada con el sistema actual, lo que favorece la 
+adopción de una alternativa digital. 
+• 
+El sistema no reemplaza funciones humanas sensibles, sino que automatiza tareas tediosas, 
+reduciendo la resistencia al cambio. 
+• 
+Un miembro del equipo de desarrollo es simultáneamente estudiante y responsable de taller, 
+garantizando perspectiva dual en el diseño. 
+ 
+5.2 Riesgos Operativos y Mitigación 
+Riesgo 
+Probabilidad 
+Impacto 
+Estrategia de Mitigación 
+Resistencia al cambio del 
+personal administrativo 
+Baja 
+Alto 
+Capacitación personalizada; 
+demostración de ahorro de tiempo 
+concreto 
+Responsables de taller sin 
+smartphone 
+Muy Baja 
+Medio 
+Verificar durante levantamiento; 
+registro manual como respaldo (RF-
+ASI-05) 
+Conectividad intermitente en 
+canchas 
+Media 
+Medio 
+PWA con modo offline para funciones 
+críticas (RF-HOR-01, QR local) 
+Baja adopción estudiantil 
+inicial 
+Baja 
+Alto 
+Diseño UX intuitivo; meta >=200 
+estudiantes en piloto Sprint 6 
+Conclusión Operativa: Factibilidad ALTA. Las condiciones del entorno son favorables y los riesgos 
+identificados tienen mitigaciones concretas ya incorporadas en el diseño del sistema. 
+ 
+6. Factibilidad Legal 
+La factibilidad legal evalúa el cumplimiento de TallerTec con el marco normativo aplicable en México. 
+ 
+• 
+ 
+• 
+ 
+• 
+ 
+• 
+ 
+Conclusión Legal: Factibilidad ALTA. No existe ningún impedimento legal para el desarrollo e 
+implementación de TallerTec. 
+ 
+7. Factibilidad Temporal 
+La factibilidad temporal evalúa si el sistema puede desarrollarse en el plazo de 16 semanas 
+disponibles con el equipo de 3 integrantes. 
+ 
+Sprint 
+Semanas 
+Entregables Clave 
+Validación 
+0 
+1-2 
+Infraestructura completa, BD, wireframes, 
+backlog 
+H1: Infraestructura Lista 
+1 
+3-4 
+Autenticación completa con 3 roles 
+— 
+2 
+5-6 
+Catálogo, inscripciones, generación de QR 
+H2: MVP Estudiantes 
+3 
+7-8 
+Escaneo QR, registro de asistencia 
+H3: MVP Responsables 
+4 
+9-10 
+Horas, historial, notificaciones email 
+— 
+5 
+11-12 
+Dashboard administrativo, reportes 
+H4: Sistema Integrado 
+6 
+13-14 
+Constancias PDF, Excel, UAT con usuarios 
+H5: Listo para Producción 
+7 
+15-16 
+Corrección de bugs, documentación, 
+entrega 
+H6: Entrega Final 
+ 
+La priorización MoSCoW garantiza que los requisitos 'Must Have' (autenticación, inscripciones, 
+asistencia QR, horas y constancias) estén listos antes de la semana 14, dejando un buffer de 2 
+semanas para correcciones y documentación. 
+Conclusión Temporal: Factibilidad ALTA. El cronograma de 8 sprints de 2 semanas es adecuado 
+para la complejidad del sistema, con metodología Scrum que permite ajuste de alcance si fuera 
+necesario. 
+ 
+8. Análisis de Riesgos Globales 
+ 
+Riesgo 
+Probabilidad 
+Impacto 
+Estrategia de Mitigación 
+Falta de apoyo 
+institucional 
+Baja 
+Alto 
+Propuesta formal a coordinación; demostrar 
+beneficios concretos y cuantificados 
+Datos de talleres no 
+disponibles a tiempo 
+Media 
+Medio 
+Crear datos de prueba realistas; iterar con 
+datos reales cuando se obtengan 
+Alcance excede tiempo 
+disponible 
+Media 
+Alto 
+Priorización MoSCoW estricta; sprints 
+cortos de 2 semanas con revisión continua 
+Errores en generación de 
+PDFs 
+Media 
+Medio 
+Pruebas exhaustivas con múltiples casos; 
+plantilla validada con la oficina de deportes 
+Límites del tier gratuito 
+de Supabase 
+Muy Baja 
+Alto 
+Monitoreo continuo del consumo; plan de 
+migración a tier pagado documentado 
+ 
+9. Conclusión y Recomendación 
+ 
+Dimensión 
+Calificación 
+Nivel de Confianza 
+Técnica 
+ALTA 
+95% 
+Económica 
+EXCELENTE 
+99% 
+Operativa 
+ALTA 
+85% 
+Legal 
+ALTA 
+98% 
+Temporal 
+ALTA 
+88% 
+ 
+Recomendación del Equipo Virgilio Power: PROCEDER CON EL DESARROLLO de TallerTec. El 
+proyecto es técnicamente sólido, económicamente excepcional ($0 de inversión directa), 
+operativamente viable con el respaldo de usuarios motivados, legalmente conforme y temporalmente 
+alcanzable con la metodología Scrum adoptada. Los riesgos identificados tienen mitigaciones 
+concretas ya integradas en el diseño del sistema y el plan de sprints. 

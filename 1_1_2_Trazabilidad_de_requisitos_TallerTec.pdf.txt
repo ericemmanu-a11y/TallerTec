@@ -1,0 +1,537 @@
+ 
+TecNM Campus Matehuala 
+Ingeniería de Software 
+  1.1.2   
+  Trazabilidad de Requisitos   
+  TallerTec — Sistema Integral de Gestión de Talleres Deportivos   
+Proyecto: TallerTec 
+Sistema Integral de Gestión de Talleres Deportivos 
+Equipo de Desarrollo: Virgilio Power  |  Febrero 2025 
+ 
+ 
+1. Introducción 
+Este documento presenta la Matriz de Trazabilidad de Requisitos (RTM) del proyecto TallerTec, 
+elaborada conforme al estándar IEEE 830-1998. Su propósito es establecer y mantener las relaciones 
+entre los orígenes (fuentes) de los requisitos, los requisitos funcionales y no funcionales documentados 
+en la ERS, y los artefactos de verificación que confirman su cumplimiento. 
+La trazabilidad garantiza que ningún requisito quede sin implementar, que todo elemento diseñado 
+responda a una necesidad real, y que los cambios futuros puedan analizarse en cuanto a su impacto 
+en el sistema completo. 
+ 
+2. Fuentes de los Requisitos (Trazabilidad hacia Atrás) 
+La siguiente tabla mapea las fuentes originales (stakeholders, documentos institucionales y 
+restricciones del entorno) hacia los requisitos que originaron. 
+ 
+ID 
+Fuente 
+Descripción de la Fuente 
+Requisitos Derivados 
+F-01 
+Reunión con Oficina de Deportes — Necesidad de 
+digitalización de inscripciones 
+RF-INS-01, RF-INS-02, RF-INS-03, 
+RF-INS-04, RF-INS-05 
+F-02 
+Propuesta de Proyecto TallerTec v1.0 — Proceso 
+AS-IS documentado 
+RF-AUTH-01 al RF-AUTH-07, RF-
+TAL-01 al RF-TAL-05 
+F-03 
+Lineamientos TecNM — Requisito de 20 horas de 
+actividad deportiva 
+RF-HOR-01 al RF-HOR-05, RF-CON-
+01 al RF-CON-07 
+F-04 
+Requisito institucional — Control de asistencia de 
+talleres 
+RF-ASI-01 al RF-ASI-07 
+F-05 
+Requisito de dirección — Reportes y estadísticas 
+del programa 
+RF-REP-01 al RF-REP-04 
+F-06 
+Restricciones de seguridad y privacidad 
+(LFPDPPP) 
+RNF-SEG-01 al RNF-SEG-05 
+F-07 
+Condiciones de campo — conectividad 
+intermitente en instalaciones 
+RNF-DISP-02, RNF-COMP-01, RNF-
+COMP-02 
+ 
+3. Matriz de Trazabilidad de Requisitos Funcionales 
+La siguiente tabla registra los 38 requisitos funcionales de TallerTec, indicando su módulo de 
+sistema y el caso de uso al que pertenecen. 
+ 
+ID 
+Requisito 
+Descripción 
+Módulo del Sistema 
+Caso de Uso 
+RF-AUTH-
+01 
+Registro con correo institucional 
+@matehuala.tecnm.mx 
+Autenticación 
+CU-AUTH-01 
+ID 
+Requisito 
+Descripción 
+Módulo del Sistema 
+Caso de Uso 
+RF-AUTH-
+02 
+Validar formato del correo 
+institucional 
+Autenticación 
+CU-AUTH-01 
+RF-AUTH-
+03 
+Enviar correo de verificación al 
+registrarse 
+Autenticación 
+CU-AUTH-01 
+RF-AUTH-
+04 
+Login con correo y contraseña 
+Autenticación 
+CU-AUTH-02 
+RF-AUTH-
+05 
+Recuperación de contraseña vía 
+correo 
+Autenticación 
+CU-AUTH-03 
+RF-AUTH-
+06 
+Gestión de tres roles: estudiante, 
+responsable_taller, 
+admin_oficina 
+Autenticación 
+CU-AUTH-02 
+RF-AUTH-
+07 
+Redirección según rol del 
+usuario autenticado 
+Autenticación 
+CU-AUTH-02 
+RF-TAL-
+01 
+Crear talleres con nombre, 
+horario, ubicación, cupo 
+Gestión de Talleres 
+CU-TAL-01 
+RF-TAL-
+02 
+Asignar responsable a cada 
+taller 
+Gestión de Talleres 
+CU-TAL-01 
+RF-TAL-
+03 
+Editar información de talleres 
+existentes 
+Gestión de Talleres 
+CU-TAL-02 
+RF-TAL-
+04 
+Activar/desactivar talleres 
+Gestión de Talleres 
+CU-TAL-02 
+RF-TAL-
+05 
+Mostrar catálogo de talleres 
+activos a usuarios 
+Gestión de Talleres 
+CU-TAL-03 
+RF-INS-01 
+Inscribir estudiantes a talleres 
+con cupo disponible 
+Inscripciones 
+CU-INS-01 
+RF-INS-02 
+Validar que el estudiante no esté 
+ya inscrito en el período 
+Inscripciones 
+CU-INS-01 
+RF-INS-03 
+Decrementar cupo al confirmar 
+inscripción 
+Inscripciones 
+CU-INS-01 
+RF-INS-04 
+Generar código QR único por 
+estudiante 
+Inscripciones 
+CU-INS-01 
+RF-INS-05 
+Enviar confirmación de 
+inscripción por email 
+Inscripciones 
+CU-INS-01 
+RF-INS-06 
+Permitir darse de baja de un 
+taller 
+Inscripciones 
+CU-INS-02 
+RF-INS-07 
+Inscripción tardía manual por 
+responsable 
+Inscripciones 
+CU-INS-03 
+RF-ASI-01 
+Escaneo de QR para registro de 
+asistencia 
+Asistencia 
+CU-ASI-01 
+RF-ASI-02 
+Validar inscripción del estudiante 
+al escanear 
+Asistencia 
+CU-ASI-01 
+ID 
+Requisito 
+Descripción 
+Módulo del Sistema 
+Caso de Uso 
+RF-ASI-03 
+Registrar fecha, hora de entrada 
+y salida 
+Asistencia 
+CU-ASI-01 
+RF-ASI-04 
+Calcular automáticamente horas 
+de la sesión 
+Asistencia 
+CU-ASI-01 
+RF-ASI-05 
+Registro manual de asistencia 
+como alternativa 
+Asistencia 
+CU-ASI-02 
+RF-ASI-06 
+Acumular horas en registro de 
+inscripción 
+Asistencia 
+CU-ASI-01 
+RF-ASI-07 
+Mostrar historial de asistencias al 
+estudiante 
+Asistencia 
+CU-HOR-01 
+RF-HOR-
+01 
+Mostrar horas acumuladas por 
+taller al estudiante 
+Horas y Progreso 
+CU-HOR-01 
+RF-HOR-
+02 
+Mostrar total de horas 
+acumuladas del período 
+Horas y Progreso 
+CU-HOR-01 
+RF-HOR-
+03 
+Mostrar progreso visual hacia 
+meta de 20 horas 
+Horas y Progreso 
+CU-HOR-01 
+RF-HOR-
+04 
+Notificar al estudiante al alcanzar 
+20 horas 
+Horas y Progreso 
+CU-HOR-02 
+RF-HOR-
+05 
+Admin puede consultar horas de 
+cualquier estudiante 
+Horas y Progreso 
+CU-HOR-03 
+RF-CON-
+01 
+Habilitar solicitud de constancia 
+al llegar a 20+ horas 
+Constancias 
+CU-CON-01 
+RF-CON-
+02 
+Estudiante solicita constancia 
+desde la app 
+Constancias 
+CU-CON-01 
+RF-CON-
+03 
+Notificar a admin cuando hay 
+solicitudes pendientes 
+Constancias 
+CU-CON-02 
+RF-CON-
+04 
+Admin aprueba o rechaza 
+solicitudes de constancia 
+Constancias 
+CU-CON-02 
+RF-CON-
+05 
+Generar PDF de constancia con 
+datos y desglose de horas 
+Constancias 
+CU-CON-02 
+RF-CON-
+06 
+Almacenar y permitir descarga 
+del PDF generado 
+Constancias 
+CU-CON-02 
+RF-CON-
+07 
+Mantener historial completo de 
+constancias emitidas 
+Constancias 
+CU-CON-03 
+RF-REP-
+01 
+Dashboard con métricas 
+globales del programa 
+Reportes 
+CU-REP-01 
+RF-REP-
+02 
+Exportar lista de estudiantes por 
+taller a Excel 
+Reportes 
+CU-REP-02 
+RF-REP-
+03 
+Exportar reporte de horas 
+acumuladas a Excel 
+Reportes 
+CU-REP-02 
+ID 
+Requisito 
+Descripción 
+Módulo del Sistema 
+Caso de Uso 
+RF-REP-
+04 
+Estadísticas de asistencia por 
+taller 
+Reportes 
+CU-REP-01 
+ 
+4. Matriz de Trazabilidad de Requisitos No Funcionales 
+Los requisitos no funcionales se trazan hacia los mecanismos de verificación que confirmarán su 
+cumplimiento durante las pruebas de aceptación (UAT) y el despliegue. 
+ 
+ID RNF 
+Descripción 
+Categoría 
+Método de 
+Verificación 
+RNF-REND-
+01 
+Carga pantalla principal <2 seg con 
+4G 
+Rendimiento 
+Prueba Lighthouse 
+RNF-REND-
+02 
+Reconocimiento de QR en <1 
+segundo 
+Rendimiento 
+Prueba cronometrada 
+RNF-REND-
+03 
+Generación PDF de constancia <5 
+segundos 
+Rendimiento 
+Prueba cronometrada 
+RNF-REND-
+04 
+API responde en <200ms al percentil 
+95 
+Rendimiento 
+Supabase Dashboard 
+RNF-REND-
+05 
+Soportar >=100 usuarios 
+concurrentes 
+Rendimiento 
+Prueba de carga 
+RNF-SEG-
+01 
+Comunicaciones con HTTPS TLS 
+1.2+ 
+Seguridad 
+Auditoría SSL 
+RNF-SEG-
+02 
+Contraseñas: mín. 8 char, 
+mayúscula, número 
+Seguridad 
+Prueba de registro 
+RNF-SEG-
+03 
+Row Level Security en Supabase 
+Seguridad 
+Revisión de políticas 
+RLS 
+RNF-SEG-
+04 
+Sesiones expiran tras 7 días de 
+inactividad 
+Seguridad 
+Prueba de sesión 
+RNF-SEG-
+05 
+Solo admin_oficina genera 
+constancias 
+Seguridad 
+Prueba de roles 
+RNF-USA-
+01 
+Interfaz responsive en móvil, tablet, 
+desktop 
+Usabilidad 
+Prueba multi-
+dispositivo 
+RNF-USA-
+02 
+Flujos principales en máx. 3 pasos 
+Usabilidad 
+Observación UAT 
+RNF-USA-
+05 
+Puntuación SUS >=75 puntos 
+Usabilidad 
+Encuesta SUS post-
+UAT 
+RNF-DISP-
+02 
+Funciones críticas offline (QR, horas) 
+Disponibilidad 
+Prueba sin red 
+RNF-DISP-
+03 
+Disponibilidad >=99% 
+Disponibilidad 
+Monitoreo Vercel 
+ID RNF 
+Descripción 
+Categoría 
+Método de 
+Verificación 
+RNF-COMP-
+01 
+Chrome, Firefox, Safari, Edge 
+(últimas 2 versiones) 
+Compatibilidad 
+Prueba cross-browser 
+RNF-COMP-
+02 
+Android 8+ e iOS 12+ 
+Compatibilidad 
+Prueba dispositivos 
+ 
+5. Trazabilidad hacia Adelante — Cobertura por Sprint 
+La siguiente tabla muestra en qué sprint de desarrollo se implementará cada módulo y cuáles 
+requisitos quedarán cubiertos al finalizar dicho sprint. 
+ 
+Sprint 
+Módulo 
+Requisitos Cubiertos 
+Hito 
+Sprint 
+0 
+Infraestructura 
+Setup: repositorio, BD, Vercel, wireframes 
+H1: Infraestructura Lista 
+Sprint 
+1 
+Autenticación 
+RF-AUTH-01 al RF-AUTH-07 
+— 
+Sprint 
+2 
+Talleres + 
+Inscripciones 
+RF-TAL-01 al RF-TAL-05, RF-INS-01 al 
+RF-INS-07 
+H2: MVP Estudiantes 
+Sprint 
+3 
+Asistencia 
+RF-ASI-01 al RF-ASI-07 
+H3: MVP Responsables 
+Sprint 
+4 
+Horas y Progreso 
+RF-HOR-01 al RF-HOR-05 
+— 
+Sprint 
+5 
+Dashboard Oficina 
++ Reportes 
+RF-REP-01 al RF-REP-04 
+H4: Sistema Integrado 
+Sprint 
+6 
+Constancias + UAT 
+RF-CON-01 al RF-CON-07 
+H5: Listo para 
+Producción 
+Sprint 
+7 
+Calidad + 
+Documentación 
+RNF completos, corrección de defectos 
+H6: Entrega Final 
+ 
+6. Indicadores de Completitud 
+ 
+Indicador 
+Meta 
+Estado Actual 
+Requisitos funcionales documentados en ERS 
+38 / 38 
+Completo 
+Requisitos con fuente identificada (traza hacia 
+atrás) 
+38 / 38 
+Completo 
+Requisitos con módulo de sistema asignado 
+38 / 38 
+Completo 
+Requisitos no funcionales documentados 
+17 / 17 
+Completo 
+Indicador 
+Meta 
+Estado Actual 
+RNFs con método de verificación definido 
+17 / 17 
+Completo 
+Requisitos implementados (RF) 
+0 / 38 
+Pendiente — En 
+Desarrollo 
+Cobertura de pruebas en módulos críticos (meta 
+70%) 
+0% 
+Pendiente — Sprint 7 
+ 
+7. Notas y Control de Versiones 
+• 
+Versión 1.0 — Febrero 2025. Documento inicial con trazabilidad de los 38 RF y 17 RNF de la 
+ERS TallerTec v1.0. 
+• 
+La columna 'Implementado' se actualizará al cierre de cada sprint con el estado real de cada 
+requisito. 
+• 
+Cualquier cambio en los requisitos de la ERS debe reflejarse de forma inmediata en esta matriz 
+para mantener la consistencia. 
+• 
+Herramienta utilizada: matriz en documento Word; para escalamiento futuro se recomienda 
+migrar a Jira o GitHub Issues con etiquetas por módulo. 

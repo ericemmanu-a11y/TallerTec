@@ -1,0 +1,360 @@
+ 
+TecNM Campus Matehuala 
+Ingeniería de Software 
+  1.5   
+  Análisis Costo-Beneficio   
+  TallerTec — Justificación Económica del Proyecto   
+Proyecto: TallerTec 
+Sistema Integral de Gestión de Talleres Deportivos 
+Equipo de Desarrollo: Virgilio Power  |  Febrero 2025 
+ 
+ 
+1. Introducción 
+El presente Análisis Costo-Beneficio (ACB) responde a la pregunta fundamental de la factibilidad 
+económica de TallerTec: ¿Vale la pena desarrollar este sistema? Mientras el Estudio de Factibilidad 
+determina si el proyecto puede ejecutarse, el ACB traduce todos los aspectos del proyecto al lenguaje 
+común del impacto económico. 
+El análisis compara los costos totales de desarrollo y operación contra los beneficios tangibles e 
+intangibles esperados, aplicando indicadores financieros estándar: flujo de caja proyectado, período de 
+recuperación (payback) y retorno de inversión (ROI). 
+ 
+2. Identificación y Clasificación de Costos 
+2.1 Costos de Desarrollo (Inversión Inicial — Año 0) 
+TallerTec se desarrolla íntegramente con herramientas open source y plataformas de tier gratuito, por 
+lo que la inversión directa en software y hardware es cero. El costo principal es el esfuerzo del equipo 
+de desarrollo, valorado a precio de mercado para dar contexto real al análisis. 
+ 
+Concepto 
+Detalle 
+Costo Real 
+Valor de 
+Mercado 
+Desarrollo de software — equipo 
+3 integrantes × 16 sem 
+× 20 hrs/sem = 960 
+horas 
+$0 MXN 
+(proyecto 
+académico) 
+$57,600 MXN* 
+Supabase Free Tier 
+BD 500 MB, Auth, 
+Storage 1 GB 
+$0 MXN 
+— 
+Vercel Hobby Plan 
+Hosting, CI/CD, SSL 
+incluido 
+$0 MXN 
+— 
+Resend — correos transaccionales 
+3,000 emails/mes 
+gratuitos 
+$0 MXN 
+— 
+Librerías open source 
+Next.js, Tailwind, 
+qrcode, React-PDF 
+$0 MXN 
+— 
+Dominio web (opcional) 
+Subdominio Vercel 
+disponible gratis 
+$0 MXN 
+$150-$250 
+MXN/año 
+TOTAL INVERSIÓN INICIAL 
+— 
+$0 MXN 
+$57,750 MXN* 
+* Valorado a $60 MXN/hora de desarrollo junior (tarifa conservadora de mercado 2025). 
+ 
+2.2 Costos Operativos Anuales (Años 1-3) 
+Una vez desplegado, TallerTec opera dentro de los límites de los planes gratuitos. Los costos 
+operativos se activan únicamente si el sistema escala más allá del volumen del campus Matehuala. 
+ 
+Concepto 
+Escenario Actual (Campus 
+Matehuala) 
+Escenario de Escala 
+(Multi-campus) 
+Supabase (BD + Auth + Storage) 
+$0 MXN (dentro del free tier) 
+~$700 MXN/mes (Pro Plan) 
+Hosting Vercel 
+$0 MXN (Hobby Plan) 
+~$350 MXN/mes (Pro Plan) 
+Correos (Resend) 
+$0 MXN (<3,000/mes) 
+~$200 MXN/mes 
+(>3,000/mes) 
+Mantenimiento técnico 
+~20 hrs/año del equipo (ad 
+honorem) 
+Requiere contratación de 
+soporte 
+TOTAL OPERATIVO ANUAL 
+$0 MXN 
+~$15,000 MXN/año 
+ 
+3. Identificación y Cuantificación de Beneficios 
+3.1 Beneficios Tangibles (Cuantificables en Dinero) 
+ 
+3.1.1 Ahorro por Eliminación de Inscripción Presencial 
+Actualmente, 1,500 estudiantes por semestre asisten a la Feria de Talleres con un tiempo promedio de 
+45 minutos. Al digitalizar el proceso, este tiempo se reduce a menos de 5 minutos por estudiante. 
+Métrica 
+Sistema Actual (AS-
+IS) 
+TallerTec (TO-BE) 
+Tiempo por estudiante en inscripción 
+45 minutos 
+<5 minutos 
+Estudiantes por semestre 
+1,500 
+1,500 
+Horas totales por semestre 
+1,125 horas 
+125 horas 
+Ahorro en horas/semestre 
+— 
+1,000 horas 
+Costo de oportunidad ($50 MXN/hr) 
+$56,250 MXN 
+$6,250 MXN 
+AHORRO ANUAL (2 semestres) 
+— 
+$100,000 MXN 
+ 
+3.1.2 Ahorro en Trabajo Administrativo 
+Actividad Administrativa 
+Horas AS-
+IS/sem 
+Horas TO-
+BE/sem 
+Ahorro Anual 
+Transcripción de hojas de registro al 
+Excel 
+50 horas 
+0 horas 
+100 horas/año 
+Atención presencial de consultas de 
+horas 
+75 horas 
+0 horas 
+150 horas/año 
+Generación manual de constancias 
+(300-400/sem) 
+75-130 horas 
+<5 horas 
+(supervisión) 
+140-250 horas/año 
+TOTAL HORAS ADMIN 
+AHORRADAS/AÑO 
+200-255 horas 
+<10 horas 
+~390-500 hrs/año 
+Valorando el tiempo administrativo a $80 MXN/hora (sueldo promedio de personal TecNM): Ahorro 
+estimado de $31,200-$40,000 MXN anuales. 
+ 
+3.1.3 Ahorro por Reducción de Errores de Datos 
+Con una tasa de error actual del 5-10% en 3,000 registros anuales, se generan entre 150-300 casos 
+con datos incorrectos. Cada caso de corrección consume aproximadamente 20 minutos del personal 
+administrativo. 
+Costo actual de correcciones: 300 casos × 20 min × $80 MXN/hr = $8,000 MXN/año. Con TallerTec, la 
+validación automática elimina prácticamente este costo. 
+ 
+3.2 Beneficios Intangibles 
+• 
+Mejora de la imagen institucional del TecNM Campus Matehuala al modernizar un proceso 
+administrativo visible para los 5,000 estudiantes activos. 
+• 
+Decisiones estratégicas mejoradas: la Coordinación de Deportes contará con métricas en 
+tiempo real sobre asistencia, talleres más demandados y tendencias del programa. 
+• 
+Satisfacción estudiantil: eliminar la burocracia presencial y dar visibilidad de horas en tiempo 
+real reduce la frustración de los usuarios finales. 
+• 
+Potencial de escalamiento a los 254 campus del TecNM a nivel nacional, multiplicando el 
+impacto económico por un factor de hasta 254x. 
+• 
+Reducción del estrés del personal administrativo al eliminar tareas repetitivas y propensas a 
+errores. 
+ 
+4. Comparación y Análisis Financiero 
+4.1 Flujo de Caja Proyectado (3 años) 
+ 
+Período 
+Costos del 
+Período 
+Beneficios del Período 
+Flujo Neto 
+Flujo 
+Acumulado 
+Año 0 
+$0 MXN (desarrollo 
+académico) 
+$0 MXN 
+$0 MXN 
+$0 MXN 
+Año 1 
+$0 MXN (ops. en 
+free tier) 
+$138,000 MXN 
+(tangibles) 
+$138,000 MXN 
+$138,000 MXN 
+Año 2 
+$0 MXN (ops. en 
+free tier) 
+$143,000 MXN 
+(estimado) 
+$143,000 MXN 
+$281,000 MXN 
+Año 3 
+$0 MXN (ops. en 
+free tier) 
+$148,000 MXN 
+(estimado) 
+$148,000 MXN 
+$429,000 MXN 
+Nota: Los beneficios del Año 1 incluyen $100,000 MXN de ahorro estudiantil + $31,200 MXN de ahorro 
+admin + $6,800 MXN de reducción de errores = $138,000 MXN totales. 
+ 
+4.2 Indicadores Financieros 
+ 
+Indicador 
+Resultado 
+Interpretación 
+Período de Recuperación 
+(Payback) 
+Inmediato — Año 0 
+Con inversión de $0 MXN, el sistema 
+genera beneficios desde el primer semestre 
+de uso 
+ROI al Año 1 
+Técnicamente infinito 
+No hay inversión directa que recuperar; todo 
+beneficio es ganancia neta 
+ROI sobre valor de mercado 
+(3 años) 
+644% 
+($429,000 - $57,750) / $57,750 × 100 = 
+644% en 3 años 
+Beneficio Neto Anual 
+Promedio 
+~$143,000 MXN 
+Promedio de los 3 primeros años de 
+operación 
+Costo por estudiante 
+beneficiado 
+$0 MXN 
+5,000 estudiantes; costo directo nulo 
+ 
+4.3 Análisis de Sensibilidad 
+El siguiente análisis evalúa cómo varían los beneficios bajo distintos escenarios de adopción del 
+sistema: 
+ 
+Escenario 
+Adopción 
+Estudiantil 
+Beneficio Anual 
+Estimado 
+ROI Año 1 (s/valor 
+mercado) 
+Pesimista 
+30% (1,500 
+estudiantes) 
+~$41,400 MXN 
+~72% 
+Base 
+50% (2,500 
+estudiantes) 
+~$69,000 MXN 
+~120% 
+Optimista (objetivo) 
+100% (5,000 
+estudiantes) 
+~$138,000 MXN 
+~239% 
+Incluso en el escenario pesimista con solo el 30% de adopción estudiantil, el proyecto recupera el 72% 
+de su valor de mercado estimado en el primer año de operación. Dado que el costo real es $0 MXN, 
+cualquier nivel de adopción representa un beneficio neto positivo. 
+ 
+5. Comparativa: TallerTec vs. Alternativas 
+ 
+Criterio 
+Sistema 
+Actual (AS-IS) 
+Software 
+Comercial 
+(SaaS) 
+Desarrollo a 
+Medida Externo 
+TallerTec 
+(propuesta) 
+Costo de implementación 
+$0 (existe) 
+$50K-$200K 
+MXN/año 
+$100K-$500K 
+MXN 
+$0 MXN 
+Criterio 
+Sistema 
+Actual (AS-IS) 
+Software 
+Comercial 
+(SaaS) 
+Desarrollo a 
+Medida Externo 
+TallerTec 
+(propuesta) 
+Adaptación al proceso 
+TecNM 
+Nula (es el 
+problema) 
+Baja-Media 
+Alta 
+Muy Alta 
+Tiempo de implementación 
+Ya operando 
+3-6 meses 
+6-18 meses 
+16 semanas 
+Escalabilidad a otros 
+campus 
+No aplica 
+Alta 
+Alta 
+Alta (open 
+source) 
+Control sobre el sistema 
+Total (Excel 
+local) 
+Nulo 
+Parcial 
+Total (código 
+propio) 
+RECOMENDACIÓN 
+— 
+No viable 
+No viable en 
+plazo 
+OPCIÓN 
+ÓPTIMA 
+ 
+6. Conclusión del Análisis Costo-Beneficio 
+El Análisis Costo-Beneficio de TallerTec arroja resultados inequívocamente positivos. Con una 
+inversión directa de $0 MXN y beneficios tangibles anuales estimados en $138,000 MXN, el proyecto 
+no solo es económicamente justificable sino óptimo en comparación con cualquier alternativa 
+disponible. 
+El ROI sobre el valor de mercado del desarrollo supera el 644% en tres años, con período de 
+recuperación inmediato desde el primer semestre de operación. Además, los beneficios intangibles —
+mejora en la experiencia estudiantil, decisiones basadas en datos y potencial de escalamiento 
+nacional— representan un valor adicional no cuantificado pero estratégicamente significativo para el 
+TecNM. 
+Recomendación final del equipo Virgilio Power: El Análisis Costo-Beneficio confirma y refuerza la 
+recomendación del Estudio de Factibilidad. TallerTec debe desarrollarse e implementarse. Representa 
+la alternativa de mayor valor, menor riesgo y máximo impacto para resolver la problemática 
+documentada de la gestión de talleres deportivos del TecNM Campus Matehuala. 

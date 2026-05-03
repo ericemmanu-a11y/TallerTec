@@ -1,0 +1,382 @@
+ 
+TecNM Campus Matehuala 
+Ingeniería de Software 
+  2.2   
+  Herramientas CASE para Diseño   
+  TallerTec — Catálogo y Configuración de Herramientas   
+Proyecto: TallerTec 
+Sistema Integral de Gestión de Talleres Deportivos 
+Equipo de Desarrollo: Virgilio Power  |  Febrero 2025 
+ 
+ 
+1. Introducción 
+Las herramientas CASE (Computer-Aided Software Engineering) son el conjunto de aplicaciones, 
+plataformas y servicios que el equipo Virgilio Power utiliza para diseñar, desarrollar, probar y desplegar 
+TallerTec. Este documento cataloga cada herramienta con su propósito, configuración específica para 
+el proyecto y las convenciones de uso acordadas por el equipo. 
+La correcta configuración de estas herramientas desde el inicio del proyecto garantiza consistencia en 
+el código, calidad continua y reproducibilidad del entorno de desarrollo en cualquier máquina del 
+equipo. 
+ 
+2. Herramientas de Modelado y Diseño 
+2.1 Diagramas UML — draw.io / diagrams.net 
+Atributo 
+Detalle 
+Herramienta 
+draw.io (diagrams.net) — versión web gratuita 
+URL 
+https://app.diagrams.net 
+Uso en TallerTec 
+Diagramas UML: casos de uso, clases, secuencia, actividad, componentes, 
+estados 
+Formato de salida 
+XML editable (.drawio) + exportación PNG/SVG para documentación 
+Almacenamiento 
+Google Drive compartido del equipo — carpeta /TallerTec/Diagramas 
+Convención de 
+nombres 
+diagrama_tipo_version.drawio (ej: uml_clases_v1.drawio) 
+ 
+2.2 Diseño de Interfaces — Figma 
+Atributo 
+Detalle 
+Herramienta 
+Figma — Plan gratuito (hasta 3 proyectos activos) 
+URL 
+https://www.figma.com 
+Uso en TallerTec 
+Wireframes, mockups y prototipo interactivo de las 3 interfaces del sistema 
+Vistas diseñadas 
+Login, Catálogo Talleres, Mi QR, Mi Progreso, Panel Asistencia, Dashboard 
+Oficina 
+Sistema de diseño 
+Componentes reutilizables: botones, cards, formularios, tablas con tokens 
+Tailwind CSS 
+Breakpoints 
+Móvil: 375px | Tablet: 768px | Desktop: 1280px 
+Paleta de colores 
+Primary: #2E75B6 | Dark: #1F3864 | Success: #2E7D32 | Error: #C62828 
+Tipografía 
+Inter (Google Fonts) — 14px base, escala modular 1.25 
+ 
+2.3 Diseño de Base de Datos — dbdiagram.io 
+Atributo 
+Detalle 
+Herramienta 
+dbdiagram.io — herramienta gratuita para ERDs 
+URL 
+https://dbdiagram.io 
+Uso en TallerTec 
+Diagrama ER del modelo relacional de Supabase PostgreSQL 
+Exportación 
+SQL DDL compatible con PostgreSQL + imagen PNG 
+Integración 
+El SQL generado se usa directamente como migración inicial en Supabase 
+ 
+3. Herramientas de Desarrollo 
+3.1 Framework Principal — Next.js 14 
+Atributo 
+Detalle 
+Versión 
+Next.js 14.2.x con App Router 
+Instalación 
+npx create-next-app@latest tallertec --typescript --tailwind --eslint --app 
+Estructura principal 
+/app (rutas), /components, /lib, /hooks, /types, /public 
+Renderizado 
+SSR para dashboard, CSR para PWA, SSG para páginas estáticas 
+API Routes 
+Carpeta /app/api/ — cada carpeta = endpoint REST 
+Configuración PWA 
+next-pwa plugin + manifest.json + service worker automático 
+ 
+Estructura de carpetas del proyecto: 
+tallertec/ 
+├── app/ 
+│   ├── (auth)/          → rutas de autenticación 
+│   ├── (estudiante)/    → rutas PWA estudiante 
+│   ├── (responsable)/  → rutas panel responsable 
+│   ├── (admin)/         → rutas dashboard oficina 
+│   └── api/             → endpoints REST 
+│       ├── auth/        → login, register, reset-password 
+│       ├── talleres/    → CRUD talleres 
+│       ├── inscripciones/ → inscribir, baja 
+│       ├── asistencias/ → registrar, historial 
+│       ├── horas/       → consultar, acumular 
+│       ├── constancias/ → solicitar, aprobar, generar 
+│       └── reportes/    → dashboard, excel 
+├── components/          → componentes reutilizables 
+│   ├── ui/              → botones, inputs, cards, modales 
+│   ├── qr/              → QrScanner, QrDisplay 
+│   └── charts/          → gráficas del dashboard 
+├── lib/                 → clientes supabase, utilidades 
+├── hooks/               → useAuth, useTaller, useHoras 
+├── types/               → interfaces TypeScript del dominio 
+└── middleware.ts        → protección de rutas por rol 
+ 
+3.2 Lenguaje — TypeScript 5 
+Configuración 
+Valor 
+Versión 
+TypeScript 5.x 
+strict 
+true — habilita todos los checks estrictos 
+target 
+ES2022 
+moduleResolution 
+bundler 
+paths 
+@/* → ./src/*  (alias para imports limpios) 
+noUncheckedIndexedAccess 
+true — seguridad en arrays 
+ 
+3.3 Estilos — Tailwind CSS 3 
+Configuración 
+Valor 
+Versión 
+Tailwind CSS 3.4.x 
+theme.extend.colors 
+primary, secondary, success, error, warning 
+plugins 
+@tailwindcss/forms, @tailwindcss/typography 
+Convención de clases 
+Mobile-first: base → sm: → md: → lg: 
+Componentes 
+reutilizables 
+Extraídos con @apply en globals.css para botones y cards 
+ 
+3.4 Backend — Supabase 
+Servicio Supabase 
+Configuración en TallerTec 
+PostgreSQL 
+Base de datos principal. Migraciones versionadas en /supabase/migrations/ 
+Auth 
+Email + contraseña. JWT con expiración 7 días. Redirect a /auth/callback 
+Row Level 
+Security 
+Habilitado en TODAS las tablas. Políticas por rol 
+Storage Buckets 
+constancias-pdf (privado), avatares (público) 
+Realtime 
+Habilitado en tabla asistencias para actualizaciones en vivo 
+Edge Functions 
+gen-constancia-pdf — función serverless para PDF 
+Variables de entorno requeridas en .env.local: 
+NEXT_PUBLIC_SUPABASE_URL=https://xxxxx.supabase.co 
+NEXT_PUBLIC_SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIs... 
+SUPABASE_SERVICE_ROLE_KEY=eyJhbGciOiJIUzI1NiIs...  (server-side only) 
+RESEND_API_KEY=re_xxxxxxxxxxxxxxxxxxxx 
+NEXT_PUBLIC_APP_URL=https://tallertec.vercel.app 
+ 
+4. Herramientas de Calidad de Código 
+4.1 ESLint — Linter 
+Configuración 
+Valor 
+extends 
+next/core-web-vitals, plugin:@typescript-
+eslint/recommended 
+rules adicionales 
+no-console:warn, prefer-const:error, no-unused-
+vars:error 
+Ejecución 
+Automática en cada commit (husky pre-commit hook) 
+Integración CI 
+GitHub Actions ejecuta npm run lint en cada PR 
+ 
+4.2 Prettier — Formateador 
+Regla 
+Valor 
+printWidth 
+100 caracteres 
+tabWidth 
+2 espacios 
+semi 
+true 
+singleQuote 
+true 
+trailingComma 
+es5 
+tailwindcss plugin 
+prettier-plugin-tailwindcss (ordena clases 
+automáticamente) 
+ 
+4.3 Jest + React Testing Library — Pruebas Unitarias 
+Aspecto 
+Configuración 
+Versión 
+Jest 29 + @testing-library/react 14 
+Cobertura mínima 
+70% en módulos críticos (auth, horas, constancias) 
+Comando 
+npm run test:coverage 
+Ubicación de tests 
+*.test.ts y *.test.tsx junto al archivo fuente 
+Mock de Supabase 
+jest.mock('@/lib/supabase') en cada test 
+ 
+4.4 Zod — Validación de Esquemas 
+Zod es la biblioteca de validación de esquemas utilizada en todas las API Routes para garantizar que 
+los datos de entrada sean correctos antes de procesarlos. 
+// Ejemplo: schema de inscripción 
+export const inscripcionSchema = z.object({ 
+  taller_id: z.string().uuid('ID de taller inválido'), 
+  periodo_id: z.string().uuid('ID de período inválido'), 
+}); 
+ 
+5. Herramientas de Control de Versiones y CI/CD 
+5.1 Git + GitHub 
+Aspecto 
+Configuración 
+Estrategia 
+Git Flow simplificado 
+Rama main 
+Siempre desplegable a producción 
+Rama develop 
+Integración de features antes de main 
+Features 
+feature/modulo-descripcion (ej: feature/auth-registro) 
+Hotfixes 
+hotfix/descripcion-corta 
+Conventional Commits 
+feat|fix|docs|style|refactor|test|chore(scope): descripción 
+Pull Requests 
+Obligatorios para merge a develop y main. 1 reviewer mínimo 
+Ejemplos de commits 
+feat(auth): implementar registro con email institucional 
+ 
+fix(qr): corregir lectura en cámaras con baja resolución 
+ 
+test(horas): agregar pruebas unitarias al módulo de acumulación 
+ 
+5.2 Vercel — Hosting y CI/CD 
+Aspecto 
+Configuración 
+Plan 
+Hobby (gratuito) — suficiente para fase piloto 
+Environments 
+Production (main), Preview (develop + PRs) 
+Build command 
+npm run build 
+Output directory 
+Automático (Next.js) 
+Variables de entorno 
+Configuradas en Vercel Dashboard por environment 
+Domain 
+tallertec.vercel.app (gratuito) o dominio personalizado 
+SSL/TLS 
+Automático (Let's Encrypt vía Vercel) 
+Analytics 
+Vercel Analytics habilitado (gratuito) 
+ 
+5.3 GitHub Actions — Pipeline CI 
+Pipeline automático definido en .github/workflows/ci.yml: 
+on: [push, pull_request] 
+jobs: 
+  ci: 
+    runs-on: ubuntu-latest 
+    steps: 
+      - uses: actions/checkout@v4 
+      - uses: actions/setup-node@v4  (node 20) 
+      - run: npm ci 
+      - run: npm run lint           # ESLint 
+      - run: npm run type-check      # TypeScript 
+      - run: npm run test:coverage   # Jest (min 70%) 
+      - run: npm run build           # Build Next.js 
+ 
+6. Herramientas de Gestión del Proyecto 
+Herramienta 
+Propósito 
+Configuración en TallerTec 
+Notion / Trello 
+Product Backlog y Sprint 
+Board 
+Board con columnas: Backlog | In Progress 
+| Review | Done 
+GitHub Issues 
+Bug tracking y tareas 
+técnicas 
+Labels: bug, feature, docs, refactor, test, 
+sprint-N 
+WhatsApp / Discord 
+Daily Standup asíncrono 
+Formato: ✅ Ayer | 🔨 Hoy | 🔨 Bloqueadores 
+Google Drive 
+Documentación compartida 
+Carpeta: TallerTec / Sprints / Documentos 
+Supabase Dashboard 
+Monitoreo de BD y Auth 
+Alertas configuradas para: uso >80% free 
+tier 
+Vercel Analytics 
+Monitoreo de rendimiento 
+Lighthouse CI en cada deploy automático 
+ 
+7. Stack Tecnológico Completo — Resumen 
+Categoría 
+Tecnología 
+Versión 
+Costo 
+Licencia 
+Frontend 
+Next.js + 
+TypeScript 
+14 / 5.x 
+$0 
+MIT 
+Estilos 
+Tailwind CSS 
+3.4 
+$0 
+MIT 
+BaaS 
+Supabase 
+Free Tier 
+$0 
+Apache 2.0 
+Hosting 
+Vercel 
+Hobby 
+$0 
+Commercial 
+Email 
+Resend 
+Free (3K/mes) 
+$0 
+Commercial 
+QR Gen 
+qrcode.react 
+3.x 
+$0 
+MIT 
+QR Scan 
+html5-qrcode 
+2.3 
+$0 
+Apache 2.0 
+PDF 
+@react-
+pdf/renderer 
+3.x 
+$0 
+MIT 
+Excel 
+xlsx (SheetJS) 
+0.18 
+$0 
+Apache 2.0 
+Validación 
+Zod 
+3.x 
+$0 
+MIT 
+Testing 
+Jest + RTL 
+29 / 14 
+$0 
+MIT 
+CI/CD 
+GitHub Actions 
+N/A 
+$0 
+Commercial 
+ 

@@ -1,0 +1,955 @@
+Propuesta de Proyecto: TallerTec 
+Página 1 de 26 
+ 
+PROPUESTA DE PROYECTO DE 
+SOFTWARE 
+ 
+TALLERTEC 
+Sistema Integral de Gestión de Talleres Deportivos 
+para Instituciones de Educación Superior 
+ 
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 
+ 
+Versión 1.0 
+Febrero 2025 
+ 
+Materia: Ingeniería de Software 
+Tecnológico Nacional de México 
+Campus Matehuala 
+ 
+Equipo de Desarrollo: 3 integrantes 
+Duración del Proyecto: 16 semanas (4 meses) 
+ 
+ 
+Propuesta de Proyecto: TallerTec 
+Página 2 de 26 
+1. RESUMEN EJECUTIVO 
+El presente documento constituye la propuesta formal para el desarrollo de TallerTec, un 
+sistema integral de gestión de talleres deportivos diseñado para resolver una 
+problemática real y documentada que afecta a la totalidad de los estudiantes del 
+Tecnológico Nacional de México Campus Matehuala. El proyecto surge de la experiencia 
+directa del equipo de desarrollo como usuarios y administradores del sistema actual, lo 
+que garantiza un entendimiento profundo del problema y sus implicaciones. 
+Actualmente, el proceso de inscripción, control de asistencia y acreditación de las 20 
+horas de talleres deportivos requeridas para titulación opera mediante un sistema 
+completamente manual: ferias presenciales obligatorias, hojas de registro en papel, 
+transcripción manual a Excel, y generación lenta de constancias. Este proceso genera 
+errores frecuentes, pérdida de información, frustración estudiantil, y una carga 
+administrativa innecesaria para el personal de la oficina de deportes. 
+TallerTec propone una solución tecnológica completa que digitaliza todo el flujo: 
+inscripción en línea sin necesidad de asistir presencialmente, registro de asistencia 
+mediante códigos QR, control de horas en tiempo real visible para estudiantes, y 
+generación automática de constancias. El sistema contempla tres tipos de usuarios con 
+interfaces diferenciadas: estudiantes (app/PWA), administradores de taller (panel de 
+gestión), y personal de oficina (dashboard administrativo). 
+El proyecto se desarrollará en 16 semanas utilizando metodología Scrum, con un stack 
+tecnológico moderno: Next.js 14 para el frontend web, React Native/Expo para la 
+aplicación móvil, y Supabase como backend (PostgreSQL + Auth + Storage). El costo de 
+desarrollo es $0 MXN aprovechando los tiers gratuitos de las plataformas seleccionadas. 
+El resultado será un sistema funcional listo para implementación piloto en el campus, con 
+potencial de escalamiento a otros campus del TecNM. 
+ 
+ 
+Propuesta de Proyecto: TallerTec 
+Página 3 de 26 
+2. IDENTIFICACIÓN DEL PROBLEMA 
+2.1 Contexto Institucional 
+El Tecnológico Nacional de México (TecNM) establece como requisito de titulación que 
+todos los estudiantes de nivel licenciatura completen 20 horas de actividades deportivas 
+o culturales a través de los talleres institucionales. Este requisito aplica a los más de 
+5,000 estudiantes activos del campus Matehuala y se replica en los 254 campus del 
+TecNM a nivel nacional. 
+Los talleres deportivos disponibles incluyen disciplinas como fútbol, voleibol, básquetbol, 
+ajedrez, atletismo, entre otros. Cada taller es coordinado por un responsable (que puede 
+ser un docente o un estudiante avanzado) quien debe llevar el control de asistencia y 
+reportar las horas acumuladas de cada participante a la oficina de deportes. 
+El proceso actual fue diseñado hace años para un volumen menor de estudiantes y no 
+ha evolucionado con las necesidades actuales. La falta de digitalización genera cuellos 
+de botella, errores, y una experiencia frustrante tanto para estudiantes como para el 
+personal administrativo. 
+2.2 Descripción del Proceso Actual (AS-IS) 
+FASE 1 - Inscripción (Feria de Talleres): Dos veces al año, la institución organiza una 
+'Feria de Talleres Deportivos' en el auditorio. Todos los estudiantes (nuevos y regulares) 
+deben asistir presencialmente en un horario específico de 1-2 días. Se les entregan hojas 
+impresas donde deben escribir manualmente: número de control, nombre completo, 
+carrera, semestre, teléfono, y taller deseado. Estas hojas se entregan a los encargados 
+de cada taller. 
+FASE 2 - Captura de Datos: El personal de la oficina de deportes recibe las hojas de 
+todos los talleres y debe transcribir manualmente cada registro a una hoja de cálculo 
+Excel. Con cientos de estudiantes y escritura a mano frecuentemente ilegible, este 
+proceso toma varios días y genera errores de transcripción (nombres mal escritos, 
+números de control incorrectos, duplicados, omisiones). 
+FASE 3 - Control de Asistencia: Cada responsable de taller lleva su propio control de 
+asistencia, generalmente en una libreta o lista impresa. No existe un formato 
+estandarizado. Algunos responsables son rigurosos, otros no. Las horas se calculan de 
+manera aproximada. 
+FASE 4 - Reporte de Horas: Al final del semestre, los responsables de taller deben 
+reportar las horas de cada estudiante a la oficina. Este reporte se hace de manera 
+Propuesta de Proyecto: TallerTec 
+Página 4 de 26 
+informal (a veces verbal, a veces en papel). La oficina actualiza manualmente el Excel 
+maestro. 
+FASE 5 - Generación de Constancias: Cuando un estudiante completa sus 20 horas y 
+necesita su constancia para titulación, debe solicitarla presencialmente en la oficina. El 
+personal busca al estudiante en el Excel, verifica las horas, genera manualmente un 
+documento en Word, lo imprime, obtiene firma del responsable, y lo entrega. Este 
+proceso puede tomar días o semanas. 
+2.3 Análisis de Causa Raíz (Diagrama de Ishikawa) 
+El problema central identificado es: 'Proceso ineficiente, propenso a errores y frustrante 
+para la gestión de talleres deportivos'. Las causas se agrupan en las siguientes 
+categorías: 
+2.3.1 Métodos y Procesos 
+El proceso de inscripción requiere presencia física obligatoria, excluyendo a estudiantes 
+con conflictos de horario, trabajo, o situaciones personales. No existe un procedimiento 
+estandarizado para el control de asistencia entre los diferentes talleres. La comunicación 
+entre responsables de taller y oficina es informal y no tiene trazabilidad. No hay un 
+proceso definido para altas tardías (estudiantes que se unen después de la feria). 
+2.3.2 Personas 
+Los responsables de taller (especialmente estudiantes) no tienen capacitación formal en 
+gestión administrativa. La carga de trabajo del personal de oficina se concentra en 
+períodos pico (inicio de semestre, fin de semestre, período de titulación). Los errores de 
+transcripción son inevitables con el volumen actual de datos manuales. La rotación de 
+responsables de taller genera pérdida de información histórica. 
+2.3.3 Tecnología 
+El único 'sistema' es un archivo Excel que no tiene validaciones, respaldos automáticos, 
+ni control de acceso. No existe una base de datos centralizada ni sistema de información. 
+Los estudiantes no tienen forma de consultar sus horas acumuladas sin ir 
+presencialmente a preguntar. No hay automatización en ninguna parte del proceso. 
+2.3.4 Información 
+Los datos capturados en papel son frecuentemente ilegibles o incompletos. No existe 
+historial de asistencias individuales, solo totales aproximados. La información está 
+fragmentada entre múltiples libretas de diferentes talleres. No hay reportes ni estadísticas 
+disponibles para la toma de decisiones. 
+Propuesta de Proyecto: TallerTec 
+Página 5 de 26 
+2.4 Stakeholders Afectados 
+Stakeholder 
+Rol y Cantidad 
+Dolor Principal 
+Interés 
+Estudiantes 
+Usuarios finales (~5,000 
+activos) 
+Proceso 
+burocrático, no 
+saben sus horas 
+Muy Alto 
+Responsables 
+Taller 
+Administradores de taller 
+(~15-20) 
+Control manual, 
+reportes informales 
+Alto 
+Personal Oficina 
+Administrativos (~2-3 
+personas) 
+Transcripción 
+manual, consultas 
+constantes 
+Alto 
+Coordinación 
+Deportes 
+Jefatura del departamento 
+Sin datos para 
+decisiones, quejas 
+frecuentes 
+Alto 
+Dirección 
+Autoridades del campus 
+Proceso que afecta 
+imagen institucional 
+Medio 
+ 
+2.5 Impacto Cuantificable del Problema 
+Tiempo perdido por estudiantes en inscripción presencial: Estimando 1,500 estudiantes 
+en la feria, con tiempo promedio de 45 minutos (traslado + espera + registro), se pierden 
+1,125 horas-estudiante por semestre. Si el valor del tiempo de un estudiante se estima 
+conservadoramente en $50 MXN/hora, el costo de oportunidad es de $56,250 MXN por 
+semestre solo en inscripciones. 
+Tiempo del personal en transcripción manual: Con 1,500 registros y un tiempo promedio 
+de 2 minutos por registro (lectura de escritura a mano, corrección de errores, captura), 
+se requieren aproximadamente 50 horas de trabajo administrativo por semestre solo para 
+captura inicial. 
+Errores de datos: Se estima conservadoramente un 5-10% de errores en la transcripción 
+(nombres mal escritos, números de control incorrectos). Con 1,500 registros, esto 
+significa 75-150 estudiantes con información incorrecta que genera re-trabajo y 
+frustración. 
+Consultas presenciales: Si el 30% de los estudiantes (450) acude al menos una vez por 
+semestre a preguntar por sus horas, con un tiempo promedio de 10 minutos por consulta, 
+se consumen 75 horas de atención que podrían evitarse con un sistema de consulta en 
+línea. 
+Propuesta de Proyecto: TallerTec 
+Página 6 de 26 
+Generación de constancias: Con aproximadamente 300-400 estudiantes por semestre 
+que completan sus horas y solicitan constancia, y un tiempo de 15-20 minutos por 
+constancia (búsqueda, verificación, generación, impresión, firma), se requieren 75-130 
+horas adicionales de trabajo administrativo. 
+ 
+ 
+Propuesta de Proyecto: TallerTec 
+Página 7 de 26 
+3. PROPUESTA DE SOLUCIÓN 
+3.1 Descripción General del Sistema 
+TallerTec es un sistema integral de gestión que digitaliza completamente el ciclo de vida 
+de los talleres deportivos institucionales, desde la inscripción hasta la generación de 
+constancias. El sistema se compone de tres interfaces principales, cada una diseñada 
+para las necesidades específicas de su tipo de usuario: 
+3.1.1 Aplicación para Estudiantes (TallerTec App) 
+Progressive Web App (PWA) instalable en cualquier dispositivo que permite a los 
+estudiantes: explorar el catálogo de talleres disponibles con horarios, ubicaciones y 
+cupos; inscribirse en línea a uno o más talleres sin necesidad de asistencia presencial; 
+visualizar su código QR personal único para registro de asistencia; consultar en tiempo 
+real las horas acumuladas por taller y el total; ver el historial detallado de asistencias 
+registradas; solicitar su constancia de créditos cuando completen las 20 horas; y recibir 
+notificaciones sobre horarios, eventos y recordatorios. 
+3.1.2 Panel para Responsables de Taller (TallerTec Admin) 
+Interfaz web responsive que permite a los coordinadores de cada taller: registrar 
+asistencia escaneando el código QR de los estudiantes con la cámara del celular; ver la 
+lista completa de estudiantes inscritos en su taller; consultar el historial de asistencias de 
+cada estudiante; agregar estudiantes que se inscriben fuera del período regular; reportar 
+incidencias o situaciones especiales; y visualizar estadísticas de su taller (asistencia 
+promedio, estudiantes activos, etc.). 
+3.1.3 Dashboard para Oficina de Deportes (TallerTec Dashboard) 
+Panel administrativo completo que permite al personal de la oficina: gestionar el catálogo 
+de talleres (crear, editar, desactivar); administrar responsables de taller y sus permisos; 
+ver el estado global de todos los talleres en tiempo real; validar y aprobar horas 
+reportadas por los responsables; generar constancias de créditos de manera automática 
+con un clic; exportar datos a Excel para reportes institucionales; consultar estadísticas y 
+métricas del programa deportivo; y gestionar períodos de inscripción y configuraciones 
+del sistema. 
+3.2 Objetivos del Proyecto (Framework SMART) 
+3.2.1 Objetivo General 
+Desarrollar e implementar un sistema de gestión de talleres deportivos que elimine los 
+procesos manuales actuales, reduzca el tiempo de inscripción de 45 minutos 
+presenciales a menos de 5 minutos en línea, proporcione visibilidad en tiempo real de 
+Propuesta de Proyecto: TallerTec 
+Página 8 de 26 
+horas acumuladas a los estudiantes, y reduzca el tiempo de generación de constancias 
+de días a segundos, durante un período de desarrollo de 16 semanas con un equipo de 
+3 personas. 
+3.2.2 Objetivos Específicos 
+1. Digitalización de Inscripciones (Specific, Measurable): Permitir que el 100% de las 
+inscripciones a talleres se realicen en línea, eliminando la necesidad de ferias 
+presenciales obligatorias, medible por el número de inscripciones procesadas 
+digitalmente en el primer período de uso. 
+2. Automatización de Asistencia (Achievable): Implementar un sistema de registro de 
+asistencia basado en códigos QR que permita registrar la entrada de un estudiante en 
+menos de 5 segundos, utilizando únicamente la cámara de un smartphone. 
+3. Transparencia de Horas (Relevant): Proporcionar a cada estudiante acceso 24/7 a su 
+información de horas acumuladas, eliminando el 100% de las consultas presenciales por 
+este motivo. 
+4. Eficiencia Administrativa (Time-bound): Reducir el tiempo de generación de 
+constancias de un promedio de 15-20 minutos a menos de 30 segundos mediante 
+automatización, implementado y funcional antes de la semana 14 del proyecto. 
+5. Adopción del Sistema (Measurable): Lograr que al menos 200 estudiantes se registren 
+y utilicen activamente el sistema durante el período de prueba piloto en las últimas 4 
+semanas del proyecto. 
+3.3 Alcance y Limitaciones 
+3.3.1 Dentro del Alcance 
+El proyecto incluye: desarrollo de PWA para estudiantes con funcionalidad offline básica; 
+desarrollo de panel web para responsables de taller; desarrollo de dashboard 
+administrativo para oficina de deportes; sistema de autenticación con correo institucional; 
+generación y escaneo de códigos QR para asistencia; base de datos con modelo 
+completo para talleres, usuarios, inscripciones, asistencias; generación automática de 
+constancias en formato PDF; sistema de notificaciones por correo electrónico; 
+exportación de datos a Excel; documentación técnica y manuales de usuario; 
+capacitación básica a usuarios piloto; y despliegue en ambiente de producción gratuito 
+(Vercel + Supabase). 
+3.3.2 Fuera del Alcance 
+El proyecto NO incluye: integración con sistemas institucionales existentes (SII, control 
+escolar) ya que requeriría permisos y APIs no disponibles; aplicación móvil nativa para 
+Propuesta de Proyecto: TallerTec 
+Página 9 de 26 
+iOS/Android (la PWA es compatible con ambos); validación biométrica o facial para 
+asistencia; sistema de pagos o cobros; gestión de instalaciones deportivas o reserva de 
+espacios; funcionalidades de gamificación o competencias entre talleres; soporte 
+multiidioma; y soporte técnico posterior al período del proyecto (se entregará 
+documentación para mantenimiento). 
+3.3.3 Supuestos 
+Para el éxito del proyecto se asume que: la oficina de deportes proporcionará información 
+del catálogo actual de talleres; los responsables de taller disponen de smartphones con 
+cámara y acceso a internet; los estudiantes tienen acceso a correo electrónico 
+institucional; la institución permitirá el uso del sistema como piloto; y se contará con al 
+menos un contacto en la oficina de deportes para validación de requisitos y pruebas de 
+aceptación. 
+3.4 Criterios de Éxito 
+Criterio 
+Métrica 
+Meta 
+Verificación 
+Funcionalidad 
+% de requisitos 
+funcionales 
+implementados 
+≥ 95% 
+Matriz de trazabilidad 
+Usabilidad 
+System Usability Scale 
+(SUS) 
+≥ 75 puntos 
+Encuesta a usuarios 
+piloto 
+Rendimiento 
+Tiempo de carga de 
+pantalla principal 
+< 2 segundos 
+Lighthouse/pruebas 
+Tiempo inscripción 
+Tiempo para completar 
+inscripción 
+< 3 minutos 
+Pruebas con usuarios 
+Tiempo asistencia 
+Tiempo para registrar 
+asistencia (QR) 
+< 5 segundos 
+Cronometrado en 
+pruebas 
+Tiempo constancia 
+Tiempo para generar 
+constancia PDF 
+< 30 segundos 
+Cronometrado en 
+pruebas 
+Adopción 
+Estudiantes registrados 
+en piloto 
+≥ 200 
+Conteo en base de 
+datos 
+Satisfacción 
+Calificación general del 
+sistema 
+≥ 4.0/5.0 
+Encuesta de 
+satisfacción 
+ 
+ 
+Propuesta de Proyecto: TallerTec 
+Página 10 de 26 
+4. ANÁLISIS DE VIABILIDAD 
+4.1 Viabilidad Técnica 
+El análisis de viabilidad técnica evalúa si el equipo cuenta con los conocimientos, 
+herramientas y recursos necesarios para desarrollar el sistema propuesto dentro del 
+tiempo establecido. 
+Tecnología 
+Propósito 
+Madurez 
+Riesgo 
+Next.js 14 
+Frontend web (PWA + 
+Dashboard) 
+Alta - 
+Framework 
+líder 
+Bajo 
+React Native/Expo 
+App móvil (opcional, PWA 
+primero) 
+Alta - Muy 
+documentado 
+Bajo 
+Supabase 
+PostgreSQL + Auth + 
+Storage 
+Alta - 
+Alternativa 
+Firebase 
+Bajo 
+Tailwind CSS 
+Estilos y diseño responsive 
+Alta - Estándar 
+actual 
+Bajo 
+QR Code libs 
+Generación y escaneo de 
+QR 
+Alta - Libs 
+maduras 
+Bajo 
+React-PDF 
+Generación de constancias 
+PDF 
+Alta - Bien 
+documentado 
+Bajo 
+ 
+Justificación del Stack Tecnológico: Se seleccionó Next.js 14 como framework principal 
+porque permite desarrollo full-stack con una sola tecnología (React + API Routes), tiene 
+excelente soporte para PWA, y Vercel ofrece hosting gratuito con CI/CD integrado. 
+Supabase se eligió sobre Firebase porque ofrece PostgreSQL (base de datos relacional 
+más adecuada para este tipo de sistema), autenticación integrada, y un tier gratuito muy 
+generoso (500MB BD, autenticación ilimitada, 1GB storage). 
+Conclusión de Viabilidad Técnica: ALTA. Todas las tecnologías son maduras, bien 
+documentadas, con comunidades activas. El equipo tiene experiencia en desarrollo web 
+y puede aprender las especificidades durante el Sprint 0. No se requiere hardware 
+especial ni integraciones complejas. 
+4.2 Viabilidad Operativa 
+La viabilidad operativa evalúa si el sistema puede ser efectivamente adoptado y utilizado 
+por los usuarios finales, y si se integra con los procesos institucionales existentes. 
+Propuesta de Proyecto: TallerTec 
+Página 11 de 26 
+Factores Favorables: Los estudiantes ya utilizan aplicaciones móviles y web en su vida 
+diaria, la curva de aprendizaje será mínima. Los responsables de taller ya tienen 
+smartphones y saben usar cámaras y apps básicas. El sistema no reemplaza procesos 
+humanos sensibles, sino que los automatiza. El equipo de desarrollo incluye un miembro 
+que es estudiante Y administrador de taller, conociendo ambas perspectivas. Existe 
+frustración generalizada con el sistema actual, lo que favorece la adopción de una 
+alternativa mejor. 
+Factores de Riesgo y Mitigación: Resistencia al cambio por parte del personal 
+administrativo - se mitigará con capacitación personalizada y demostración de beneficios 
+concretos (ahorro de tiempo). Posible falta de smartphones en algunos responsables de 
+taller - se verificará durante levantamiento de requisitos y se considerará alternativa de 
+registro manual como respaldo. Conectividad intermitente en instalaciones deportivas - 
+la PWA tendrá modo offline para operaciones críticas. 
+4.3 Viabilidad Económica 
+Concepto 
+Costo 
+Notas 
+Supabase Free Tier 
+$0 MXN 
+500MB BD, Auth 
+ilimitado 
+Vercel Hobby Plan 
+$0 MXN 
+100GB bandwidth, SSL 
+incluido 
+Dominio (opcional) 
+$0-250 MXN/año 
+Puede usar subdominio 
+gratuito 
+Resend (emails) 
+$0 MXN 
+3,000 emails/mes 
+gratis 
+Librerías y herramientas 
+$0 MXN 
+Todo open source 
+TOTAL 
+$0 MXN 
+100% dentro del 
+presupuesto 
+ 
+Conclusión de Viabilidad Económica: EXCELENTE. El proyecto puede desarrollarse con 
+costo $0 utilizando servicios gratuitos que son suficientes para el volumen esperado de 
+usuarios (hasta 5,000 estudiantes están dentro de los límites de los planes gratuitos). 
+4.4 Análisis de Riesgos 
+Riesgo 
+Prob. 
+Impacto Estrategia de Mitigación 
+Falta de apoyo 
+institucional 
+Baja 
+Alto 
+Presentar propuesta formal a coordinación, 
+demostrar beneficios 
+Propuesta de Proyecto: TallerTec 
+Página 12 de 26 
+Datos de talleres no 
+disponibles 
+Media 
+Medio 
+Crear datos de prueba, iterar cuando se 
+obtengan reales 
+Usuarios no adoptan el 
+sistema 
+Baja 
+Alto 
+Diseño UX intuitivo, beneficios claros, 
+soporte inicial 
+Problemas de 
+conectividad 
+Media 
+Medio 
+PWA con modo offline, sincronización 
+posterior 
+Alcance excede tiempo 
+disponible 
+Media 
+Alto 
+Priorización MoSCoW, sprints cortos, ajuste 
+de alcance 
+Errores en generación 
+de PDF 
+Media 
+Medio 
+Pruebas exhaustivas, plantilla validada con 
+oficina 
+ 
+ 
+Propuesta de Proyecto: TallerTec 
+Página 13 de 26 
+5. ARQUITECTURA PROPUESTA 
+5.1 Arquitectura General 
+El sistema sigue una arquitectura de tres capas con separación clara de 
+responsabilidades, optimizada para desarrollo ágil con un equipo pequeño: 
+CAPA DE PRESENTACIÓN: Tres interfaces de usuario desarrolladas con Next.js 14 y 
+Tailwind CSS. La PWA para estudiantes es una aplicación web progresiva instalable con 
+manifest.json y service worker para funcionalidad offline básica. El panel para 
+responsables de taller es una interfaz web responsive optimizada para uso en 
+dispositivos móviles. El dashboard administrativo es una interfaz web completa con 
+componentes de visualización de datos. 
+CAPA DE LÓGICA DE NEGOCIO: API Routes de Next.js que implementan la lógica del 
+sistema. Endpoints RESTful para todas las operaciones CRUD. Validación de datos con 
+Zod. Autenticación y autorización con Supabase Auth y middleware personalizado. 
+Generación de PDFs con React-PDF o jsPDF. 
+CAPA DE DATOS: Supabase como Backend-as-a-Service. PostgreSQL como base de 
+datos relacional con Row Level Security (RLS) para seguridad a nivel de fila. Supabase 
+Auth para gestión de usuarios y sesiones. Supabase Storage para almacenamiento de 
+archivos (fotos de perfil, constancias generadas). 
+5.2 Modelo de Datos 
+El modelo de datos relacional se estructura en las siguientes tablas principales: 
+usuarios: id (UUID, PK), email (único, validado como institucional), nombre_completo, 
+numero_control (único para estudiantes), rol (enum: estudiante, responsable_taller, 
+admin_oficina), telefono, carrera, semestre, foto_url, codigo_qr (único), activo, 
+created_at, updated_at. 
+talleres: id (UUID, PK), nombre, descripcion, categoria (deportivo/cultural), horario_texto, 
+ubicacion, cupo_maximo, responsable_id (FK a usuarios), activo, periodo_id (FK), 
+created_at. 
+periodos: id (UUID, PK), nombre (ej: 'Enero-Junio 2025'), fecha_inicio, fecha_fin, 
+inscripciones_abiertas, activo. 
+inscripciones: id (UUID, PK), estudiante_id (FK), taller_id (FK), fecha_inscripcion, estado 
+(enum: activa, baja, completada), horas_acumuladas (calculado), created_at. Índice 
+único en (estudiante_id, taller_id, periodo_id). 
+Propuesta de Proyecto: TallerTec 
+Página 14 de 26 
+asistencias: id (UUID, PK), inscripcion_id (FK), fecha, hora_entrada, hora_salida, 
+horas_computadas, registrado_por (FK a usuarios), metodo_registro (enum: qr, manual), 
+notas, created_at. 
+constancias: id (UUID, PK), estudiante_id (FK), fecha_generacion, horas_totales, 
+periodo_id (FK), archivo_url, generado_por (FK), estado (enum: generada, entregada), 
+created_at. 
+notificaciones: id (UUID, PK), usuario_id (FK), tipo, titulo, mensaje, leida, created_at. 
+5.3 Flujos Principales del Sistema 
+Flujo de Inscripción: Estudiante accede a la PWA → Inicia sesión con correo institucional 
+→ Ve catálogo de talleres disponibles → Selecciona taller y confirma inscripción → 
+Sistema valida cupo disponible → Crea registro en tabla inscripciones → Genera código 
+QR único si es primera inscripción → Envía confirmación por email → Estudiante puede 
+ver su inscripción en 'Mis Talleres'. 
+Flujo de Registro de Asistencia: Estudiante llega al taller → Muestra su código QR en la 
+app → Responsable abre panel y selecciona 'Registrar Asistencia' → Escanea QR con 
+cámara del celular → Sistema valida que el estudiante está inscrito en ese taller → 
+Registra hora de entrada → Al finalizar sesión, responsable puede registrar hora de 
+salida o usar duración estándar → Sistema calcula horas y actualiza acumulado. 
+Flujo de Generación de Constancia: Estudiante completa 20 horas → Sistema detecta 
+automáticamente → Habilita botón 'Solicitar Constancia' en app del estudiante → 
+Estudiante solicita constancia → Personal de oficina recibe notificación → Revisa y 
+aprueba en dashboard → Sistema genera PDF automáticamente con datos del 
+estudiante, desglose de horas, firma digital → Constancia disponible para descarga → 
+Se registra en historial. 
+5.4 Integraciones y APIs Externas 
+Servicio 
+Uso 
+Costo 
+Prioridad 
+Supabase Auth 
+Autenticación, gestión de 
+sesiones 
+Gratis 
+Must Have 
+Supabase Database 
+PostgreSQL para todos los datos 
+Gratis 
+(500MB) 
+Must Have 
+Supabase Storage 
+Almacenamiento de PDFs y 
+fotos 
+Gratis (1GB) 
+Must Have 
+Resend 
+Envío de emails transaccionales 
+Gratis 
+(3K/mes) 
+Should Have 
+Propuesta de Proyecto: TallerTec 
+Página 15 de 26 
+Vercel 
+Hosting y deployment 
+Gratis 
+Must Have 
+ 
+ 
+Propuesta de Proyecto: TallerTec 
+Página 16 de 26 
+6. METODOLOGÍA DE DESARROLLO 
+6.1 Metodología Seleccionada: Scrum 
+Se utilizará Scrum como marco de trabajo ágil, adaptado para un equipo de 3 personas. 
+La elección se justifica porque el proyecto tiene requisitos que pueden evolucionar 
+basándose en feedback de usuarios reales, el equipo es pequeño y puede funcionar de 
+manera autoorganizada, y la duración de 16 semanas permite 8 sprints de 2 semanas 
+cada uno, ideal para entrega incremental. 
+6.2 Roles del Equipo 
+Rol 
+Responsabilidades 
+Asignación 
+Product Owner 
+Definir y priorizar backlog, validar con 
+usuarios, aceptar entregables 
+Integrante con experiencia 
+como admin de taller 
+Scrum Master 
+Facilitar ceremonias, remover 
+impedimentos, asegurar proceso 
+Rotativo cada 2 sprints 
+Development Team 
+Diseño, desarrollo, pruebas, 
+documentación 
+Los 3 integrantes (full-stack) 
+6.3 Ceremonias Scrum 
+Sprint Duration: 2 semanas (14 días). Con 16 semanas de proyecto, se tendrán 8 sprints. 
+Sprint Planning (Lunes, 2 horas): Revisar Product Backlog priorizado, seleccionar 
+historias de usuario para el sprint, desglosar en tareas técnicas, estimar con Planning 
+Poker (tallas S/M/L/XL), definir Sprint Goal. 
+Daily Standup (Diario, 15 minutos): Puede ser presencial o asíncrono vía 
+WhatsApp/Discord. Formato: ¿Qué completé ayer? ¿Qué haré hoy? ¿Tengo 
+impedimentos? 
+Sprint Review (Viernes semana 2, 1 hora): Demostración del incremento funcional. Invitar 
+a stakeholder de la oficina de deportes cuando sea posible. Recopilar feedback. 
+Sprint Retrospective (Viernes semana 2, 30 minutos): ¿Qué funcionó bien? ¿Qué debe 
+mejorar? ¿Qué acciones tomamos para el siguiente sprint? 
+6.4 Definition of Done 
+Una Historia de Usuario se considera 'Done' cuando: el código está escrito siguiendo los 
+estándares definidos, el código ha sido revisado por al menos un compañero (code 
+review), las pruebas unitarias pasan (cobertura mínima 70% en lógica crítica), la 
+Propuesta de Proyecto: TallerTec 
+Página 17 de 26 
+funcionalidad está integrada en la rama main sin conflictos, la funcionalidad está 
+desplegada en ambiente de staging, la documentación técnica está actualizada si aplica, 
+el Product Owner ha probado y aceptado la funcionalidad. 
+ 
+ 
+Propuesta de Proyecto: TallerTec 
+Página 18 de 26 
+7. PLAN DE TRABAJO 
+7.1 Work Breakdown Structure (WBS) 
+1. GESTIÓN DEL PROYECTO: Planificación inicial, configuración de herramientas 
+(GitHub, Notion/Trello), seguimiento de sprints, gestión de riesgos, documentación de 
+gestión. 
+2. ANÁLISIS Y DISEÑO: Levantamiento de requisitos con oficina de deportes, diseño de 
+arquitectura, diseño de base de datos, diseño de interfaces (wireframes, mockups), 
+definición de API. 
+3. INFRAESTRUCTURA: Configuración de repositorio Git, setup de proyecto Next.js, 
+configuración de Supabase, configuración de Vercel, CI/CD básico. 
+4. DESARROLLO - MÓDULO AUTENTICACIÓN: Registro de usuarios, login con email 
+institucional, recuperación de contraseña, gestión de sesiones, roles y permisos. 
+5. DESARROLLO - MÓDULO ESTUDIANTES: Catálogo de talleres, inscripción a 
+talleres, visualización de código QR, consulta de horas acumuladas, historial de 
+asistencias, solicitud de constancias. 
+6. DESARROLLO - MÓDULO RESPONSABLES: Lista de estudiantes inscritos, escaneo 
+de QR para asistencia, registro manual de asistencia, historial del taller, estadísticas 
+básicas. 
+7. DESARROLLO - MÓDULO OFICINA: Dashboard con métricas, gestión de talleres y 
+responsables, gestión de períodos, validación de horas, generación de constancias PDF, 
+exportación a Excel. 
+8. PRUEBAS: Pruebas unitarias, pruebas de integración, pruebas de usabilidad, pruebas 
+de aceptación de usuario (UAT), corrección de defectos. 
+9. DESPLIEGUE Y CIERRE: Despliegue en producción, capacitación a usuarios, 
+documentación final, entrega de proyecto. 
+7.2 Cronograma por Sprints 
+Sprint 
+Entregables Principales 
+Semanas 
+0 
+Setup completo: Repo, Next.js, Supabase, Vercel. Modelo 
+BD creado. Wireframes. Backlog inicial. 
+1-2 
+1 
+Autenticación completa (registro, login, roles). Landing page. 
+Estructura de navegación. 
+3-4 
+Propuesta de Proyecto: TallerTec 
+Página 19 de 26 
+2 
+Módulo estudiantes: Catálogo de talleres, inscripción, 
+generación de QR personal. 
+5-6 
+3 
+Módulo responsables: Escaneo QR, registro de asistencia, 
+lista de inscritos. 
+7-8 
+4 
+Visualización de horas para estudiantes. Historial de 
+asistencias. Notificaciones email. 
+9-10 
+5 
+Dashboard oficina: Gestión de talleres, usuarios, períodos. 
+Métricas básicas. 
+11-12 
+6 
+Generación de constancias PDF. Exportación Excel. UAT 
+con usuarios piloto. 
+13-14 
+7 
+Corrección de bugs. PWA optimizada. Documentación. 
+Capacitación. Entrega final. 
+15-16 
+7.3 Hitos del Proyecto 
+Hito 
+Fecha 
+Criterio de Cumplimiento 
+H1: Infraestructura Lista 
+Fin Semana 
+2 
+Repo, BD, deploy funcionando. Equipo 
+puede desarrollar. 
+H2: MVP Estudiantes 
+Fin Semana 
+6 
+Estudiante puede registrarse, inscribirse a 
+taller, ver su QR. 
+H3: MVP Responsables 
+Fin Semana 
+8 
+Responsable puede escanear QR y 
+registrar asistencias. 
+H4: Sistema Integrado 
+Fin Semana 
+12 
+Todos los módulos funcionando, flujo 
+completo E2E. 
+H5: Listo para Producción 
+Fin Semana 
+14 
+UAT completado, bugs críticos resueltos, 
+constancias generándose. 
+H6: Entrega Final 
+Fin Semana 
+16 
+Documentación completa, capacitación 
+realizada, proyecto entregado. 
+ 
+ 
+Propuesta de Proyecto: TallerTec 
+Página 20 de 26 
+8. REQUISITOS DEL SISTEMA 
+8.1 Requisitos Funcionales 
+8.1.1 Módulo de Autenticación (RF-AUTH) 
+RF-AUTH-01: El sistema debe permitir el registro de usuarios con correo electrónico 
+institucional (@matehuala.tecnm.mx). RF-AUTH-02: El sistema debe validar el formato 
+del correo institucional antes de permitir el registro. RF-AUTH-03: El sistema debe enviar 
+un correo de verificación al registrarse. RF-AUTH-04: El sistema debe permitir inicio de 
+sesión con correo y contraseña. RF-AUTH-05: El sistema debe permitir recuperación de 
+contraseña vía correo electrónico. RF-AUTH-06: El sistema debe manejar tres roles: 
+estudiante, responsable_taller, admin_oficina. RF-AUTH-07: El sistema debe redirigir a 
+la interfaz correspondiente según el rol del usuario. 
+8.1.2 Módulo de Gestión de Talleres (RF-TAL) 
+RF-TAL-01: El sistema debe permitir a admin_oficina crear nuevos talleres con nombre, 
+descripción, horario, ubicación y cupo máximo. RF-TAL-02: El sistema debe permitir 
+asignar un responsable a cada taller. RF-TAL-03: El sistema debe permitir editar la 
+información 
+de 
+talleres 
+existentes. 
+RF-TAL-04: 
+El 
+sistema 
+debe 
+permitir 
+activar/desactivar talleres. RF-TAL-05: El sistema debe mostrar el catálogo de talleres 
+activos a todos los usuarios. 
+8.1.3 Módulo de Inscripciones (RF-INS) 
+RF-INS-01: El sistema debe permitir a estudiantes inscribirse a talleres con cupo 
+disponible. RF-INS-02: El sistema debe validar que el estudiante no esté ya inscrito en 
+el mismo taller del período actual. RF-INS-03: El sistema debe decrementar el cupo 
+disponible al confirmar una inscripción. RF-INS-04: El sistema debe generar un código 
+QR único para cada estudiante si es su primera inscripción. RF-INS-05: El sistema debe 
+enviar confirmación de inscripción por correo electrónico. RF-INS-06: El sistema debe 
+permitir a estudiantes darse de baja de un taller. RF-INS-07: El sistema debe permitir a 
+responsables agregar estudiantes manualmente (inscripción tardía). 
+8.1.4 Módulo de Asistencia (RF-ASI) 
+RF-ASI-01: El sistema debe permitir a responsables escanear el código QR de 
+estudiantes para registrar asistencia. RF-ASI-02: El sistema debe validar que el 
+estudiante escaneado esté inscrito en el taller del responsable. RF-ASI-03: El sistema 
+debe registrar fecha, hora de entrada y opcionalmente hora de salida. RF-ASI-04: El 
+sistema debe calcular automáticamente las horas de la sesión. RF-ASI-05: El sistema 
+debe permitir registro manual de asistencia como alternativa al QR. RF-ASI-06: El 
+Propuesta de Proyecto: TallerTec 
+Página 21 de 26 
+sistema debe acumular las horas en el registro de inscripción del estudiante. RF-ASI-07: 
+El sistema debe mostrar al estudiante su historial de asistencias detallado. 
+8.1.5 Módulo de Horas y Progreso (RF-HOR) 
+RF-HOR-01: El sistema debe mostrar al estudiante sus horas acumuladas por taller. RF-
+HOR-02: El sistema debe mostrar el total de horas acumuladas considerando todos los 
+talleres. RF-HOR-03: El sistema debe mostrar el progreso hacia la meta de 20 horas. 
+RF-HOR-04: El sistema debe notificar al estudiante cuando alcance las 20 horas. RF-
+HOR-05: El sistema debe permitir a admin_oficina ver las horas de cualquier estudiante. 
+8.1.6 Módulo de Constancias (RF-CON) 
+RF-CON-01: El sistema debe habilitar la solicitud de constancia solo cuando el estudiante 
+tenga 20+ horas. RF-CON-02: El sistema debe permitir al estudiante solicitar su 
+constancia desde la app. RF-CON-03: El sistema debe notificar a admin_oficina cuando 
+hay solicitudes pendientes. RF-CON-04: El sistema debe permitir a admin_oficina 
+aprobar o rechazar solicitudes. RF-CON-05: El sistema debe generar automáticamente 
+el PDF de la constancia con datos del estudiante y desglose de horas. RF-CON-06: El 
+sistema debe almacenar el PDF generado y permitir su descarga. RF-CON-07: El 
+sistema debe mantener un historial de constancias emitidas. 
+8.1.7 Módulo de Reportes (RF-REP) 
+RF-REP-01: El dashboard debe mostrar métricas generales: total estudiantes inscritos, 
+total por taller, horas promedio. RF-REP-02: El sistema debe permitir exportar lista de 
+estudiantes por taller a Excel. RF-REP-03: El sistema debe permitir exportar reporte de 
+horas acumuladas a Excel. RF-REP-04: El sistema debe mostrar estadísticas de 
+asistencia por taller. 
+8.2 Requisitos No Funcionales 
+RNF-REND-01: La aplicación debe cargar la pantalla principal en menos de 2 segundos 
+con conexión 4G. RNF-REND-02: El escaneo de QR debe reconocer el código en menos 
+de 1 segundo. RNF-REND-03: La generación de PDF de constancia debe completarse 
+en menos de 5 segundos. RNF-REND-04: El sistema debe soportar al menos 100 
+usuarios concurrentes sin degradación. 
+RNF-DISP-01: La PWA debe ser instalable en dispositivos Android e iOS. RNF-DISP-02: 
+Las funciones críticas (ver QR, ver horas) deben funcionar offline. RNF-DISP-03: El 
+sistema debe tener disponibilidad del 99% (excluyendo mantenimiento programado). 
+RNF-SEG-01: Todas las comunicaciones deben usar HTTPS. RNF-SEG-02: Las 
+contraseñas deben cumplir requisitos mínimos (8 caracteres, mayúscula, número). RNF-
+SEG-03: El sistema debe implementar Row Level Security en Supabase. RNF-SEG-04: 
+Propuesta de Proyecto: TallerTec 
+Página 22 de 26 
+Las sesiones deben expirar después de 7 días de inactividad. RNF-SEG-05: Solo 
+admin_oficina puede generar constancias oficiales. 
+RNF-USA-01: La interfaz debe ser responsive, funcionando en móviles, tablets y 
+desktop. RNF-USA-02: Los flujos principales deben completarse en máximo 3 clics. RNF-
+USA-03: Los mensajes de error deben ser claros y en español. RNF-USA-04: El sistema 
+debe proporcionar feedback visual para todas las acciones. 
+RNF-COMP-01: La PWA debe funcionar en Chrome, Firefox, Safari y Edge (últimas 2 
+versiones). RNF-COMP-02: La PWA debe funcionar en Android 8+ e iOS 12+. RNF-
+COMP-03: El escáner QR debe funcionar con cualquier cámara de smartphone. 
+8.3 Casos de Uso Principales 
+CU-01 Inscribirse a Taller: Actor: Estudiante. Precondición: Usuario autenticado como 
+estudiante. Flujo: Estudiante accede a 'Catálogo de Talleres' → Ve lista de talleres con 
+horarios y cupos → Selecciona un taller → Ve detalles y confirma inscripción → Sistema 
+valida cupo y no duplicidad → Registra inscripción → Genera/muestra código QR → 
+Envía confirmación por email. Postcondición: Estudiante inscrito, cupo decrementado. 
+CU-02 Registrar Asistencia: Actor: Responsable de Taller. Precondición: Responsable 
+autenticado, estudiante presente. Flujo: Responsable abre 'Registrar Asistencia' → 
+Activa cámara para escanear → Estudiante muestra su QR → Sistema lee QR y busca 
+estudiante → Valida inscripción en el taller → Muestra nombre y foto del estudiante → 
+Responsable confirma → Sistema registra hora de entrada. Postcondición: Asistencia 
+registrada, horas actualizadas. 
+CU-03 Consultar Mis Horas: Actor: Estudiante. Precondición: Usuario autenticado. Flujo: 
+Estudiante accede a 'Mi Progreso' → Ve resumen de horas totales y por taller → Ve barra 
+de progreso hacia 20 horas → Puede ver detalle de cada asistencia registrada → Si tiene 
+20+ horas, ve botón de solicitar constancia. Postcondición: Información mostrada. 
+CU-04 Generar Constancia: Actor: Admin Oficina. Precondición: Solicitud de constancia 
+pendiente. Flujo: Admin ve notificación de solicitud → Accede a 'Solicitudes Pendientes' 
+→ Selecciona solicitud → Ve detalles del estudiante y desglose de horas → Verifica 
+información → Aprueba solicitud → Sistema genera PDF con datos, firma digital, folio → 
+PDF disponible para descarga → Notifica al estudiante. Postcondición: Constancia 
+generada y almacenada. 
+ 
+ 
+Propuesta de Proyecto: TallerTec 
+Página 23 de 26 
+9. PLAN DE CALIDAD 
+9.1 Estrategia de Testing 
+Pruebas Unitarias: Se utilizará Jest y React Testing Library para pruebas de 
+componentes y funciones de lógica. Cobertura mínima del 70% en módulos críticos 
+(autenticación, cálculo de horas, generación de QR). Las pruebas se ejecutarán 
+automáticamente en cada push mediante GitHub Actions. 
+Pruebas de Integración: Verificar flujos completos end-to-end: registro → inscripción → 
+asistencia → consulta de horas. Probar integración con Supabase (auth, database, 
+storage). Verificar generación correcta de PDFs con diferentes casos de datos. 
+Pruebas de Usabilidad: Pruebas con 5-10 estudiantes reales para validar flujos de 
+inscripción y consulta. Pruebas con 2-3 responsables de taller para validar flujo de 
+asistencia. Aplicar cuestionario SUS (System Usability Scale) para medir usabilidad. 
+Pruebas de Aceptación (UAT): Ejecutar en Sprint 6 con usuarios reales de la institución. 
+Preparar casos de prueba basados en requisitos funcionales. Documentar bugs 
+encontrados y priorizar correcciones para Sprint 7. 
+9.2 Métricas de Calidad 
+Métrica 
+Objetivo 
+Herramienta 
+Frecuencia 
+Cobertura de código 
+≥ 70% 
+Jest coverage 
+Cada PR 
+Bugs críticos abiertos 
+0 en release 
+GitHub Issues 
+Diario 
+Lighthouse 
+Performance 
+≥ 90 
+Lighthouse CI 
+Cada deploy 
+Lighthouse 
+Accessibility 
+≥ 90 
+Lighthouse CI 
+Cada deploy 
+SUS Score 
+≥ 75 
+Encuesta SUS 
+Post-UAT 
+Tiempo de respuesta 
+API 
+< 200ms p95 
+Supabase Dashboard 
+Continuo 
+ 
+ 
+Propuesta de Proyecto: TallerTec 
+Página 24 de 26 
+10. DOCUMENTACIÓN Y ESTÁNDARES 
+10.1 Estándares de Código 
+JavaScript/TypeScript: Se utilizará TypeScript para todo el código del proyecto, 
+aprovechando el tipado estático para prevenir errores. ESLint con configuración de 
+Next.js para linting. Prettier para formateo automático. Convención de nombres: 
+camelCase para variables y funciones, PascalCase para componentes React, 
+UPPER_SNAKE_CASE para constantes. 
+Estructura de Proyecto Next.js: Uso del App Router (carpeta /app). Componentes 
+reutilizables en /components. Hooks personalizados en /hooks. Utilidades en /lib. Tipos 
+TypeScript en /types. 
+Base de Datos: Nombres de tablas en snake_case y plural (usuarios, talleres). Nombres 
+de columnas en snake_case. Uso de UUIDs como primary keys. Timestamps created_at 
+y updated_at en todas las tablas. 
+10.2 Control de Versiones 
+Repositorio: GitHub con repositorio privado compartido con el profesor como 
+colaborador. 
+Estrategia de Branching: Git Flow simplificado. Rama 'main' siempre desplegable. Rama 
+'develop' para integración. Features en ramas 'feature/nombre-descriptivo'. Hotfixes en 
+ramas 'hotfix/descripcion'. Pull Requests obligatorios para merge a develop y main. 
+Commits: Conventional Commits. Formato: tipo(alcance): descripción. Tipos: feat, fix, 
+docs, style, refactor, test, chore. Ejemplos: 'feat(auth): implementar registro con email 
+institucional', 'fix(qr): corregir lectura en cámaras antiguas'. 
+10.3 Documentación Entregable 
+Documentación Técnica: README.md completo con instrucciones de instalación y 
+configuración. Documentación de API con ejemplos de uso. Diagrama de arquitectura y 
+modelo de datos. Guía de contribución para futuros desarrolladores. 
+Documentación de Usuario: Manual de usuario para estudiantes (con capturas de 
+pantalla). Manual de usuario para responsables de taller. Manual de administrador para 
+oficina de deportes. Video tutorial de las funcionalidades principales. 
+ 
+ 
+Propuesta de Proyecto: TallerTec 
+Página 25 de 26 
+11. REFERENCIAS Y BIBLIOGRAFÍA 
+11.1 Estándares y Normas 
+IEEE 830-1998: IEEE Recommended Practice for Software Requirements Specifications. 
+Guía para la estructura de requisitos del presente documento. 
+IEEE 1016-2009: IEEE Standard for Information Technology—Systems Design—
+Software Design Descriptions. Marco para la documentación de arquitectura. 
+ISO/IEC 25010:2011: Systems and software engineering — Systems and software 
+Quality Requirements and Evaluation (SQuaRE). Referencia para métricas de calidad. 
+PMBOK Guide, 7th Edition. Project Management Institute, 2021. Referencia para gestión 
+del proyecto. 
+Scrum Guide 2020. Ken Schwaber y Jeff Sutherland. Marco de trabajo ágil utilizado. 
+11.2 Documentación Técnica 
+Next.js Documentation: https://nextjs.org/docs - Framework principal del proyecto. 
+Supabase Documentation: https://supabase.com/docs - Backend-as-a-Service utilizado. 
+Tailwind CSS Documentation: https://tailwindcss.com/docs - Framework de estilos. 
+React-PDF Documentation: https://react-pdf.org/ - Generación de PDFs. 
+QRCode.react: https://www.npmjs.com/package/qrcode.react - Generación de códigos 
+QR. 
+html5-qrcode: https://github.com/mebjas/html5-qrcode - Escaneo de códigos QR. 
+11.3 Normativa Institucional 
+Lineamientos para la Acreditación de Actividades Complementarias del TecNM. 
+Documento que establece el requisito de 20 horas de actividades deportivas o culturales. 
+Reglamento de Estudiantes del Tecnológico Nacional de México. 
+ 
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 
+ 
+— Fin del Documento — 
+Propuesta de Proyecto: TallerTec 
+Página 26 de 26 
+TallerTec v1.0 | Propuesta de Proyecto | Febrero 2025 

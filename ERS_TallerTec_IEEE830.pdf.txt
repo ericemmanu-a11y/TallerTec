@@ -1,0 +1,814 @@
+ERS TallerTec
+IEEE 830  |  TecNM Campus Matehuala  |  v1.0
+E S P E C I F I C A C I Ó N  D E  R E Q U I S I T O S  
+S O F T W A R E
+TallerTec
+Sistema Integral de Gestión de Talleres Deportivos
+para Instituciones de Educación Superior
+Estándar  IEEE 830-1998
+Versión  1.0   •   Febrero  2025
+I N S T I T U C I Ó N
+TecNM Campus 
+Matehuala
+M A T E R I A
+Ingeniería de Software
+D U R A C I Ó N
+16 semanas · 3 integrantes
+Sistema Integral de Gestión de Talleres Deportivos
+Febrero 2025
+PAGE
+ERS TallerTec
+IEEE 830  |  TecNM Campus Matehuala  |  v1.0
+1
+I N T R O D U C C I Ó N
+1.1  Propósito
+El presente documento constituye la Especificación de Requisitos Software (ERS) del sistema TallerTec, elaborada conforme 
+al estándar IEEE 830. Su propósito es definir de manera clara, completa y verificable los requisitos funcionales y no 
+funcionales, sirviendo como contrato entre el equipo de desarrollo y los stakeholders del proyecto.
+TallerTec digitaliza completamente el ciclo de vida de los talleres deportivos institucionales del TecNM Campus Matehuala, 
+eliminando el proceso manual actual que afecta a más de 5,000 estudiantes.
+Este documento está dirigido a:
+  
+▸Equipo de desarrollo (3 integrantes)
+  
+▸Personal de la oficina de deportes del TecNM Campus Matehuala
+  
+▸Responsables de talleres deportivos
+  
+▸Autoridades académicas y coordinación del departamento
+  
+▸Profesor de la materia Ingeniería de Software
+1.2  Ámbito del Sistema
+TallerTec es un sistema web/móvil que abarca los siguientes ámbitos operativos:
+Inscripción en línea
+Sin necesidad de ferias presenciales
+Registro QR
+Asistencia mediante códigos únicos
+Control de horas
+Visibilidad en tiempo real 24/7
+Generación de constancias
+PDF automático en segundos
+Administración de catálogo
+Talleres, responsables y períodos
+Reportes y estadísticas
+Exportación a Excel
+1.3  Definiciones, Acrónimos y Abreviaturas
+Término / Acrónimo
+Definición
+TallerTec
+Sistema Integral de Gestión de Talleres Deportivos
+ERS
+Especificación de Requisitos Software
+IEEE 830
+Estándar IEEE para especificación de requisitos de software
+TecNM
+Tecnológico Nacional de México
+Sistema Integral de Gestión de Talleres Deportivos
+Febrero 2025
+PAGE
+ERS TallerTec
+IEEE 830  |  TecNM Campus Matehuala  |  v1.0
+Término / Acrónimo
+Definición
+PWA
+Progressive Web App – aplicación web progresiva instalable
+QR
+Quick Response – código de barras bidimensional
+RF / RNF
+Requisito Funcional / Requisito No Funcional
+RLS
+Row Level Security – seguridad a nivel de fila en Supabase
+UAT
+User Acceptance Testing – pruebas de aceptación de usuario
+SUS
+System Usability Scale – escala de usabilidad del sistema
+Next.js
+Framework React full-stack utilizado en el proyecto
+Supabase
+Backend-as-a-Service basado en PostgreSQL
+Vercel
+Plataforma de hosting y despliegue del frontend
+HTTPS
+HyperText Transfer Protocol Secure
+CI/CD
+Continuous Integration / Continuous Deployment
+1.4  Referencias
+  
+▸IEEE 830-1998: IEEE Recommended Practice for Software Requirements Specifications.
+  
+▸IEEE 1016-2009: IEEE Standard for Information Technology – Software Design Descriptions.
+  
+▸ISO/IEC 25010:2011: Systems and software Quality Requirements and Evaluation (SQuaRE).
+  
+▸PMBOK Guide, 7th Edition. Project Management Institute, 2021.
+  
+▸Scrum Guide 2020. Ken Schwaber y Jeff Sutherland.
+  
+▸Next.js Documentation: https://nextjs.org/docs
+  
+▸Supabase Documentation: https://supabase.com/docs
+  
+▸Propuesta de Proyecto TallerTec v1.0, Febrero 2025.
+  
+▸Lineamientos para la Acreditación de Actividades Complementarias del TecNM.
+1.5  Visión General del Documento
+Sección
+Contenido
+1 – Introducción
+Propósito, ámbito, definiciones, referencias y estructura
+2 – Descripción General
+Contexto del sistema, funciones, tipos de usuario, restricciones, suposiciones y requisitos 
+futuros
+3 – Requisitos Específicos
+Interfaces externas, 38+ requisitos funcionales, rendimiento, restricciones de diseño y 
+atributos de calidad
+4 – Apéndices
+Modelos de datos, casos de uso, cronograma de sprints y análisis de riesgos
+Sistema Integral de Gestión de Talleres Deportivos
+Febrero 2025
+PAGE
+ERS TallerTec
+IEEE 830  |  TecNM Campus Matehuala  |  v1.0
+2
+D E S C R I P C I Ó N  G E N E R A L
+2.1  Perspectiva del Producto
+TallerTec es un sistema nuevo e independiente que no extiende ningún sistema institucional existente. Se ubica en la 
+intersección de tres dominios:
+Gestión Educativa
+Reemplaza procesos administrativos 
+manuales con un flujo digital.
+Aplicaciones Web/Móvil
+Accesible como PWA desde cualquier 
+dispositivo sin instalación.
+Sistemas de 
+Información
+Centraliza datos dispersos en papel y 
+Excel en una BD única.
+2.2  Funciones del Producto
+TallerTec proporciona las siguientes funciones principales, organizadas por módulo:
+  
+◆Módulo de Autenticación
+  
+▸Registro/login con correo institucional, gestión de roles (estudiante, responsable, admin)
+  
+▸Recuperación de contraseña y verificación de cuenta
+  
+◆Módulo de Gestión de Talleres
+  
+▸Catálogo de talleres con horarios, ubicaciones y cupos
+  
+▸Creación, edición y activación/desactivación de talleres
+  
+◆Módulo de Inscripciones
+  
+▸Inscripción en línea sin presencia física
+  
+▸Generación de código QR personal único
+  
+▸Control de cupos y prevención de duplicados
+  
+◆Módulo de Asistencia
+  
+▸Registro de asistencia mediante escaneo de código QR
+  
+▸Registro manual como alternativa
+  
+▸Cálculo automático de horas por sesión
+  
+◆Módulo de Horas y Progreso
+  
+▸Visualización en tiempo real de horas acumuladas
+  
+▸Progreso hacia la meta de 20 horas
+Sistema Integral de Gestión de Talleres Deportivos
+Febrero 2025
+PAGE
+ERS TallerTec
+IEEE 830  |  TecNM Campus Matehuala  |  v1.0
+  
+▸Historial detallado de asistencias
+  
+◆Módulo de Constancias
+  
+▸Solicitud y aprobación de constancias desde la app
+  
+▸Generación automática de PDF en menos de 30 segundos
+  
+▸Almacenamiento y descarga de constancias
+  
+◆Módulo de Reportes
+  
+▸Dashboard con métricas globales del programa deportivo
+  
+▸Exportación de datos a Excel
+2.3  Características de los Usuarios
+Usuario
+Cantidad
+Rol
+Nivel Técnico
+Interfaz
+Estudiante
+~5,000
+Usuario final consumidor
+Básico-Intermedio
+PWA App
+Responsable de Taller
+~15-20
+Admin de taller
+Básico
+Panel web responsive
+Personal Oficina 
+Deportes
+~2-3
+Administrador general
+Intermedio
+Dashboard completo
+Coordinación Deportes
+1
+Supervisión y reportes
+Intermedio
+Dashboard (lectura)
+2.4  Restricciones
+  
+◆Restricciones Técnicas
+  
+▸Sistema dentro de los límites del plan gratuito de Supabase (500 MB BD, 1 GB storage).
+  
+▸Hosting Vercel Hobby Plan: máximo 100 GB de ancho de banda mensual.
+  
+▸Sin acceso a APIs de sistemas institucionales existentes (SII, control escolar).
+  
+◆Restricciones de Tiempo
+  
+▸Desarrollo en 16 semanas con equipo de 3 personas.
+  
+▸Funcionalidades “Must Have” listas antes de la semana 14.
+  
+◆Restricciones Legales y de Privacidad
+  
+▸Cumplimiento con la LFPDPPP de México (datos personales de estudiantes).
+  
+▸Las constancias tienen valor oficial dentro del TecNM.
+  
+◆Restricciones de Entorno
+  
+▸Conectividad intermitente en instalaciones deportivas: funciones críticas deben operar offline.
+2.5  Suposiciones y Dependencias
+Sistema Integral de Gestión de Talleres Deportivos
+Febrero 2025
+PAGE
+ERS TallerTec
+IEEE 830  |  TecNM Campus Matehuala  |  v1.0
+  
+◆Suposiciones
+  
+▸La oficina de deportes proporcionará el catálogo de talleres, horarios y responsables.
+  
+▸Los responsables de taller cuentan con smartphones con cámara y acceso a internet.
+  
+▸Los estudiantes tienen acceso a correo electrónico institucional (@matehuala.tecnm.mx).
+  
+▸La institución autorizará el sistema como proyecto piloto.
+  
+◆Dependencias Externas
+  
+▸Supabase: BD, autenticación y almacenamiento de archivos.
+  
+▸Vercel: hosting y despliegue continuo.
+  
+▸Resend: envío de correos transaccionales (3,000 emails/mes gratuitos).
+  
+▸Librerías open source: qrcode.react, html5-qrcode, react-pdf.
+2.6  Requisitos Futuros
+Requisito Futuro
+Justificación
+Integración con SII del TecNM
+Sincronización automática de datos de estudiantes
+App móvil nativa iOS/Android
+Mayor rendimiento y acceso a hardware nativo
+Escalamiento a otros campus TecNM
+254 campus a nivel nacional con la misma problemática
+Validación biométrica / facial
+Mayor seguridad en el registro de asistencia
+Módulo de gamificación
+Insignias, rankings y motivación estudiantil
+Gestión de instalaciones
+Reserva de canchas y espacios deportivos
+Soporte multiidioma
+Contextos internacionales del TecNM
+Sistema Integral de Gestión de Talleres Deportivos
+Febrero 2025
+PAGE
+ERS TallerTec
+IEEE 830  |  TecNM Campus Matehuala  |  v1.0
+3
+R E Q U I S I T O S  E S P E C Í F I C O S
+3.1  Interfaces Externas
+  
+◆3.1.1 Interfaces de Usuario
+Interfaz
+Usuarios
+Dispositivo Principal
+Funciones Clave
+TallerTec App (PWA)
+Estudiantes
+Móvil Android/iOS
+Ver QR, inscribirse, consultar horas, 
+solicitar constancia
+TallerTec Admin
+Responsables de 
+taller
+Móvil (cualquier)
+Escanear QR, registrar asistencia, ver 
+inscritos
+TallerTec Dashboard
+Personal oficina
+Desktop/Tablet
+Gestionar catálogo, generar constancias, 
+ver reportes
+  
+◆3.1.2 Interfaces de Hardware
+  
+▸Cámara de smartphone: escaneo de códigos QR, compatible con cualquier cámara trasera.
+  
+▸Pantalla de dispositivo: PWA adaptable desde 320px de ancho.
+  
+▸Impresora (opcional): para imprimir constancias en PDF.
+  
+◆3.1.3 Interfaces de Software
+Servicio
+Propósito
+Protocolo
+Costo
+Supabase Auth
+Autenticación y sesiones
+REST / OAuth 2.0
+$0 MXN
+Supabase Database
+PostgreSQL – todos los datos
+REST / WebSocket
+$0 MXN
+Supabase Storage
+PDFs y fotos de perfil
+REST
+$0 MXN
+Resend
+Correos transaccionales
+REST API
+$0 MXN
+Vercel
+Hosting y CI/CD
+Git Push / API
+$0 MXN
+  
+◆3.1.4 Interfaces de Comunicación
+  
+▸Todas las comunicaciones cliente-servidor mediante HTTPS (TLS 1.2+).
+  
+▸Autenticación con tokens JWT (expiración 7 días) gestionados por Supabase Auth.
+  
+▸Actualizaciones en tiempo real mediante Supabase Realtime (WebSockets).
+  
+▸Notificaciones por correo electrónico a través de Resend.
+3.2  Funciones
+Sistema Integral de Gestión de Talleres Deportivos
+Febrero 2025
+PAGE
+ERS TallerTec
+IEEE 830  |  TecNM Campus Matehuala  |  v1.0
+  
+◆3.2.1 Módulo de Autenticación (RF-AUTH)
+RF-AUTH-01
+Permitir registro de usuarios con correo electrónico institucional (@matehuala.tecnm.mx).
+RF-AUTH-02
+Validar el formato del correo institucional antes de permitir el registro.
+RF-AUTH-03
+Enviar correo de verificación al completar el registro.
+RF-AUTH-04
+Permitir inicio de sesión con correo y contraseña.
+RF-AUTH-05
+Permitir recuperación de contraseña vía correo electrónico.
+RF-AUTH-06
+Manejar tres roles: estudiante, responsable_taller, admin_oficina.
+RF-AUTH-07
+Redirigir a la interfaz correspondiente según el rol del usuario autenticado.
+  
+◆3.2.2 Módulo de Gestión de Talleres (RF-TAL)
+RF-TAL-01
+Permitir a admin_oficina crear nuevos talleres con nombre, descripción, horario, ubicación 
+y cupo máximo.
+RF-TAL-02
+Permitir asignar un responsable a cada taller.
+RF-TAL-03
+Permitir editar la información de talleres existentes.
+RF-TAL-04
+Permitir activar/desactivar talleres.
+RF-TAL-05
+Mostrar el catálogo de talleres activos a todos los usuarios autenticados.
+  
+◆3.2.3 Módulo de Inscripciones (RF-INS)
+RF-INS-01
+Permitir a estudiantes inscribirse a talleres con cupo disponible.
+RF-INS-02
+Validar que el estudiante no esté ya inscrito en el mismo taller del período actual.
+RF-INS-03
+Decrementar el cupo disponible al confirmar una inscripción.
+Sistema Integral de Gestión de Talleres Deportivos
+Febrero 2025
+PAGE
+ERS TallerTec
+IEEE 830  |  TecNM Campus Matehuala  |  v1.0
+RF-INS-04
+Generar un código QR único para cada estudiante en su primera inscripción.
+RF-INS-05
+Enviar confirmación de inscripción por correo electrónico.
+RF-INS-06
+Permitir a estudiantes darse de baja de un taller.
+RF-INS-07
+Permitir a responsables agregar estudiantes manualmente (inscripción tardía).
+  
+◆3.2.4 Módulo de Asistencia (RF-ASI)
+RF-ASI-01
+Permitir a responsables escanear el código QR de estudiantes para registrar asistencia.
+RF-ASI-02
+Validar que el estudiante escaneado esté inscrito en el taller del responsable.
+RF-ASI-03
+Registrar fecha, hora de entrada y opcionalmente hora de salida.
+RF-ASI-04
+Calcular automáticamente las horas de la sesión.
+RF-ASI-05
+Permitir registro manual de asistencia como alternativa al QR.
+RF-ASI-06
+Acumular las horas en el registro de inscripción del estudiante.
+RF-ASI-07
+Mostrar al estudiante su historial de asistencias detallado.
+  
+◆3.2.5 Módulo de Horas y Progreso (RF-HOR)
+RF-HOR-01
+Mostrar al estudiante sus horas acumuladas por taller.
+RF-HOR-02
+Mostrar el total de horas acumuladas de todos los talleres del período.
+RF-HOR-03
+Mostrar el progreso visual hacia la meta de 20 horas requeridas.
+RF-HOR-04
+Notificar al estudiante cuando alcance las 20 horas.
+RF-HOR-05
+Permitir a admin_oficina consultar las horas acumuladas de cualquier estudiante.
+Sistema Integral de Gestión de Talleres Deportivos
+Febrero 2025
+PAGE
+ERS TallerTec
+IEEE 830  |  TecNM Campus Matehuala  |  v1.0
+  
+◆3.2.6 Módulo de Constancias (RF-CON)
+RF-CON-01
+Habilitar la solicitud de constancia únicamente cuando el estudiante tenga 20 o más horas.
+RF-CON-02
+Permitir al estudiante solicitar su constancia desde la app.
+RF-CON-03
+Notificar a admin_oficina cuando existan solicitudes de constancia pendientes.
+RF-CON-04
+Permitir a admin_oficina aprobar o rechazar solicitudes de constancia.
+RF-CON-05
+Generar automáticamente el PDF de la constancia con datos del estudiante, desglose de 
+horas y folio único.
+RF-CON-06
+Almacenar el PDF en Supabase Storage y permitir su descarga desde la app.
+RF-CON-07
+Mantener historial completo de constancias emitidas con fecha y generador.
+  
+◆3.2.7 Módulo de Reportes (RF-REP)
+RF-REP-01
+Mostrar métricas globales: total de inscritos, total por taller y horas promedio.
+RF-REP-02
+Exportar lista de estudiantes por taller en formato Excel (.xlsx).
+RF-REP-03
+Exportar reporte de horas acumuladas por estudiante en Excel.
+RF-REP-04
+Mostrar estadísticas de asistencia por taller (promedio, tendencia, activos).
+3.3  Requisitos de Rendimiento
+ID
+Requisito
+Meta
+RNF-REND-01
+Carga de pantalla principal (conexión 4G)
+< 2 segundos
+RNF-REND-02
+Reconocimiento de código QR
+< 1 segundo
+RNF-REND-03
+Generación de PDF de constancia
+< 5 segundos
+RNF-REND-04
+Respuesta de API (percentil 95)
+< 200 ms
+RNF-REND-05
+Usuarios concurrentes soportados
+≥ 100
+RNF-DISP-02
+Funciones críticas en modo offline (QR, horas)
+Sí (Service Worker)
+Sistema Integral de Gestión de Talleres Deportivos
+Febrero 2025
+PAGE
+ERS TallerTec
+IEEE 830  |  TecNM Campus Matehuala  |  v1.0
+ID
+Requisito
+Meta
+RNF-DISP-03
+Disponibilidad del sistema
+≥ 99%
+3.4  Restricciones de Diseño
+  
+◆Tecnologías Obligatorias
+  
+▸Frontend: Next.js 14 con App Router y TypeScript.
+  
+▸Estilos: Tailwind CSS para diseño responsive.
+  
+▸Backend / Base de datos: Supabase (PostgreSQL + Auth + Storage).
+  
+▸Hosting: Vercel (Hobby Plan gratuito).
+  
+◆Restricciones de Arquitectura
+  
+▸Arquitectura de tres capas: presentación, lógica de negocio, datos.
+  
+▸Lógica de negocio en API Routes de Next.js; nunca en el cliente.
+  
+▸Row Level Security (RLS) en Supabase para control de acceso a nivel de fila.
+  
+◆Estándares de Código
+  
+▸TypeScript estricto, ESLint + Prettier, Conventional Commits.
+  
+▸Cobertura mínima de pruebas unitarias del 70% en módulos críticos.
+3.5  Atributos del Sistema
+Atributo
+ID
+Descripción
+Meta
+Seguridad
+RNF-SEG-01
+Comunicaciones con HTTPS TLS 1.2+
+100%
+Seguridad
+RNF-SEG-02
+Contraseñas: mín. 8 char, mayúscula y número
+Obligatorio
+Seguridad
+RNF-SEG-05
+Solo admin genera constancias oficiales
+Obligatorio
+Usabilidad
+RNF-USA-01
+Interfaz responsive en móvil, tablet, desktop
+100%
+Usabilidad
+RNF-USA-02
+Flujos principales en máximo 3 pasos
+≤3 pasos
+Usabilidad
+RNF-USA-05
+Puntuación SUS (System Usability Scale)
+≥75 pts
+Compatibilidad
+RNF-COMP-01
+Chrome, Firefox, Safari, Edge (últimas 2 
+versiones)
+4 browsers
+Compatibilidad
+RNF-COMP-02
+Android 8+ e iOS 12+
+Ambos SO
+Mantenibilidad
+RNF-MANT-02
+Documentación técnica completa entregada
+Sí
+3.6  Otros Requisitos
+  
+◆Localización
+Sistema Integral de Gestión de Talleres Deportivos
+Febrero 2025
+PAGE
+ERS TallerTec
+IEEE 830  |  TecNM Campus Matehuala  |  v1.0
+  
+▸Sistema en español (México) exclusivamente en la versión actual.
+  
+▸Fechas en formato DD/MM/AAAA; horas en formato 12h con AM/PM.
+  
+▸Zona horaria: America/Monterrey (CST/CDT).
+  
+◆Privacidad y Datos
+  
+▸Solo se solicitan datos personales estrictamente necesarios.
+  
+▸Los datos de estudiantes no se compartirán con terceros.
+  
+▸Mecanismo para eliminar datos de usuarios a solicitud de la autoridad.
+  
+◆Documentación Entregable
+  
+▸Manual de usuario para estudiantes (con capturas de pantalla).
+  
+▸Manual de usuario para responsables de taller.
+  
+▸Manual de administrador para la oficina de deportes.
+  
+▸Documentación técnica: README, API docs, diagramas de arquitectura y modelo de datos.
+Sistema Integral de Gestión de Talleres Deportivos
+Febrero 2025
+PAGE
+ERS TallerTec
+IEEE 830  |  TecNM Campus Matehuala  |  v1.0
+4
+A P É N D I C E S
+4.1  Modelo de Datos
+Tabla
+Campos Principales
+Relaciones
+usuarios
+id (UUID PK), email, nombre_completo, 
+numero_control, rol, telefono, carrera, codigo_qr, activo
+—
+periodos
+id (UUID PK), nombre, fecha_inicio, fecha_fin, 
+inscripciones_abiertas, activo
+—
+talleres
+id, nombre, descripcion, categoria, horario_texto, 
+ubicacion, cupo_maximo
+responsable_id → usuarios; 
+periodo_id → periodos
+inscripciones
+id, estado (activa/baja/completada), horas_acumuladas, 
+fecha_inscripcion
+estudiante_id → usuarios; taller_id 
+→ talleres
+asistencias
+id, fecha, hora_entrada, hora_salida, 
+horas_computadas, metodo_registro
+inscripcion_id → inscripciones; 
+registrado_por → usuarios
+constancias
+id, fecha_generacion, horas_totales, archivo_url, estado 
+(generada/entregada)
+estudiante_id → usuarios; 
+generado_por → usuarios
+notificaciones
+id, tipo, titulo, mensaje, leida, created_at
+usuario_id → usuarios
+4.2  Casos de Uso Principales
+CU-01  Inscribirse a Taller
+Actor:  Estudiante
+Precondición:  Usuario autenticado. Período de inscripciones abierto.
+Flujo Principal:  1. Accede al Catálogo de Talleres  →  2. Revisa horarios y cupos  →  3. Selecciona taller  →  4. 
+Confirma inscripción  →  5. Sistema valida cupo y duplicidad  →  6. Registra inscripción y genera/muestra QR  →  7. 
+Envía confirmación por email
+Postcondición:  Estudiante inscrito. Cupo decrementado. QR disponible.
+Excepciones:  Sin cupo: sistema notifica. Ya inscrito: mensaje de duplicado.
+CU-02  Registrar Asistencia (QR)
+Actor:  Responsable de Taller
+Precondición:  Responsable autenticado. Estudiante presente.
+Flujo Principal:  1. Abre ‘Registrar Asistencia’  →  2. Activa cámara  →  3. Escanea QR del estudiante  →  4. Sistema 
+valida inscripción  →  5. Muestra nombre y confirma  →  6. Registra hora de entrada y actualiza horas
+Postcondición:  Asistencia registrada. Horas acumuladas actualizadas en tiempo real.
+Sistema Integral de Gestión de Talleres Deportivos
+Febrero 2025
+PAGE
+ERS TallerTec
+IEEE 830  |  TecNM Campus Matehuala  |  v1.0
+Excepciones:  No inscrito: alerta al responsable. QR ilegible: opción de registro manual.
+CU-03  Generar Constancia
+Actor:  Admin Oficina
+Precondición:  Estudiante con 20+ horas ha solicitado la constancia.
+Flujo Principal:  1. Admin recibe notificación  →  2. Accede a Solicitudes Pendientes  →  3. Revisa desglose de horas  
+→  4. Aprueba la solicitud  →  5. Sistema genera PDF con folio  →  6. PDF disponible para descarga  →  7. Notifica al 
+estudiante
+Postcondición:  PDF generado, almacenado en Supabase Storage y registrado en historial.
+Excepciones:  Datos incorrectos: admin puede rechazar con observaciones.
+4.3  Cronograma de Sprints
+Sprint
+Semanas
+Entregables Principales
+Hito
+Sprint 0
+1-2
+Setup: repo, Next.js, Supabase, Vercel. Modelo BD. 
+Wireframes.
+H1: Infraestructura Lista
+Sprint 1
+3-4
+Autenticación completa (registro, login, roles). Landing 
+page.
+—
+Sprint 2
+5-6
+Módulo estudiantes: catálogo, inscripción, QR personal.
+H2: MVP Estudiantes
+Sprint 3
+7-8
+Módulo responsables: escaneo QR, registro de asistencia.
+H3: MVP Responsables
+Sprint 4
+9-10
+Visualización de horas. Historial. Notificaciones email.
+—
+Sprint 5
+11-12
+Dashboard oficina: gestión talleres, usuarios, períodos.
+H4: Sistema Integrado
+Sprint 6
+13-14
+Constancias PDF. Exportación Excel. UAT piloto.
+H5: Listo para Producción
+Sprint 7
+15-16
+Corrección bugs. PWA optimizada. Documentación. 
+Entrega.
+H6: Entrega Final
+4.4  Análisis de Riesgos
+Riesgo
+Prob.
+Impacto
+Estrategia de Mitigación
+Falta de apoyo institucional
+Baja
+Alto
+Propuesta formal a coordinación; demostrar beneficios 
+concretos.
+Datos de talleres no disponibles
+Media
+Medio
+Crear datos de prueba realistas; iterar con datos reales.
+Baja adopción por usuarios
+Baja
+Alto
+Diseño UX intuitivo; beneficios visibles; soporte inicial.
+Conectividad intermitente
+Media
+Medio
+PWA con modo offline para funciones críticas.
+Alcance excede tiempo 
+disponible
+Media
+Alto
+Priorización MoSCoW; sprints cortos; ajuste de alcance.
+Sistema Integral de Gestión de Talleres Deportivos
+Febrero 2025
+PAGE
+ERS TallerTec
+IEEE 830  |  TecNM Campus Matehuala  |  v1.0
+Riesgo
+Prob.
+Impacto
+Estrategia de Mitigación
+Errores en generación de PDF
+Media
+Medio
+Pruebas exhaustivas; plantilla validada con la oficina.
+4.5  Criterios de Éxito
+Criterio
+Métrica
+Meta
+Verificación
+Funcionalidad
+% de RF implementados
+≥95%
+Matriz de trazabilidad
+Usabilidad
+Puntuación SUS
+≥75 pts
+Encuesta post-UAT
+Rendimiento
+Carga pantalla principal
+<2 seg
+Lighthouse CI
+Tiempo inscripción
+Duración flujo completo
+<3 min
+Pruebas con usuarios
+Tiempo asistencia
+Registro QR
+<5 seg
+Cronometrado
+Tiempo constancia
+Generación PDF
+<30 seg
+Pruebas de aceptación
+Adopción piloto
+Estudiantes registrados
+≥200
+Conteo en BD
+Satisfacción
+Calificación general
+≥4.0/5.0
+Encuesta post-piloto
+IEEE 830
+TallerTec ERS v1.0  •  Tecnológico Nacional de México  •  Febrero 2025
+v1.0
+Sistema Integral de Gestión de Talleres Deportivos
+Febrero 2025
+PAGE

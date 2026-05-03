@@ -1,0 +1,274 @@
+ 
+TecNM Campus Matehuala 
+Ingeniería de Software 
+  1.2   
+  Descripción de Procesos Actuales   
+  Modelo AS-IS — TallerTec   
+Proyecto: TallerTec 
+Sistema Integral de Gestión de Talleres Deportivos 
+Equipo de Desarrollo: Virgilio Power  |  Febrero 2025 
+ 
+ 
+1. Introducción y Objetivo del Documento 
+El presente documento describe en detalle los procesos actuales (modelo AS-IS) del área de talleres 
+deportivos del TecNM Campus Matehuala. Su propósito es establecer una línea base que justifique la 
+necesidad del sistema TallerTec, identificar los puntos de dolor y servir como referencia para el diseño 
+del modelo mejorado (TO-BE). 
+Los procesos fueron documentados mediante entrevistas con personal de la oficina de deportes, 
+responsables de talleres y observación directa del flujo de trabajo durante el semestre Enero-Junio 
+2025. 
+ 
+2. Contexto Institucional 
+El TecNM Campus Matehuala cuenta con más de 5,000 estudiantes activos que deben acreditar 20 
+horas de actividades deportivas o culturales como requisito para titulación, según los Lineamientos 
+de Actividades Complementarias del TecNM. 
+Los talleres deportivos disponibles incluyen disciplinas como fútbol, voleibol, básquetbol, ajedrez y 
+atletismo, cada uno coordinado por un responsable (docente o estudiante avanzado). La gestión de 
+todo el ciclo —desde la inscripción hasta la emisión de constancias— recae en la Oficina de Deportes, 
+con un equipo de 2-3 personas administrativas. 
+ 
+3. Actores Involucrados 
+ 
+Actor 
+Rol en el Proceso Actual 
+Punto de Dolor Principal 
+Estudiante (~5,000) 
+Usuario final del servicio de talleres; debe 
+inscribirse y asistir presencialmente a la 
+feria para inscribirse 
+Proceso burocrático y 
+presencial; desconoce sus 
+horas acumuladas sin ir a la 
+oficina 
+Responsable de Taller 
+(~15-20) 
+Coordina la asistencia de su taller; lleva 
+registro manual en libreta o lista impresa; 
+reporta horas informalmente 
+Control manual no 
+estandarizado; carga de 
+trabajo en períodos de reporte; 
+pérdida de registros 
+Personal Oficina de 
+Deportes (~2-3) 
+Organiza la Feria de Talleres; transcribe 
+manualmente al Excel maestro; genera 
+constancias a solicitud 
+Transcripción manual masiva; 
+alta tasa de errores; consultas 
+presenciales constantes de 
+estudiantes 
+Coordinación de 
+Deportes (1) 
+Supervisa el programa deportivo; no 
+cuenta con métricas ni reportes 
+automáticos 
+Sin visibilidad en tiempo real; 
+toma de decisiones basada en 
+datos incompletos 
+ 
+4. Descripción de los Procesos Actuales por Fase 
+4.1 Fase 1 — Inscripción a Talleres (Feria Presencial) 
+Frecuencia: Dos veces al año (inicio de cada semestre). 
+Descripción: La Oficina de Deportes organiza la 'Feria de Talleres Deportivos' en el auditorio del 
+campus durante 1-2 días. Todos los estudiantes deben asistir presencialmente en un horario 
+específico para inscribirse. 
+Flujo de actividades: 
+1. La Oficina de Deportes prepara y distribuye hojas de registro impresas por taller. 
+2. Los estudiantes acuden al auditorio en el horario asignado. 
+3. Cada estudiante llena manualmente la hoja de su taller elegido con: número de control, nombre 
+completo, carrera, semestre y teléfono. 
+4. El responsable de taller recibe y revisa las hojas entregadas. 
+5. Las hojas son recolectadas por la Oficina de Deportes al finalizar la feria. 
+ 
+Entradas: Listas impresas de talleres, hojas de registro en blanco. 
+Salidas: Hojas de registro completadas a mano con los datos de cada estudiante por taller. 
+Tiempo estimado por estudiante: 45 minutos (traslado + espera + llenado del formulario). 
+Puntos de dolor identificados: 
+• 
+Exclusión de estudiantes con conflicto de horario laboral o personal. 
+• 
+Escritura ilegible genera errores de transcripción posterior. 
+• 
+Sin mecanismo de validación de cupos en tiempo real. 
+• 
+No existe proceso definido para inscripciones tardías. 
+ 
+4.2 Fase 2 — Captura de Datos al Excel Maestro 
+Frecuencia: Una vez por semestre, inmediatamente después de la feria. 
+Descripción: El personal de la Oficina de Deportes transcribe manualmente los datos de todas las 
+hojas de registro al Excel maestro compartido. 
+Flujo de actividades: 
+6. Personal recibe el conjunto de hojas de todos los talleres. 
+7. Un empleado lee cada hoja e ingresa los datos al Excel (nombre, número de control, carrera, 
+taller). 
+8. Se revisa manualmente si hay duplicados evidentes. 
+9. El Excel queda como única fuente de verdad del programa. 
+ 
+Tiempo estimado: Con 1,500 registros y 2 min/registro = ~50 horas de trabajo administrativo. 
+Puntos de dolor identificados: 
+• 
+Tasa de error estimada del 5-10% (75-150 estudiantes con datos incorrectos por semestre). 
+• 
+Sin respaldo automático del archivo Excel. 
+• 
+Archivo sin control de versiones ni auditoría de cambios. 
+• 
+Proceso completamente manual sin validaciones automáticas. 
+ 
+4.3 Fase 3 — Control de Asistencia 
+Frecuencia: En cada sesión de taller a lo largo del semestre. 
+Descripción: Cada responsable lleva su propio control de asistencia en libreta o lista impresa, sin 
+formato estandarizado. 
+Flujo de actividades: 
+10. Responsable lleva lista de inscritos (extraída o recordada del Excel). 
+11. Al inicio de cada sesión, pasa lista verbalmente o en papel. 
+12. Marca los asistentes en su libreta personal. 
+13. Calcula las horas de forma aproximada (duración de la sesión). 
+ 
+Puntos de dolor identificados: 
+• 
+Sin estandarización: cada responsable tiene su propio sistema. 
+• 
+Horas calculadas de forma aproximada, no exacta. 
+• 
+Riesgo de pérdida de información si el responsable cambia o pierde la libreta. 
+• 
+Imposible para el estudiante conocer sus horas sin preguntarle al responsable. 
+ 
+4.4 Fase 4 — Reporte de Horas al Final del Semestre 
+Frecuencia: Una vez por semestre, en las últimas dos semanas. 
+Descripción: Los responsables reportan las horas de cada estudiante a la Oficina de Deportes de 
+forma informal. 
+Flujo de actividades: 
+14. Responsable suma manualmente las horas de cada estudiante desde su libreta. 
+15. Entrega el reporte (en papel o verbal) al personal de la Oficina. 
+16. El personal actualiza manualmente el Excel maestro con los totales. 
+ 
+Puntos de dolor identificados: 
+• 
+Reportes informales: a veces verbales, sin evidencia documental. 
+• 
+Sin mecanismo de validación cruzada de las horas reportadas. 
+• 
+Concentración de carga de trabajo en el personal al final del semestre. 
+ 
+4.5 Fase 5 — Generación de Constancias 
+Frecuencia: Continua, a lo largo del período de titulación. 
+Descripción: El estudiante solicita presencialmente su constancia cuando necesita acreditar las 20 
+horas para tramitar su titulación. 
+Flujo de actividades: 
+17. Estudiante acude presencialmente a la Oficina de Deportes. 
+18. Personal busca al estudiante en el Excel maestro y verifica sus horas. 
+19. Si tiene 20+ horas, el personal genera manualmente un documento en Word. 
+20. El documento se imprime y se obtiene la firma del responsable del taller. 
+21. Se entrega la constancia al estudiante. El proceso puede tomar días o semanas. 
+ 
+Tiempo estimado: 15-20 minutos por constancia. Con 300-400 estudiantes por semestre = 75-130 
+horas de trabajo administrativo. 
+Puntos de dolor identificados: 
+• 
+Proceso completamente presencial y manual. 
+• 
+Tiempo de entrega inconsistente: puede tardar días o semanas. 
+• 
+Sin folio único ni historial digital de constancias emitidas. 
+• 
+Riesgo de emisión de constancias con datos incorrectos por errores acumulados en fases 
+anteriores. 
+ 
+5. Resumen de Puntos de Dolor (Análisis de Causa Raíz) 
+ 
+Categoría 
+Problema Identificado 
+Impacto 
+Frecuencia 
+Métodos 
+Inscripción presencial 
+obligatoria 
+1,125 horas-estudiante 
+perdidas/semestre 
+2 veces/año 
+Métodos 
+Sin proceso para 
+inscripciones tardías 
+Exclusión de estudiantes 
+2 veces/año 
+Tecnología 
+Solo un Excel sin 
+validaciones ni respaldo 
+Pérdida de datos, errores 
+Continuo 
+Tecnología 
+Sin consulta en línea de 
+horas 
+75 hrs/sem en consultas 
+presenciales 
+Continuo 
+Personas 
+Transcripción manual 
+masiva 
+5-10% de errores (75-150 
+estudiantes) 
+2 veces/año 
+Personas 
+Rotación de responsables 
+de taller 
+Pérdida de historial de 
+asistencias 
+Cada semestre 
+Información 
+Datos fragmentados en 
+múltiples libretas 
+Sin consolidación ni 
+trazabilidad 
+Continuo 
+Información 
+Constancias generadas 
+manualmente 
+75-130 hrs de trabajo 
+admin/semestre 
+Continuo 
+ 
+6. Cuantificación del Impacto del Proceso Actual 
+ 
+Métrica 
+Valor Estimado 
+Fuente del Cálculo 
+Tiempo perdido por estudiantes en 
+inscripción 
+1,125 horas/semestre 
+1,500 est. × 45 min 
+promedio 
+Costo de oportunidad estudiantil 
+$56,250 MXN/semestre 
+1,125 hrs × $50 MXN/hr 
+Trabajo admin en transcripción inicial 
+~50 horas/semestre 
+1,500 reg. × 2 min/registro 
+Registros con errores de transcripción 
+75-150 por semestre 
+Tasa estimada 5-10% 
+Atención en consultas presenciales de 
+horas 
+75 horas/semestre 
+450 estudiantes × 10 min 
+Trabajo admin en generación de 
+constancias 
+75-130 horas/semestre 
+300-400 const. × 15-20 min 
+Tiempo de entrega de constancia al 
+estudiante 
+Días a semanas 
+Observación directa 
+ 
+7. Conclusión — Justificación del Proyecto TallerTec 
+El análisis del proceso actual demuestra que la gestión de talleres deportivos del TecNM Campus 
+Matehuala opera con una ineficiencia estructural significativa. Los cinco procesos documentados 
+generan en conjunto más de 250 horas de trabajo administrativo adicional por semestre, una tasa 
+de error del 5-10% en los datos de los estudiantes, y una experiencia de usuario deficiente que afecta 
+a más de 5,000 estudiantes. 
+TallerTec tiene como objetivo transformar este modelo AS-IS en un modelo TO-BE completamente 
+digitalizado, eliminando las causas raíz identificadas y proporcionando: inscripción en línea en menos 
+de 5 minutos, registro de asistencia por QR en menos de 5 segundos, consulta de horas 24/7 desde 
+cualquier dispositivo, y generación automática de constancias en menos de 30 segundos. 
