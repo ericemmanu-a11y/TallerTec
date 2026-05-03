@@ -1,77 +1,61 @@
-"use client";
-
-import QrScanner from "@/components/talleres/qr-scanner";
+import { createClient } from "@/lib/supabase/server";
+import { redirect } from "next/navigation";
+import { QRCodeSVG } from "qrcode.react";
 import Link from "next/link";
-import { ArrowLeft, Clock, Users } from "lucide-react";
-import { useState } from "react";
+import { ArrowLeft, Download } from "lucide-react";
 
-export default function ScanPage() {
-  const [sessionHours, setSessionHours] = useState("2.0");
-  const [totalScanned, setTotalScanned] = useState(0);
+export const metadata = { title: "Mi Código QR | TallerTec" };
 
-  const handleScanSuccess = (text: string) => {
-    // In a real app, send 'text' and 'sessionHours' to backend via Server Action
-    setTotalScanned(prev => prev + 1);
-  };
+export default async function MiQRPage() {
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) redirect("/login");
+
+  const qrData = `tallertec:${user.id}`;
+  const nombre = user.user_metadata?.nombre_completo ?? user.email;
+  const control = user.user_metadata?.numero_control;
 
   return (
-    <div className="min-h-screen bg-background flex flex-col">
-      <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/80 backdrop-blur">
-        <div className="container mx-auto max-w-6xl flex h-16 items-center px-4 justify-between">
-          <Link href="/dashboard" className="flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors">
-            <ArrowLeft className="w-5 h-5" />
-            <span className="font-medium">Volver</span>
-          </Link>
-          <div className="flex items-center gap-2">
-            <div className="w-8 h-8 bg-accent rounded-lg flex items-center justify-center text-primary-foreground font-bold">
-              R
-            </div>
-            <span className="font-bold tracking-tight hidden sm:inline-block">Panel de Responsable</span>
-          </div>
-        </div>
-      </header>
+    <div className="min-h-screen flex flex-col items-center justify-center p-6">
+      <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-96 h-96 bg-primary/10 rounded-full blur-[100px] pointer-events-none" />
 
-      <main className="flex-1 container mx-auto max-w-md p-4 flex flex-col items-center py-8 animate-fade-in">
-        <div className="text-center mb-8">
-          <h1 className="text-2xl font-bold">Pase de Lista QR</h1>
-          <p className="text-muted-foreground">Taller de Fútbol Varonil</p>
-        </div>
+      <div className="w-full max-w-sm relative z-10 text-center animate-slide-up">
+        <Link href="/dashboard" className="inline-flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors text-sm mb-8">
+          <ArrowLeft className="w-4 h-4" /> Volver al Dashboard
+        </Link>
 
-        {/* Panel de Configuración de la Sesión */}
-        <div className="w-full glass-card p-4 rounded-2xl mb-8 flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 bg-primary/20 text-primary rounded-xl flex items-center justify-center">
-              <Clock className="w-5 h-5" />
-            </div>
-            <div>
-              <p className="text-sm font-medium">Valor de la Sesión</p>
-              <select 
-                value={sessionHours}
-                onChange={(e) => setSessionHours(e.target.value)}
-                className="bg-transparent text-foreground text-sm font-bold focus:outline-none cursor-pointer"
-              >
-                <option value="1.0">1.0 horas</option>
-                <option value="1.5">1.5 horas</option>
-                <option value="2.0">2.0 horas</option>
-                <option value="3.0">3.0 horas</option>
-              </select>
-            </div>
+        <h1 className="text-2xl font-extrabold mb-1">Mi Código QR</h1>
+        <p className="text-muted-foreground text-sm mb-8">
+          Muéstraselo al responsable de tu taller para registrar asistencia.
+        </p>
+
+        <div className="glass-card p-6 rounded-3xl mb-6">
+          <div className="bg-white p-4 rounded-2xl mx-auto inline-block shadow-xl shadow-white/10 mb-4">
+            <QRCodeSVG
+              value={qrData}
+              size={220}
+              level="H"
+              includeMargin
+            />
           </div>
-          
-          <div className="flex items-center gap-2 text-right">
-            <div>
-              <p className="text-sm font-medium">Asistencia</p>
-              <p className="text-lg font-bold text-accent">{totalScanned} / 25</p>
-            </div>
-            <div className="w-10 h-10 bg-accent/20 text-accent rounded-xl flex items-center justify-center">
-              <Users className="w-5 h-5" />
-            </div>
-          </div>
+          <p className="font-bold">{nombre}</p>
+          {control && <p className="text-sm text-muted-foreground font-mono mt-0.5">{control}</p>}
+          <p className="text-xs text-muted-foreground mt-3 font-mono bg-black/20 px-3 py-1.5 rounded-lg truncate">
+            {qrData.slice(0, 35)}...
+          </p>
         </div>
 
-        {/* Escáner */}
-        <QrScanner onScanSuccess={handleScanSuccess} />
-      </main>
+        <p className="text-xs text-muted-foreground mb-6">
+          Este código es único e intransferible. No lo compartas con terceros.
+        </p>
+
+        <button
+          onClick={() => window.print()}
+          className="w-full flex items-center justify-center gap-2 py-3 rounded-xl bg-primary/20 text-primary border border-primary/30 font-semibold text-sm hover:bg-primary/30 transition-colors"
+        >
+          <Download className="w-4 h-4" /> Guardar / Imprimir QR
+        </button>
+      </div>
     </div>
   );
 }
