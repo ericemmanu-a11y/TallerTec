@@ -83,17 +83,23 @@ CREATE INDEX idx_asistencias_inscripcion ON asistencias(inscripcion_id);
 CREATE INDEX idx_asistencias_fecha ON asistencias(fecha);
 
 CREATE TABLE constancias (
-  id                  UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  estudiante_id       UUID NOT NULL REFERENCES usuarios(id),
-  periodo_id          UUID NOT NULL REFERENCES periodos(id),
-  fecha_generacion    TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-  horas_totales       NUMERIC(5,2) NOT NULL CHECK (horas_totales >= 20),
-  archivo_url         TEXT,
-  folio               VARCHAR(50) UNIQUE,
-  generado_por        UUID REFERENCES usuarios(id),
-  estado              estado_constancia NOT NULL DEFAULT 'PENDIENTE',
-  observaciones       TEXT,
-  created_at          TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+  id                    UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  estudiante_id         UUID NOT NULL REFERENCES usuarios(id),
+  periodo_id            UUID NOT NULL REFERENCES periodos(id),
+  taller_id             UUID REFERENCES talleres(id),
+  fecha_generacion      TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+  horas_totales         NUMERIC(5,2) NOT NULL CHECK (horas_totales >= 20),
+  archivo_url           TEXT,
+  folio                 VARCHAR(50) UNIQUE,
+  generado_por          UUID REFERENCES usuarios(id),
+  estado                estado_constancia NOT NULL DEFAULT 'PENDIENTE',
+  observaciones         TEXT,
+  -- Evaluación del encargado (rúbrica oficial IT Matehuala)
+  nivel_desempeno       TEXT CHECK (nivel_desempeno IN ('INSUFICIENTE','SUFICIENTE','BUENO','NOTABLE','EXCELENTE')),
+  criterios_evaluacion  JSONB,          -- array de 7 enteros [0-4]
+  evaluado_por_nombre   TEXT,           -- nombre del encargado que evaluó
+  evaluado_en           TIMESTAMPTZ,
+  created_at            TIMESTAMPTZ NOT NULL DEFAULT NOW(),
   CONSTRAINT uq_constancia_periodo UNIQUE (estudiante_id, periodo_id)
 );
 CREATE INDEX idx_constancias_estudiante ON constancias(estudiante_id);

@@ -1,10 +1,32 @@
 import { createClient } from "@/lib/supabase/server";
 import { redirect, notFound } from "next/navigation";
 import Link from "next/link";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, AlertCircle } from "lucide-react";
 import PrintButton from "@/components/ui/print-button";
 
 export const metadata = { title: "Constancia de Actividad | TallerTec" };
+
+const NIVEL_LABEL: Record<string, string> = {
+  INSUFICIENTE: "insuficiente", SUFICIENTE: "suficiente",
+  BUENO: "bueno", NOTABLE: "notable", EXCELENTE: "excelente",
+};
+const NIVEL_VALOR: Record<string, number> = {
+  INSUFICIENTE: 0, SUFICIENTE: 1, BUENO: 2, NOTABLE: 3, EXCELENTE: 4,
+};
+const CRITERIOS = [
+  "Cumple en tiempo y forma con las actividades encomendadas alcanzando los objetivos.",
+  "Trabaja en equipo y se adapta a nuevas situaciones.",
+  "Muestra liderazgo en las actividades encomendadas.",
+  "Organiza su tiempo y trabaja de manera proactiva.",
+  "Interpreta la realidad y se sensibiliza aportando soluciones a la problemática con la actividad Cultural, Deportiva y Cívica.",
+  "Realiza sugerencias innovadoras para beneficio o mejora del programa en el que participa.",
+  "Tiene iniciativa para ayudar en las actividades encomendadas y muestra espíritu de servicio.",
+];
+const NIVEL_COLS = ["Insuficiente", "Suficiente", "Bueno", "Notable", "Excelente"];
+
+function numToMes(n: number) {
+  return ["enero","febrero","marzo","abril","mayo","junio","julio","agosto","septiembre","octubre","noviembre","diciembre"][n];
+}
 
 export default async function ConstanciaPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
@@ -12,168 +34,304 @@ export default async function ConstanciaPage({ params }: { params: Promise<{ id:
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) redirect("/login");
 
-  const { data: constancia } = await supabase
+  const { data: c } = await supabase
     .from("constancias")
-    .select("*, usuarios(nombre_completo, numero_control, carrera, semestre), periodos(nombre, fecha_inicio, fecha_fin)")
+    .select(`*, usuarios(nombre_completo, numero_control, carrera, semestre), periodos(nombre, fecha_inicio, fecha_fin), talleres(nombre, categoria)`)
     .eq("id", id)
     .single();
 
-  if (!constancia) notFound();
+  if (!c) notFound();
 
   const isAdmin = user.user_metadata?.rol === "ADMIN_OFICINA";
-  const isOwner = constancia.estudiante_id === user.id;
+  const isOwner = c.estudiante_id === user.id;
   if (!isAdmin && !isOwner) redirect("/dashboard");
 
-  const alumno = constancia.usuarios as unknown as {
-    nombre_completo: string;
-    numero_control: string | null;
-    carrera: string | null;
-    semestre: number | null;
+  const alumno = c.usuarios as unknown as {
+    nombre_completo: string; numero_control: string | null;
+    carrera: string | null; semestre: number | null;
   } | null;
+  const periodo = c.periodos as unknown as { nombre: string; fecha_inicio: string; fecha_fin: string } | null;
+  const taller  = c.talleres  as unknown as { nombre: string; categoria: string } | null;
 
-  const periodo = constancia.periodos as unknown as {
-    nombre: string;
-    fecha_inicio: string;
-    fecha_fin: string;
-  } | null;
+  const criterios: number[] = Array.isArray(c.criterios_evaluacion)
+    ? (c.criterios_evaluacion as number[])
+    : Array(7).fill(-1);
 
-  const fechaGeneracion = new Date(constancia.created_at).toLocaleDateString("es-MX", {
-    day: "numeric", month: "long", year: "numeric",
-  });
+  const nivelKey: string  = c.nivel_desempeno ?? "";
+  const nivelLabel        = NIVEL_LABEL[nivelKey] ?? "________";
+  const valorNumerico     = nivelKey in NIVEL_VALOR ? NIVEL_VALOR[nivelKey] : "___";
+  const hasEvaluacion     = Boolean(c.evaluado_en);
+
+  const fechaDoc  = new Date(c.evaluado_en ?? c.created_at);
+  const dia       = fechaDoc.getDate().toString().padStart(2, "0");
+  const mes       = numToMes(fechaDoc.getMonth());
+  const anio      = fechaDoc.getFullYear();
+
+  const periodoLabel  = periodo?.nombre ?? "_________________________";
+  const tallerNombre  = taller?.nombre  ?? "_________________________";
+  const tallerCat     = taller?.categoria === "CULTURAL" ? "cultural" : "deportiva";
 
   const backHref = isAdmin ? "/admin/constancias" : "/dashboard/constancias";
 
   return (
-    <div className="min-h-screen bg-background flex flex-col items-center justify-center p-4">
+    <div className="min-h-screen bg-background flex flex-col items-center p-4 py-8">
 
-      {/* Barra de acciones — no se imprime */}
-      <div className="no-print w-full max-w-2xl flex items-center justify-between mb-6">
+      {/* ── Action bar ── */}
+      <div className="no-print w-full max-w-3xl flex items-center justify-between mb-6">
         <Link href={backHref}
           className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors">
           <ArrowLeft className="w-4 h-4" /> Volver
         </Link>
-        <div className="flex items-center gap-3">
-          <span className="text-sm text-muted-foreground">Vista previa de constancia</span>
+        <div className="flex items-center gap-3 flex-wrap justify-end">
+          {!hasEvaluacion && (
+            <span className="flex items-center gap-1.5 text-xs text-yellow-500 bg-yellow-500/10 border border-yellow-500/20 px-3 py-1.5 rounded-lg">
+              <AlertCircle className="w-3.5 h-3.5" /> Pendiente de evaluación — rúbrica en blanco
+            </span>
+          )}
           <PrintButton label="Imprimir / Guardar PDF" />
         </div>
       </div>
 
-      {/* Documento imprimible */}
-      <div className="print-document w-full max-w-2xl bg-white text-gray-900 rounded-2xl overflow-hidden shadow-2xl">
+      {/* ══════════════════════════════════════════════════════════
+          HOJA 1 — CARTA OFICIAL
+      ══════════════════════════════════════════════════════════ */}
+      <article className="print-page w-full max-w-3xl bg-white text-gray-900 shadow-2xl rounded-2xl overflow-hidden mb-8 print:mb-0 print:shadow-none print:rounded-none">
 
         {/* Encabezado institucional */}
-        <div className="bg-[#003087] text-white px-10 py-8 text-center">
-          <p className="text-xs font-semibold tracking-widest uppercase opacity-80 mb-1">
-            Tecnológico Nacional de México
-          </p>
-          <h2 className="text-xl font-extrabold tracking-tight">
-            Instituto Tecnológico de Matehuala
-          </h2>
-          <p className="text-sm opacity-80 mt-1">Carretera 57 Km 5 — Matehuala, San Luis Potosí</p>
-          <div className="mt-4 border-t border-white/30 pt-4">
-            <p className="text-xs uppercase tracking-widest font-bold opacity-70">
-              Oficina de Deportes y Actividades Culturales
-            </p>
+        <header className="flex items-center gap-4 px-10 py-5 border-b-[3px] border-[#003087]">
+          <div className="w-16 h-16 border-2 border-[#003087] rounded-lg flex flex-col items-center justify-center shrink-0 text-center">
+            <p className="text-[7px] font-black text-[#003087] leading-tight uppercase">TecNM</p>
+            <p className="text-[7px] font-bold text-[#003087] leading-tight">Campus</p>
+            <p className="text-[8px] font-black text-[#003087] leading-tight uppercase">Matehuala</p>
           </div>
-        </div>
+          <div className="flex-1 text-center">
+            <p className="text-[10px] font-bold text-gray-500 tracking-widest uppercase">Tecnológico Nacional de México</p>
+            <h2 className="text-[17px] font-extrabold text-[#003087] leading-tight mt-0.5">
+              Instituto Tecnológico de Matehuala
+            </h2>
+            <p className="text-[11px] text-gray-500 mt-0.5">Subdirección de Planeación y Vinculación</p>
+          </div>
+          <div className="w-16 h-16 border-2 border-[#003087] rounded-lg flex flex-col items-center justify-center shrink-0 text-center">
+            <p className="text-[7px] font-bold text-[#003087] leading-tight">Verificado</p>
+            <p className="text-[7px] font-black text-[#003087] leading-tight">TallerTec</p>
+            <p className="text-[7px] font-bold text-[#003087] leading-tight">{c.folio ?? ""}</p>
+          </div>
+        </header>
 
-        {/* Título */}
-        <div className="px-10 py-8 text-center border-b border-gray-200">
-          <h1 className="text-2xl font-extrabold text-[#003087] uppercase tracking-wide">
-            Constancia de Actividad Extracurricular
+        {/* Título del documento */}
+        <div className="px-10 pt-5 pb-2 text-center">
+          <h1 className="text-[13px] font-extrabold text-[#003087] uppercase tracking-wider leading-snug">
+            Constancia de Cumplimiento de Actividad<br/>Cultural, Deportiva y Cívica
           </h1>
-          {constancia.folio && (
-            <p className="text-sm text-gray-500 mt-2 font-mono">Folio: {constancia.folio}</p>
-          )}
         </div>
 
-        {/* Cuerpo */}
-        <div className="px-10 py-8 space-y-6 text-sm leading-relaxed">
-          <p className="text-gray-700 text-base">
-            La Oficina de Deportes y Actividades Culturales del Instituto Tecnológico de
-            Matehuala hace constar que:
+        {/* Destinatario */}
+        <div className="px-10 pt-4 pb-2">
+          <p className="text-[12px] font-bold text-gray-800 uppercase leading-snug">
+            Lic. Martha Beatriz Coronado Rosales
+          </p>
+          <p className="text-[11px] text-gray-600">Jefa del Departamento de Servicios Escolares</p>
+          <p className="text-[11px] text-gray-500 mt-1 font-semibold">Presente</p>
+        </div>
+
+        {/* Cuerpo de la carta */}
+        <div className="px-10 py-4 space-y-4 text-[12px] text-gray-800 leading-relaxed text-justify">
+          <p>
+            El que suscribe <span className="font-bold">Ing. Mario Mata Ontiveros</span>, por este
+            medio se permite hacer de su conocimiento que al estudiante{" "}
+            <span className="font-extrabold text-[#003087] uppercase">
+              {alumno?.nombre_completo ?? "___________________________"}
+            </span>
+            ., con número de control{" "}
+            <span className="font-bold font-mono">{alumno?.numero_control ?? "__________"}</span>{" "}
+            de la carrera de{" "}
+            <span className="font-bold">{alumno?.carrera ?? "_________________________"}</span>,
+            {" "}ha cumplido su actividad {tallerCat} (Taller de{" "}
+            <span className="font-bold uppercase">{tallerNombre}</span>) con el nivel de desempeño{" "}
+            <span className="font-bold">{nivelLabel}</span> y un valor numérico de{" "}
+            <span className="font-extrabold text-[#003087]">{valorNumerico}</span>{" "}
+            durante el periodo escolar{" "}
+            <span className="font-bold">{periodoLabel}</span> con un valor curricular de{" "}
+            <span className="font-bold">1 crédito</span>.
           </p>
 
-          <div className="bg-gray-50 border border-gray-200 rounded-xl p-6">
-            <div className="grid grid-cols-2 gap-x-6 gap-y-4">
-              <div>
-                <p className="text-xs text-gray-400 uppercase font-semibold">Nombre Completo</p>
-                <p className="font-bold text-gray-900">{alumno?.nombre_completo}</p>
-              </div>
-              <div>
-                <p className="text-xs text-gray-400 uppercase font-semibold">No. de Control</p>
-                <p className="font-bold text-gray-900 font-mono">{alumno?.numero_control ?? "—"}</p>
-              </div>
-              <div>
-                <p className="text-xs text-gray-400 uppercase font-semibold">Carrera</p>
-                <p className="font-bold text-gray-900">{alumno?.carrera ?? "—"}</p>
-              </div>
-              <div>
-                <p className="text-xs text-gray-400 uppercase font-semibold">Semestre</p>
-                <p className="font-bold text-gray-900">{alumno?.semestre ? `${alumno.semestre}°` : "—"}</p>
-              </div>
-            </div>
-          </div>
-
-          <p className="text-gray-700">
-            Ha cumplido satisfactoriamente con{" "}
-            <strong className="text-[#003087] text-lg">{constancia.horas_totales} horas</strong> de
-            actividad extracurricular durante el período{" "}
-            <strong>{periodo?.nombre}</strong>
-            {periodo?.fecha_inicio && periodo?.fecha_fin && (
-              <span>
-                {" "}
-                ({new Date(periodo.fecha_inicio).toLocaleDateString("es-MX")} al{" "}
-                {new Date(periodo.fecha_fin).toLocaleDateString("es-MX")})
-              </span>
-            )}
-            , cumpliendo con el requisito establecido por el plan de estudios institucional.
-          </p>
-
-          <p className="text-gray-500 text-xs">
-            Esta constancia se expide el día <strong>{fechaGeneracion}</strong> a petición del
-            interesado, para los fines que estime convenientes.
+          <p>
+            Se extiende la presente en la ciudad de Matehuala a los{" "}
+            <span className="font-bold">{dia}</span> días del mes de{" "}
+            <span className="font-bold">{mes}</span> de{" "}
+            <span className="font-bold">{anio}</span>.
           </p>
         </div>
 
-        {/* Firmas */}
-        <div className="px-10 py-10 border-t border-gray-200">
-          <div className="grid grid-cols-2 gap-10">
+        <p className="px-10 text-right text-[12px] font-bold text-gray-800">ATENTAMENTE</p>
+
+        {/* Firmas hoja 1 */}
+        <div className="px-10 pb-10 pt-0">
+          <div className="grid grid-cols-2 gap-10 mt-12">
             <div className="text-center">
-              <div className="border-t-2 border-gray-400 pt-3 mt-16">
-                <p className="font-semibold text-sm text-gray-800">Jefe de Deportes</p>
-                <p className="text-xs text-gray-500 mt-0.5">Oficina de Deportes y Actividades Culturales</p>
-                <p className="text-xs text-gray-400 mt-0.5">TecNM Campus Matehuala</p>
+              <p className="text-[10px] text-gray-500 mb-1">Vo. Bo.</p>
+              <div className="border-t border-gray-400 pt-2 mt-10">
+                <p className="text-[11px] font-bold text-gray-800">Ing. Mario Mata Ontiveros.</p>
+                <p className="text-[10px] text-gray-500">Jefe del Depto. de Actividades Extraescolares</p>
               </div>
             </div>
             <div className="text-center">
-              <div className="border-t-2 border-gray-400 pt-3 mt-16">
-                <p className="font-semibold text-sm text-gray-800">Director del Plantel</p>
-                <p className="text-xs text-gray-500 mt-0.5">Instituto Tecnológico de Matehuala</p>
-                <p className="text-xs text-gray-400 mt-0.5">TecNM</p>
+              <div className="border-t border-gray-400 pt-2 mt-[52px]">
+                <p className="text-[11px] font-bold text-gray-800">Lic. Miguel Ángel Vargas Zapata.</p>
+                <p className="text-[10px] text-gray-500">Jefe de la Oficina de Promoción Deportiva</p>
               </div>
             </div>
           </div>
         </div>
+      </article>
 
-        {/* Pie */}
-        <div className="bg-gray-50 px-10 py-4 text-center border-t border-gray-200">
-          <p className="text-xs text-gray-400">
-            Documento generado digitalmente por TallerTec • matehuala.tecnm.mx •{" "}
-            Verifica la autenticidad con el folio {constancia.folio ?? "pendiente"}
+      {/* ══════════════════════════════════════════════════════════
+          HOJA 2 — RÚBRICA DE EVALUACIÓN
+      ══════════════════════════════════════════════════════════ */}
+      <article className="print-page w-full max-w-3xl bg-white text-gray-900 shadow-2xl rounded-2xl overflow-hidden print:shadow-none print:rounded-none">
+
+        {/* Encabezado institucional */}
+        <header className="flex items-center gap-4 px-10 py-4 border-b-[3px] border-[#003087]">
+          <div className="w-14 h-14 border-2 border-[#003087] rounded-lg flex flex-col items-center justify-center shrink-0 text-center">
+            <p className="text-[7px] font-black text-[#003087] leading-tight uppercase">TecNM</p>
+            <p className="text-[7px] font-bold text-[#003087] leading-tight">Matehuala</p>
+          </div>
+          <div className="flex-1 text-center">
+            <p className="text-[10px] font-bold text-gray-500 tracking-widest uppercase">Tecnológico Nacional de México</p>
+            <h2 className="text-[15px] font-extrabold text-[#003087] leading-tight mt-0.5">
+              Instituto Tecnológico de Matehuala
+            </h2>
+            <p className="text-[10px] text-gray-500">Subdirección de Planeación y Vinculación</p>
+            <p className="text-[10px] text-gray-500">Departamento de Actividades Extraescolares</p>
+            <p className="text-[10px] font-semibold text-gray-600">Oficina de Promoción Cultural, Deportiva y Cívica</p>
+          </div>
+        </header>
+
+        {/* Datos del estudiante */}
+        <div className="px-8 py-3 border-b border-gray-200 grid grid-cols-3 gap-x-4 gap-y-1 text-[11px]">
+          <div className="col-span-2">
+            <span className="text-gray-500 font-semibold">Nombre del estudiante: </span>
+            <span className="font-bold border-b border-gray-400 inline-block min-w-[200px] pb-0.5">
+              {alumno?.nombre_completo ?? ""}
+            </span>
+          </div>
+          <div>
+            <span className="text-gray-500 font-semibold">Actividad: </span>
+            <span className="font-bold border-b border-gray-400 inline-block min-w-[80px] pb-0.5 capitalize">
+              {tallerCat}
+            </span>
+          </div>
+          <div className="col-span-2">
+            <span className="text-gray-500 font-semibold">Periodo de realización: </span>
+            <span className="font-bold border-b border-gray-400 inline-block min-w-[160px] pb-0.5">
+              {periodoLabel}
+            </span>
+          </div>
+          <div>
+            <span className="text-gray-500 font-semibold">Nivel de desempeño del criterio </span>
+            <span className="font-extrabold text-[#003087]">({valorNumerico})</span>
+          </div>
+        </div>
+
+        {/* Tabla de criterios */}
+        <div className="px-6 py-4">
+          <table className="w-full text-[11px] border-collapse border border-gray-400">
+            <thead>
+              <tr>
+                <th className="border border-gray-400 bg-[#003087] text-white px-2 py-2 w-8 text-center">No.</th>
+                <th className="border border-gray-400 bg-[#003087] text-white px-3 py-2 text-left">Criterios a evaluar</th>
+                {NIVEL_COLS.map((n) => (
+                  <th key={n} className="border border-gray-400 bg-[#003087] text-white px-1 py-2 text-center w-[78px] leading-tight">
+                    {n}
+                  </th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {CRITERIOS.map((criterio, i) => (
+                <tr key={i} className={i % 2 === 0 ? "bg-white" : "bg-gray-50"}>
+                  <td className="border border-gray-300 px-2 py-2 text-center font-extrabold text-[#003087]">{i + 1}</td>
+                  <td className="border border-gray-300 px-3 py-2 leading-snug">{criterio}</td>
+                  {[0, 1, 2, 3, 4].map((val) => (
+                    <td key={val} className="border border-gray-300 px-2 py-2 text-center text-sm">
+                      {hasEvaluacion && criterios[i] === val
+                        ? <strong className="text-[#003087] text-base">X</strong>
+                        : <span className="text-gray-300 text-xs">○</span>}
+                    </td>
+                  ))}
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+
+        {/* Observaciones */}
+        <div className="px-8 py-2 border-t border-gray-200">
+          <p className="text-[11px] text-gray-700">
+            <span className="font-semibold">Observaciones: </span>
+            <span className="border-b border-gray-400 inline-block min-w-[380px] pb-0.5 ml-1 align-bottom">
+              {c.observaciones ?? ""}
+            </span>
           </p>
         </div>
-      </div>
+
+        {/* Resumen */}
+        <div className="px-8 py-3 border-t border-gray-200 flex flex-wrap gap-6 text-[11px]">
+          <p>
+            <span className="font-semibold">Valor numérico de la actividad {tallerCat}: </span>
+            <strong className="text-[#003087] text-sm">{valorNumerico}</strong>
+          </p>
+          <p>
+            <span className="font-semibold">Nivel de desempeño alcanzado de la actividad {tallerCat}: </span>
+            <strong className="text-[#003087]">{nivelLabel}.</strong>
+          </p>
+        </div>
+
+        {/* Fecha y firmas hoja 2 */}
+        <div className="px-8 pt-1 pb-2">
+          <p className="text-[11px] text-gray-700">
+            Lugar y fecha: Matehuala S.L.P. a los <strong>{dia}</strong> días del mes de{" "}
+            <strong>{mes}</strong> de <strong>{anio}</strong>.
+          </p>
+        </div>
+        <div className="px-10 pb-8">
+          <div className="grid grid-cols-2 gap-10 mt-8">
+            <div className="text-center">
+              <div className="border-t border-gray-400 pt-2 mt-12">
+                <p className="text-[11px] font-bold text-gray-800">Ing. Mario Mata Ontiveros.</p>
+                <p className="text-[10px] text-gray-500">Jefe del Depto. de Actividades Extraescolares</p>
+              </div>
+            </div>
+            <div className="text-center">
+              <div className="border-t border-gray-400 pt-2 mt-12">
+                <p className="text-[11px] font-bold text-gray-800">Lic. Miguel Ángel Vargas Zapata.</p>
+                <p className="text-[10px] text-gray-500">Promotor</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Pie de página */}
+        <footer className="bg-[#003087] px-8 py-2 text-center">
+          <p className="text-[10px] text-white/70">
+            Carretera 57 Km 5, Matehuala, S.L.P. • (488) 882-1314 • matehuala.tecnm.mx •
+            Folio: {c.folio ?? "PENDIENTE"} • Verificado digitalmente — TallerTec
+          </p>
+        </footer>
+      </article>
 
       <style jsx global>{`
         @media print {
           .no-print { display: none !important; }
-          body { background: white !important; }
-          .print-document {
+          body { background: white !important; margin: 0; padding: 0; }
+          .print-page {
             box-shadow: none !important;
             border-radius: 0 !important;
             max-width: 100% !important;
+            margin-bottom: 0 !important;
+            width: 100% !important;
           }
+          .print-page + .print-page { page-break-before: always; }
         }
       `}</style>
     </div>
