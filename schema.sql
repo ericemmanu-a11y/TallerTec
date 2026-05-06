@@ -117,6 +117,16 @@ CREATE TABLE notificaciones (
 );
 CREATE INDEX idx_notificaciones_usuario ON notificaciones(usuario_id, leida);
 
+CREATE TABLE contactos (
+  id         UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  nombre     VARCHAR(200) NOT NULL,
+  email      VARCHAR(255) NOT NULL,
+  asunto     VARCHAR(200),
+  mensaje    TEXT NOT NULL,
+  leido      BOOLEAN NOT NULL DEFAULT FALSE,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
 CREATE OR REPLACE FUNCTION calcular_horas_acumuladas()
 RETURNS TRIGGER AS $$
 BEGIN

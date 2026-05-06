@@ -1,5 +1,6 @@
 import { createClient } from "@/lib/supabase/server";
 import { Users, Download, CheckCircle2, Clock, Search } from "lucide-react";
+import Link from "next/link";
 
 export const metadata = { title: "Registros de Alumnos | Admin TallerTec" };
 
@@ -42,9 +43,10 @@ export default async function AlumnosPage({
         </div>
         <div className="flex items-center gap-3">
           <span className="text-sm text-muted-foreground">{completados}/{total} con meta cumplida</span>
-          <button className="flex items-center gap-2 py-2.5 px-5 rounded-xl text-sm font-semibold bg-white/5 hover:bg-white/10 transition-all border border-border/50">
-            <Download className="w-4 h-4" /> Exportar
-          </button>
+          <Link href="/api/admin/export-alumnos"
+            className="flex items-center gap-2 py-2.5 px-5 rounded-xl text-sm font-semibold bg-white/5 hover:bg-white/10 transition-all border border-border/50 hover:border-primary/30 hover:text-primary">
+            <Download className="w-4 h-4" /> Exportar CSV
+          </Link>
         </div>
       </div>
 

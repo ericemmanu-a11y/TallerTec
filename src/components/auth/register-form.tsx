@@ -95,22 +95,47 @@ export default function RegisterForm() {
 
   if (success) {
     return (
-      <div className="w-full max-w-md mx-auto glass-card rounded-2xl p-8 animate-scale-in text-center">
-        <div className="w-16 h-16 bg-green-500/20 rounded-full flex items-center justify-center mx-auto mb-4 border border-green-500/30">
-          <Mail className="w-8 h-8 text-green-500" />
+      <div className="w-full max-w-md mx-auto animate-scale-in space-y-5">
+        {/* Confirmation card */}
+        <div className="glass-card rounded-2xl p-8 text-center">
+          <div className="w-16 h-16 bg-green-500/20 rounded-full flex items-center justify-center mx-auto mb-4 border border-green-500/30">
+            <Mail className="w-8 h-8 text-green-500" />
+          </div>
+          <h2 className="text-2xl font-bold mb-2">¡Registro Exitoso!</h2>
+          <p className="text-muted-foreground text-sm mb-1">
+            Enviamos un enlace de activación a
+          </p>
+          <p className="font-bold text-foreground text-sm mb-4">{form.email}</p>
+          <p className="text-xs text-muted-foreground mb-6">
+            Revisa tu bandeja de entrada (y spam) y haz clic en el enlace para activar tu cuenta.
+          </p>
+          <Link href="/login"
+            className="inline-flex items-center justify-center gap-2 py-2.5 px-6 rounded-xl text-sm font-semibold text-primary-foreground bg-primary hover:bg-primary/90 transition-colors">
+            Ir al Login <ArrowRight className="w-4 h-4" />
+          </Link>
         </div>
-        <h2 className="text-2xl font-bold text-foreground mb-2">¡Registro Exitoso!</h2>
-        <p className="text-muted-foreground text-sm mb-6">
-          Hemos enviado un enlace de confirmación a{" "}
-          <strong className="text-foreground">{form.email}</strong>.
-          Revisa tu bandeja de entrada para activar tu cuenta.
-        </p>
-        <Link
-          href="/login"
-          className="inline-flex items-center justify-center py-2.5 px-6 rounded-xl text-sm font-semibold text-primary-foreground bg-primary hover:bg-primary/90 transition-colors"
-        >
-          Ir al Login
-        </Link>
+
+        {/* Onboarding steps */}
+        <div className="glass-card rounded-2xl p-6 space-y-4">
+          <p className="text-sm font-bold text-center text-muted-foreground uppercase tracking-wider">¿Qué sigue?</p>
+          {[
+            { num: "1", title: "Confirma tu correo", desc: "Revisa el enlace que te enviamos." },
+            { num: "2", title: "Inicia sesión", desc: "Usa tus credenciales institucionales." },
+            { num: "3", title: "Inscríbete a un taller", desc: "Elige deportivo o cultural." },
+            { num: "4", title: "Registra tu asistencia", desc: "Muestra tu QR al encargado cada sesión." },
+            { num: "5", title: "Solicita tu constancia", desc: "Al cumplir 20 horas la constancia es tuya." },
+          ].map(({ num, title, desc }) => (
+            <div key={num} className="flex items-start gap-3">
+              <div className="w-7 h-7 rounded-lg bg-primary/20 text-primary font-extrabold text-xs flex items-center justify-center shrink-0 mt-0.5">
+                {num}
+              </div>
+              <div>
+                <p className="font-semibold text-sm">{title}</p>
+                <p className="text-xs text-muted-foreground">{desc}</p>
+              </div>
+            </div>
+          ))}
+        </div>
       </div>
     );
   }

@@ -1,5 +1,5 @@
 import { createClient } from "@/lib/supabase/server";
-import { LogOut, LayoutDashboard, BookOpen, Award, Bell, QrCode } from "lucide-react";
+import { LogOut, LayoutDashboard, BookOpen, Award, Bell, QrCode, UserCircle } from "lucide-react";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 
@@ -22,6 +22,7 @@ export default async function DashboardLayout({ children }: { children: React.Re
     { href: "/talleres", label: "Talleres", icon: BookOpen },
     { href: "/dashboard/constancias", label: "Constancias", icon: Award },
     { href: "/dashboard/notificaciones", label: "Avisos", icon: Bell, badge: unread > 0 ? unread : null },
+    { href: "/dashboard/perfil", label: "Perfil", icon: UserCircle, badge: null },
   ];
 
   return (
