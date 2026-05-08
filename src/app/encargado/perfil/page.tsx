@@ -1,9 +1,10 @@
 "use client";
 
 import { useState, useTransition } from "react";
-import { KeyRound, User, Mail, Shield, CheckCircle2, Loader2, XCircle } from "lucide-react";
+import { KeyRound, User, Mail, Shield, CheckCircle2, Loader2, XCircle, ArrowLeft } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import { useEffect } from "react";
+import Link from "next/link";
 
 type UserInfo = { nombre: string; email: string };
 
@@ -51,6 +52,9 @@ export default function PerfilEncargadoPage() {
   return (
     <div className="container mx-auto p-4 md:p-8 space-y-8 animate-fade-in max-w-xl">
       <div>
+        <Link href="/encargado" className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors mb-4">
+          <ArrowLeft className="w-4 h-4" /> Volver al panel
+        </Link>
         <h1 className="text-3xl font-extrabold tracking-tight">Seguridad</h1>
         <p className="text-muted-foreground mt-1">Gestiona tu acceso al sistema.</p>
       </div>

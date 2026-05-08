@@ -1,13 +1,17 @@
-import { createClient } from "@/lib/supabase/server";
+import { createAdminClient } from "@/lib/supabase/admin";
 import { NextResponse } from "next/server";
 
 export async function GET() {
-  const supabase = await createClient();
-  const { data, error } = await supabase
-    .from("periodos")
-    .select("*")
-    .order("fecha_inicio", { ascending: false });
+  try {
+    const adminClient = createAdminClient();
+    const { data, error } = await adminClient
+      .from("periodos")
+      .select("*")
+      .order("fecha_inicio", { ascending: false });
 
-  if (error) return NextResponse.json([], { status: 500 });
-  return NextResponse.json(data);
+    if (error) return NextResponse.json([], { status: 500 });
+    return NextResponse.json(data);
+  } catch (e) {
+    return NextResponse.json([], { status: 500 });
+  }
 }

@@ -1,8 +1,9 @@
 "use client";
 
 import { useState, useEffect, useTransition } from "react";
-import { UserPlus, UserCog, Trash2, Edit2, Loader2, X, ToggleLeft, ToggleRight } from "lucide-react";
+import { UserPlus, UserCog, Trash2, Edit2, Loader2, X, ToggleLeft, ToggleRight, ArrowLeft } from "lucide-react";
 import { crearEncargado, toggleUsuarioActivo } from "@/app/actions/usuarios";
+import Link from "next/link";
 
 type Encargado = {
   id: string;
@@ -50,6 +51,9 @@ export default function EncargadosPage() {
     <div className="container mx-auto p-4 md:p-8 space-y-8 animate-fade-in">
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
+          <Link href="/admin" className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors mb-4">
+            <ArrowLeft className="w-4 h-4" /> Volver al panel
+          </Link>
           <h1 className="text-3xl font-extrabold tracking-tight">Responsables de Taller</h1>
           <p className="text-muted-foreground mt-1">Gestiona los encargados y controla su acceso al sistema.</p>
         </div>

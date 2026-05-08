@@ -1,4 +1,4 @@
-import { createClient } from "@/lib/supabase/server";
+import { getAuthUser } from "@/lib/auth/get-user-role";
 import { LogOut, QrCode, ClipboardList, KeyRound, Users } from "lucide-react";
 import Link from "next/link";
 import { redirect } from "next/navigation";
@@ -8,10 +8,9 @@ export default async function EncargadoLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const supabase = await createClient();
-  const { data: { user } } = await supabase.auth.getUser();
+  const user = await getAuthUser();
 
-  if (!user || user.user_metadata?.rol !== "RESPONSABLE_TALLER") {
+  if (!user || user.rol !== "RESPONSABLE_TALLER") {
     redirect("/login");
   }
 

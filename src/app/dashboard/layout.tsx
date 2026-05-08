@@ -1,12 +1,14 @@
 import { createClient } from "@/lib/supabase/server";
+import { getAuthUser } from "@/lib/auth/get-user-role";
 import { LogOut, LayoutDashboard, BookOpen, Award, Bell, QrCode, UserCircle } from "lucide-react";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 
 export default async function DashboardLayout({ children }: { children: React.ReactNode }) {
   const supabase = await createClient();
-  const { data: { user } } = await supabase.auth.getUser();
+  const user = await getAuthUser();
   if (!user) redirect("/login");
+  if (user.rol !== "ESTUDIANTE") redirect("/login");
 
   const { data: notifCount } = await supabase
     .from("notificaciones")
@@ -15,7 +17,7 @@ export default async function DashboardLayout({ children }: { children: React.Re
     .eq("leida", false);
 
   const unread = (notifCount as unknown as { count: number } | null)?.count ?? 0;
-  const nombre = user.user_metadata?.nombre_completo?.split(" ")[0] ?? user.email;
+  const nombre = user.nombre_completo?.split(" ")[0] ?? user.email;
 
   const navItems = [
     { href: "/dashboard", label: "Inicio", icon: LayoutDashboard },

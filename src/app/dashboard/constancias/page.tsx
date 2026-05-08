@@ -1,5 +1,6 @@
 import { createClient } from "@/lib/supabase/server";
-import { Award, CheckCircle2, Clock, XCircle, AlertCircle, FileText, ExternalLink } from "lucide-react";
+import { createAdminClient } from "@/lib/supabase/admin";
+import { Award, CheckCircle2, Clock, XCircle, AlertCircle, FileText, ExternalLink, ArrowLeft } from "lucide-react";
 import Link from "next/link";
 import { solicitarConstancia } from "@/app/actions/constancias";
 import { redirect } from "next/navigation";
@@ -19,19 +20,33 @@ export default async function ConstanciasPage() {
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) redirect("/login");
 
-  const { data: constancias } = await supabase
+  let adminClient;
+  try {
+    adminClient = createAdminClient();
+  } catch (e) {
+    return (
+      <div className="flex items-center justify-center min-h-[50vh]">
+        <div className="text-center">
+          <h1 className="text-2xl font-bold mb-2">Error de Configuración</h1>
+          <p className="text-muted-foreground">El sistema no está configurado correctamente.</p>
+        </div>
+      </div>
+    );
+  }
+
+  const { data: constancias } = await adminClient
     .from("constancias")
     .select("*, periodos(nombre)")
     .eq("estudiante_id", user.id)
     .order("created_at", { ascending: false });
 
-  const { data: inscActivas } = await supabase
+  const { data: inscActivas } = await adminClient
     .from("inscripciones")
     .select("horas_acumuladas")
     .eq("estudiante_id", user.id)
     .eq("estado", "ACTIVA");
 
-  const { data: inscCompletadas } = await supabase
+  const { data: inscCompletadas } = await adminClient
     .from("inscripciones")
     .select("horas_acumuladas")
     .eq("estudiante_id", user.id)
@@ -43,7 +58,7 @@ export default async function ConstanciasPage() {
 
   const metaAlcanzada = totalHoras >= 20;
 
-  const { data: periodoActivo } = await supabase
+  const { data: periodoActivo } = await adminClient
     .from("periodos")
     .select("id, nombre")
     .eq("activo", true)
@@ -64,6 +79,9 @@ export default async function ConstanciasPage() {
   return (
     <div className="space-y-8 animate-fade-in">
       <div>
+        <Link href="/dashboard" className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors mb-4">
+          <ArrowLeft className="w-4 h-4" /> Volver al inicio
+        </Link>
         <h1 className="text-3xl font-extrabold tracking-tight">Mis Constancias</h1>
         <p className="text-muted-foreground mt-1">
           Solicita y descarga tus constancias de actividad extracurricular.

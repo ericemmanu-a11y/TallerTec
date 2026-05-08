@@ -50,13 +50,6 @@ export default async function MiQRPage() {
           <PrintButton label="Guardar / Imprimir QR" />
         </div>
       </div>
-
-      <style jsx global>{`
-        @media print {
-          .no-print { display: none !important; }
-          body { background: white !important; color: black !important; }
-        }
-      `}</style>
     </div>
   );
 }

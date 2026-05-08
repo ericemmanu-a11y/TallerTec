@@ -1,18 +1,16 @@
 "use client";
 
 import { useState, useEffect, useTransition } from "react";
-import { User, Mail, Hash, GraduationCap, Phone, KeyRound, CheckCircle2, XCircle, Loader2, Save } from "lucide-react";
+import { User, Mail, Hash, GraduationCap, Phone, KeyRound, CheckCircle2, XCircle, Loader2, Save, ArrowLeft } from "lucide-react";
+import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
 
 const CARRERAS = [
-  "Ing. en Sistemas Computacionales",
-  "Ing. Industrial",
-  "Ing. en Gestión Empresarial",
-  "Ing. en Administración",
-  "Lic. en Administración",
-  "Ing. Mecatrónica",
-  "Ing. en Tecnologías de la Información",
-  "Otra carrera",
+  "Ingeniería en Sistemas Computacionales",
+  "Ingeniería Civil",
+  "Ingeniería Industrial",
+  "Ingeniería en Gestión Empresarial",
+  "Contador Público",
 ];
 
 type StatusMsg = { ok: boolean; msg: string } | null;
@@ -55,7 +53,7 @@ export default function DashboardPerfilPage() {
       const { error } = await supabase.auth.updateUser({
         data: {
           nombre_completo: info.nombre_completo.trim(),
-          numero_control:  info.numero_control.trim().toUpperCase(),
+          numero_control:  info.numero_control.trim(),
           carrera:         info.carrera,
           semestre:        info.semestre ? parseInt(info.semestre) : null,
           telefono:        info.telefono.trim(),
@@ -98,6 +96,9 @@ export default function DashboardPerfilPage() {
   return (
     <div className="space-y-8 animate-fade-in max-w-2xl">
       <div>
+        <Link href="/dashboard" className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors mb-4">
+          <ArrowLeft className="w-4 h-4" /> Volver al inicio
+        </Link>
         <h1 className="text-3xl font-extrabold tracking-tight">Mi Perfil</h1>
         <p className="text-muted-foreground mt-1">Actualiza tu información personal y datos académicos.</p>
       </div>

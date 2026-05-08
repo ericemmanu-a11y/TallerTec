@@ -61,7 +61,7 @@ export default function LoginForm() {
       <form onSubmit={handleLogin} className="space-y-5">
         <div className="space-y-1">
           <label className="text-sm font-medium text-foreground/80 ml-1">
-            Correo Institucional
+            Correo Electrónico
           </label>
           <div className="relative">
             <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -72,7 +72,7 @@ export default function LoginForm() {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               className="glass-input w-full pl-10 pr-4 py-3 rounded-xl text-sm"
-              placeholder="l12345678@matehuala.tecnm.mx"
+              placeholder="tucorreo@ejemplo.com"
               required
             />
           </div>

@@ -1,5 +1,5 @@
 import { createClient } from "@/lib/supabase/server";
-import { Award, CheckCircle2, XCircle, Clock, FileText, AlertCircle, ExternalLink, ClipboardCheck } from "lucide-react";
+import { Award, CheckCircle2, XCircle, Clock, FileText, AlertCircle, ExternalLink, ClipboardCheck, ArrowLeft } from "lucide-react";
 import Link from "next/link";
 import { aprobarConstancia, rechazarConstancia, marcarConstanciaEntregada } from "@/app/actions/constancias";
 
@@ -36,6 +36,9 @@ export default async function AdminConstanciasPage() {
   return (
     <main className="container mx-auto p-4 md:p-8 space-y-8 animate-fade-in">
       <div>
+        <Link href="/admin" className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors mb-4">
+          <ArrowLeft className="w-4 h-4" /> Volver al panel
+        </Link>
         <h1 className="text-3xl font-extrabold tracking-tight">Gestión de Constancias</h1>
         <p className="text-muted-foreground mt-1">
           Aprueba solicitudes una vez que el encargado haya completado la evaluación del estudiante.

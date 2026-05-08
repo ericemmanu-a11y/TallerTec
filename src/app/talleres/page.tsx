@@ -1,4 +1,5 @@
 import { createClient } from "@/lib/supabase/server";
+import { createAdminClient } from "@/lib/supabase/admin";
 import Link from "next/link";
 import { Calendar, MapPin, Users, ArrowRight, BookOpen, Trophy, Music } from "lucide-react";
 
@@ -7,21 +8,25 @@ export const metadata = {
   description: "Explora e inscríbete a los talleres deportivos y culturales del TecNM Campus Matehuala",
 };
 
-const MOCK_TALLERES = [
-  { id: "m1", nombre: "Fútbol Varonil", categoria: "DEPORTIVO", horario_texto: "Lunes y Miércoles 16:00–18:00", ubicacion: "Cancha de Fútbol", cupo_maximo: 25, cupo_disponible: 10, descripcion: "Práctica y competencia de fútbol soccer varonil." },
-  { id: "m2", nombre: "Voleibol Femenil", categoria: "DEPORTIVO", horario_texto: "Martes y Jueves 16:00–18:00", ubicacion: "Duela Central", cupo_maximo: 16, cupo_disponible: 4, descripcion: "Entrenamiento de voleibol para equipos femeniles." },
-  { id: "m3", nombre: "Basquetbol Mixto", categoria: "DEPORTIVO", horario_texto: "Lunes y Viernes 07:00–09:00", ubicacion: "Cancha de Basquetbol", cupo_maximo: 20, cupo_disponible: 8, descripcion: "Desarrollo de habilidades y juego de equipo en basquetbol." },
-  { id: "m4", nombre: "Atletismo y Acondicionamiento", categoria: "DEPORTIVO", horario_texto: "Martes y Jueves 07:00–09:00", ubicacion: "Pista Exterior", cupo_maximo: 30, cupo_disponible: 15, descripcion: "Preparación física, resistencia y velocidad." },
-  { id: "m5", nombre: "Ajedrez", categoria: "CULTURAL", horario_texto: "Viernes 14:00–17:00", ubicacion: "Sala de Usos Múltiples", cupo_maximo: 20, cupo_disponible: 20, descripcion: "Desarrollo del pensamiento lógico mediante el ajedrez competitivo." },
-  { id: "m6", nombre: "Danza Folclórica", categoria: "CULTURAL", horario_texto: "Miércoles 16:00–18:00", ubicacion: "Explanada Principal", cupo_maximo: 24, cupo_disponible: 12, descripcion: "Representación cultural de la región Huasteca y bailes nacionales." },
-  { id: "m7", nombre: "Coro Institucional", categoria: "CULTURAL", horario_texto: "Viernes 16:00–18:00", ubicacion: "Auditorio", cupo_maximo: 30, cupo_disponible: 18, descripcion: "Canto coral con repertorio clásico y folclórico." },
-  { id: "m8", nombre: "Tae-kwon-do", categoria: "DEPORTIVO", horario_texto: "Lunes, Miércoles y Viernes 18:00–19:30", ubicacion: "Duela Central", cupo_maximo: 20, cupo_disponible: 0, descripcion: "Arte marcial coreano enfocado en disciplina y autodefensa." },
-];
-
 export default async function TalleresPage() {
   const supabase = await createClient();
 
-  const { data: dbTalleres } = await supabase
+  let adminClient;
+  try {
+    adminClient = createAdminClient();
+  } catch (e) {
+    // Fallback - no admin client available
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-center">
+          <h1 className="text-2xl font-bold mb-2">Error de Configuración</h1>
+          <p className="text-muted-foreground">El sistema no está configurado correctamente.</p>
+        </div>
+      </div>
+    );
+  }
+
+  const { data: dbTalleres } = await adminClient
     .from("talleres")
     .select("*, periodos(nombre, inscripciones_abiertas)")
     .eq("activo", true)
@@ -31,7 +36,7 @@ export default async function TalleresPage() {
 
   let inscritosIds: string[] = [];
   if (user) {
-    const { data: mis } = await supabase
+    const { data: mis } = await adminClient
       .from("inscripciones")
       .select("taller_id")
       .eq("estudiante_id", user.id)
@@ -39,7 +44,7 @@ export default async function TalleresPage() {
     inscritosIds = mis?.map((i) => i.taller_id) ?? [];
   }
 
-  const talleres = dbTalleres?.length ? dbTalleres : MOCK_TALLERES;
+  const talleres = dbTalleres ?? [];
   const deportivos = talleres.filter((t) => t.categoria === "DEPORTIVO");
   const culturales = talleres.filter((t) => t.categoria === "CULTURAL");
 
@@ -95,7 +100,18 @@ export default async function TalleresPage() {
   );
 }
 
-function TallerGrid({ talleres, inscritosIds }: { talleres: typeof MOCK_TALLERES; inscritosIds: string[] }) {
+type Taller = {
+  id: string;
+  nombre: string;
+  descripcion?: string | null;
+  categoria: string;
+  horario_texto: string;
+  ubicacion: string;
+  cupo_maximo: number;
+  cupo_disponible: number;
+};
+
+function TallerGrid({ talleres, inscritosIds }: { talleres: Taller[]; inscritosIds: string[] }) {
   return (
     <div className="grid gap-5 md:grid-cols-2 lg:grid-cols-3">
       {talleres.map((taller) => {

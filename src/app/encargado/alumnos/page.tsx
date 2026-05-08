@@ -1,4 +1,5 @@
 import { createClient } from "@/lib/supabase/server";
+import { createAdminClient } from "@/lib/supabase/admin";
 import { Users, CheckCircle2, Clock, ArrowLeft, AlertCircle, BookOpen, ClipboardCheck } from "lucide-react";
 import Link from "next/link";
 import { redirect } from "next/navigation";
@@ -15,9 +16,23 @@ export default async function AlumnosEncargadoPage({
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) redirect("/login");
 
+  let adminClient;
+  try {
+    adminClient = createAdminClient();
+  } catch (e) {
+    return (
+      <div className="flex items-center justify-center min-h-[50vh]">
+        <div className="text-center">
+          <h1 className="text-2xl font-bold mb-2">Error de Configuración</h1>
+          <p className="text-muted-foreground">El sistema no está configurado correctamente.</p>
+        </div>
+      </div>
+    );
+  }
+
   // Sin taller param: selector de talleres del encargado
   if (!tallerId) {
-    const { data: misTalleres } = await supabase
+    const { data: misTalleres } = await adminClient
       .from("talleres")
       .select("id, nombre, horario_texto, categoria")
       .eq("responsable_id", user.id)
@@ -27,6 +42,9 @@ export default async function AlumnosEncargadoPage({
     return (
       <div className="container mx-auto p-4 md:p-8 space-y-6 animate-fade-in">
         <div>
+          <Link href="/encargado" className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors mb-4">
+            <ArrowLeft className="w-4 h-4" /> Volver al panel
+          </Link>
           <h1 className="text-3xl font-extrabold tracking-tight">Mis Alumnos</h1>
           <p className="text-muted-foreground mt-1">Selecciona un taller para ver su lista de inscritos.</p>
         </div>
@@ -56,7 +74,7 @@ export default async function AlumnosEncargadoPage({
     );
   }
 
-  const { data: taller } = await supabase
+  const { data: taller } = await adminClient
     .from("talleres")
     .select("id, nombre, horario_texto")
     .eq("id", tallerId)
@@ -65,7 +83,7 @@ export default async function AlumnosEncargadoPage({
 
   if (!taller) redirect("/encargado");
 
-  const { data: inscripciones } = await supabase
+  const { data: inscripciones } = await adminClient
     .from("inscripciones")
     .select("id, horas_acumuladas, estado, fecha_inscripcion, usuarios(id, nombre_completo, numero_control, carrera, semestre)")
     .eq("taller_id", tallerId)
@@ -74,7 +92,7 @@ export default async function AlumnosEncargadoPage({
 
   const hoy = new Date().toISOString().split("T")[0];
   const asistenciasHoy = inscripciones?.length
-    ? await supabase
+    ? await adminClient
         .from("asistencias")
         .select("inscripcion_id")
         .eq("fecha", hoy)
@@ -93,7 +111,7 @@ export default async function AlumnosEncargadoPage({
     .filter(Boolean) as string[];
 
   const { data: constanciasPendientes } = completadasIds?.length
-    ? await supabase
+    ? await adminClient
         .from("constancias")
         .select("id, estudiante_id, estado, evaluado_en, nivel_desempeno")
         .in("estudiante_id", completadasIds)

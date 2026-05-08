@@ -9,7 +9,7 @@ CREATE TYPE tipo_notificacion AS ENUM ('INSCRIPCION', 'ASISTENCIA', 'CONSTANCIA_
 CREATE TABLE usuarios (
   id                UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   email             VARCHAR(255) NOT NULL UNIQUE
-                    CHECK (email ~* '^[A-Za-z0-9._%+-]+@matehuala\.tecnm\.mx$'),
+                    CHECK (email ~* '^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$'),
   nombre_completo   VARCHAR(200) NOT NULL CHECK (char_length(nombre_completo) >= 3),
   numero_control    VARCHAR(20) UNIQUE,
   rol               rol_enum NOT NULL DEFAULT 'ESTUDIANTE',

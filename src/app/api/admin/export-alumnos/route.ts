@@ -1,4 +1,5 @@
-import { createClient } from "@/lib/supabase/server";
+import { createAdminClient } from "@/lib/supabase/admin";
+import { getAuthUser } from "@/lib/auth/get-user-role";
 import { NextResponse } from "next/server";
 
 function escapeCsv(val: string | number | null | undefined): string {
@@ -11,13 +12,19 @@ function escapeCsv(val: string | number | null | undefined): string {
 }
 
 export async function GET() {
-  const supabase = await createClient();
-  const { data: { user } } = await supabase.auth.getUser();
-  if (!user || user.user_metadata?.rol !== "ADMIN_OFICINA") {
+  const authUser = await getAuthUser();
+  if (!authUser || authUser.rol !== "ADMIN_OFICINA") {
     return NextResponse.json({ error: "No autorizado" }, { status: 401 });
   }
 
-  const { data } = await supabase
+  let adminClient;
+  try {
+    adminClient = createAdminClient();
+  } catch (e) {
+    return NextResponse.json({ error: "Error de configuración" }, { status: 500 });
+  }
+
+  const { data } = await adminClient
     .from("inscripciones")
     .select("id, horas_acumuladas, estado, fecha_inscripcion, talleres(nombre, categoria), usuarios(nombre_completo, numero_control, carrera, semestre, email)")
     .in("estado", ["ACTIVA", "COMPLETADA", "BAJA"])

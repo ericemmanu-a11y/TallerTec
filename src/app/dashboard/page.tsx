@@ -1,4 +1,5 @@
 import { createClient } from "@/lib/supabase/server";
+import { createAdminClient } from "@/lib/supabase/admin";
 import Link from "next/link";
 import { ArrowRight, CheckCircle2, Award, BookOpen, Bell, QrCode } from "lucide-react";
 import { QRCodeSVG } from "qrcode.react";
@@ -12,22 +13,67 @@ export default async function DashboardPage() {
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return null;
 
-  const nombre = user.user_metadata?.nombre_completo ?? user.email;
+  let adminClient;
+  try {
+    adminClient = createAdminClient();
+  } catch (e) {
+    return (
+      <div className="flex items-center justify-center min-h-[50vh]">
+        <div className="text-center">
+          <h1 className="text-2xl font-bold mb-2">Error de Configuración</h1>
+          <p className="text-muted-foreground">El sistema no está configurado correctamente.</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Get user data from usuarios table
+  let { data: userData } = await adminClient
+    .from("usuarios")
+    .select("nombre_completo")
+    .eq("id", user.id)
+    .single();
+
+  // Auto-sync: If user doesn't exist in usuarios table, create them
+  if (!userData) {
+    const { error: syncError } = await adminClient.from("usuarios").insert({
+      id: user.id,
+      email: user.email,
+      nombre_completo: user.user_metadata?.nombre_completo || user.email,
+      numero_control: user.user_metadata?.numero_control || null,
+      carrera: user.user_metadata?.carrera || null,
+      semestre: user.user_metadata?.semestre || null,
+      telefono: user.user_metadata?.telefono || null,
+      rol: user.user_metadata?.rol || "ESTUDIANTE",
+    });
+
+    if (!syncError) {
+      // Refetch user data after sync
+      const { data: newUserData } = await adminClient
+        .from("usuarios")
+        .select("nombre_completo")
+        .eq("id", user.id)
+        .single();
+      userData = newUserData;
+    }
+  }
+
+  const nombre = userData?.nombre_completo ?? user.user_metadata?.nombre_completo ?? user.email;
   const qrData = `tallertec:${user.id}`;
 
-  const { data: inscripciones } = await supabase
+  const { data: inscripciones } = await adminClient
     .from("inscripciones")
     .select("id, estado, horas_acumuladas, talleres(id, nombre, horario_texto, categoria, ubicacion)")
     .eq("estudiante_id", user.id)
     .eq("estado", "ACTIVA");
 
-  const { data: completadas } = await supabase
+  const { data: completadas } = await adminClient
     .from("inscripciones")
     .select("horas_acumuladas")
     .eq("estudiante_id", user.id)
     .eq("estado", "COMPLETADA");
 
-  const { data: notificaciones } = await supabase
+  const { data: notificaciones } = await adminClient
     .from("notificaciones")
     .select("id, titulo, tipo, created_at")
     .eq("usuario_id", user.id)
@@ -35,7 +81,7 @@ export default async function DashboardPage() {
     .order("created_at", { ascending: false })
     .limit(3);
 
-  const { data: constanciaActiva } = await supabase
+  const { data: constanciaActiva } = await adminClient
     .from("constancias")
     .select("id, estado, folio, horas_totales")
     .eq("estudiante_id", user.id)

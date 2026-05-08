@@ -1,16 +1,16 @@
 "use server";
 
-import { createClient } from "@/lib/supabase/server";
+import { createAdminClient } from "@/lib/supabase/admin";
+import { getAuthUser } from "@/lib/auth/get-user-role";
 import { revalidatePath } from "next/cache";
 
 export async function registrarAsistencia(qrData: string, tallerId: string, horasComputadas: number) {
-  const supabase = await createClient();
-  const { data: { user }, error: authError } = await supabase.auth.getUser();
+  const authUser = await getAuthUser();
 
-  if (!user || authError) {
+  if (!authUser) {
     return { error: "No autorizado." };
   }
-  if (user.user_metadata?.rol !== "RESPONSABLE_TALLER") {
+  if (authUser.rol !== "RESPONSABLE_TALLER") {
     return { error: "Solo los responsables de taller pueden registrar asistencia." };
   }
 
@@ -18,9 +18,16 @@ export async function registrarAsistencia(qrData: string, tallerId: string, hora
     return { error: "Código QR inválido." };
   }
 
+  let adminClient;
+  try {
+    adminClient = createAdminClient();
+  } catch (e) {
+    return { error: "Error de configuración del sistema." };
+  }
+
   const estudianteId = qrData.replace("tallertec:", "");
 
-  const { data: estudiante } = await supabase
+  const { data: estudiante } = await adminClient
     .from("usuarios")
     .select("id, nombre_completo, numero_control")
     .eq("id", estudianteId)
@@ -31,7 +38,7 @@ export async function registrarAsistencia(qrData: string, tallerId: string, hora
     return { error: "Estudiante no encontrado en el sistema." };
   }
 
-  const { data: inscripcion } = await supabase
+  const { data: inscripcion } = await adminClient
     .from("inscripciones")
     .select("id, estado, horas_acumuladas")
     .eq("estudiante_id", estudianteId)
@@ -44,7 +51,7 @@ export async function registrarAsistencia(qrData: string, tallerId: string, hora
   }
 
   const hoy = new Date().toISOString().split("T")[0];
-  const { data: asistenciaExistente } = await supabase
+  const { data: asistenciaExistente } = await adminClient
     .from("asistencias")
     .select("id")
     .eq("inscripcion_id", inscripcion.id)
@@ -58,13 +65,13 @@ export async function registrarAsistencia(qrData: string, tallerId: string, hora
   const ahora = new Date();
   const horaEntrada = ahora.toTimeString().split(" ")[0];
 
-  const { error } = await supabase.from("asistencias").insert({
+  const { error } = await adminClient.from("asistencias").insert({
     inscripcion_id: inscripcion.id,
     fecha: hoy,
     hora_entrada: horaEntrada,
     horas_computadas: horasComputadas,
     metodo_registro: "QR",
-    registrado_por: user.id,
+    registrado_por: authUser.id,
   });
 
   if (error) {
@@ -85,22 +92,28 @@ export async function registrarAsistenciaManual(
   horasComputadas: number,
   notas?: string
 ) {
-  const supabase = await createClient();
-  const { data: { user } } = await supabase.auth.getUser();
-  if (!user || user.user_metadata?.rol !== "RESPONSABLE_TALLER") {
+  const authUser = await getAuthUser();
+  if (!authUser || authUser.rol !== "RESPONSABLE_TALLER") {
     return { error: "No autorizado." };
+  }
+
+  let adminClient;
+  try {
+    adminClient = createAdminClient();
+  } catch (e) {
+    return { error: "Error de configuración del sistema." };
   }
 
   const hoy = new Date().toISOString().split("T")[0];
   const horaEntrada = new Date().toTimeString().split(" ")[0];
 
-  const { error } = await supabase.from("asistencias").insert({
+  const { error } = await adminClient.from("asistencias").insert({
     inscripcion_id: inscripcionId,
     fecha: hoy,
     hora_entrada: horaEntrada,
     horas_computadas: horasComputadas,
     metodo_registro: "MANUAL",
-    registrado_por: user.id,
+    registrado_por: authUser.id,
     notas,
   });
 

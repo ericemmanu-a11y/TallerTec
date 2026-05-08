@@ -24,6 +24,7 @@ export async function middleware(request: NextRequest) {
   const { data: { user } } = await supabase.auth.getUser();
   const path = request.nextUrl.pathname;
 
+  // Rutas públicas que no requieren auth
   const isPublicRoute =
     path === "/" ||
     path.startsWith("/login") ||
@@ -32,15 +33,33 @@ export async function middleware(request: NextRequest) {
     path.startsWith("/reset-password") ||
     path.startsWith("/sobre-nosotros") ||
     path.startsWith("/ayuda") ||
-    path.startsWith("/contacto");
+    path.startsWith("/contacto") ||
+    path.startsWith("/auth/callback");
+
+  // Solo redirigir desde rutas de auth si ya está logueado
+  const isAuthRoute =
+    path.startsWith("/login") ||
+    path.startsWith("/register") ||
+    path.startsWith("/forgot-password");
 
   if (isPublicRoute) {
-    if (user) {
-      const role = user.user_metadata?.rol || "ESTUDIANTE";
+    // Si está en ruta de auth y ya está logueado, redirigir a su panel
+    if (user && isAuthRoute) {
+      let role = user.user_metadata?.rol;
+      if (!role) {
+        const { data: dbUser } = await supabase
+          .from("usuarios")
+          .select("rol")
+          .eq("id", user.id)
+          .single();
+        role = dbUser?.rol || "ESTUDIANTE";
+      }
+
       if (role === "ADMIN_OFICINA") return NextResponse.redirect(new URL("/admin", request.url));
       if (role === "RESPONSABLE_TALLER") return NextResponse.redirect(new URL("/encargado", request.url));
       return NextResponse.redirect(new URL("/dashboard", request.url));
     }
+    // Permitir acceso a otras rutas públicas sin redirigir
     return supabaseResponse;
   }
 
@@ -48,7 +67,16 @@ export async function middleware(request: NextRequest) {
     return NextResponse.redirect(new URL("/login", request.url));
   }
 
-  const role = user.user_metadata?.rol || "ESTUDIANTE";
+  // Consultar rol desde la tabla usuarios (fuente de verdad)
+  let role = user.user_metadata?.rol;
+  if (!role) {
+    const { data: dbUser } = await supabase
+      .from("usuarios")
+      .select("rol")
+      .eq("id", user.id)
+      .single();
+    role = dbUser?.rol || "ESTUDIANTE";
+  }
 
   if (path.startsWith("/admin") && role !== "ADMIN_OFICINA") {
     return NextResponse.redirect(new URL(role === "RESPONSABLE_TALLER" ? "/encargado" : "/dashboard", request.url));

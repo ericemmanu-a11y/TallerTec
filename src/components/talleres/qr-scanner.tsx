@@ -102,22 +102,6 @@ export default function QrScanner({ onScanSuccess }: QrScannerProps) {
           </div>
         )}
       </div>
-
-      <style jsx global>{`
-        #reader { border: none !important; }
-        #reader__dashboard_section_csr span { display: none !important; }
-        #reader__dashboard_section_csr button {
-          background-color: var(--primary) !important;
-          color: white !important;
-          border-radius: 0.75rem !important;
-          padding: 0.5rem 1.25rem !important;
-          border: none !important;
-          margin-bottom: 1rem !important;
-          cursor: pointer !important;
-          font-weight: 600 !important;
-        }
-        #reader__header_message { display: none !important; }
-      `}</style>
     </div>
   );
 }

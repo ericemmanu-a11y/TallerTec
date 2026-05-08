@@ -17,12 +17,6 @@ export default function ForgotPasswordForm() {
     setLoading(true);
     setError(null);
 
-    if (!email.endsWith("@matehuala.tecnm.mx")) {
-      setError("Ingresa tu correo institucional (@matehuala.tecnm.mx).");
-      setLoading(false);
-      return;
-    }
-
     const { error: resetError } = await supabase.auth.resetPasswordForEmail(email, {
       redirectTo: `${window.location.origin}/reset-password`,
     });
@@ -71,7 +65,7 @@ export default function ForgotPasswordForm() {
       <form onSubmit={handleSubmit} className="space-y-5">
         <div className="space-y-1">
           <label className="text-sm font-medium text-foreground/80 ml-1">
-            Correo Institucional
+            Correo Electrónico
           </label>
           <div className="relative">
             <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
@@ -80,7 +74,7 @@ export default function ForgotPasswordForm() {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               className="glass-input w-full pl-10 pr-4 py-3 rounded-xl text-sm"
-              placeholder="l20230001@matehuala.tecnm.mx"
+              placeholder="tucorreo@ejemplo.com"
               required
             />
           </div>

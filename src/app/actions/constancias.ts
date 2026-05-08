@@ -1,6 +1,7 @@
 "use server";
 
-import { createClient } from "@/lib/supabase/server";
+import { createAdminClient } from "@/lib/supabase/admin";
+import { getAuthUser } from "@/lib/auth/get-user-role";
 import { revalidatePath } from "next/cache";
 
 const NIVEL_A_VALOR: Record<string, number> = {
@@ -8,11 +9,18 @@ const NIVEL_A_VALOR: Record<string, number> = {
 };
 
 export async function solicitarConstancia(periodoId: string) {
-  const supabase = await createClient();
-  const { data: { user } } = await supabase.auth.getUser();
-  if (!user) return { error: "No autorizado." };
+  const authUser = await getAuthUser();
+  if (!authUser) return { error: "No autorizado." };
+  const user = { id: authUser.id };
 
-  const { data: inscrCompletadas } = await supabase
+  let adminClient;
+  try {
+    adminClient = createAdminClient();
+  } catch (e) {
+    return { error: "Error de configuración del sistema." };
+  }
+
+  const { data: inscrCompletadas } = await adminClient
     .from("inscripciones")
     .select("id, horas_acumuladas, taller_id")
     .eq("estudiante_id", user.id)
@@ -25,7 +33,7 @@ export async function solicitarConstancia(periodoId: string) {
     return { error: `Necesitas al menos 20 horas. Tienes ${horas.toFixed(1)} horas acumuladas.` };
   }
 
-  const { data: existente } = await supabase
+  const { data: existente } = await adminClient
     .from("constancias")
     .select("id, estado")
     .eq("estudiante_id", user.id)
@@ -39,7 +47,7 @@ export async function solicitarConstancia(periodoId: string) {
   // Use the taller with most hours as the primary taller for the constancia
   const primaryTallerId = inscrCompletadas?.[0]?.taller_id ?? null;
 
-  const { error } = await supabase.from("constancias").insert({
+  const { error } = await adminClient.from("constancias").insert({
     estudiante_id: user.id,
     periodo_id: periodoId,
     taller_id: primaryTallerId,
@@ -58,9 +66,8 @@ export async function evaluarConstancia(
   nivel: string,
   observaciones?: string,
 ) {
-  const supabase = await createClient();
-  const { data: { user } } = await supabase.auth.getUser();
-  if (!user || user.user_metadata?.rol !== "RESPONSABLE_TALLER") {
+  const authUser = await getAuthUser();
+  if (!authUser || authUser.rol !== "RESPONSABLE_TALLER") {
     return { error: "No autorizado." };
   }
 
@@ -71,9 +78,16 @@ export async function evaluarConstancia(
     return { error: "Nivel de desempeño inválido." };
   }
 
-  const encargadoNombre = user.user_metadata?.nombre_completo ?? user.email;
+  let adminClient;
+  try {
+    adminClient = createAdminClient();
+  } catch (e) {
+    return { error: "Error de configuración del sistema." };
+  }
 
-  const { error } = await supabase
+  const encargadoNombre = authUser.nombre_completo ?? authUser.email;
+
+  const { error } = await adminClient
     .from("constancias")
     .update({
       nivel_desempeno: nivel,
@@ -91,15 +105,21 @@ export async function evaluarConstancia(
 }
 
 export async function aprobarConstancia(constanciaId: string) {
-  const supabase = await createClient();
-  const { data: { user } } = await supabase.auth.getUser();
-  if (!user || user.user_metadata?.rol !== "ADMIN_OFICINA") {
+  const authUser = await getAuthUser();
+  if (!authUser || authUser.rol !== "ADMIN_OFICINA") {
     return { error: "No autorizado." };
   }
 
-  const { error } = await supabase
+  let adminClient;
+  try {
+    adminClient = createAdminClient();
+  } catch (e) {
+    return { error: "Error de configuración del sistema." };
+  }
+
+  const { error } = await adminClient
     .from("constancias")
-    .update({ estado: "APROBADA", generado_por: user.id })
+    .update({ estado: "APROBADA", generado_por: authUser.id })
     .eq("id", constanciaId);
 
   if (error) return { error: "Error al aprobar la constancia." };
@@ -108,15 +128,21 @@ export async function aprobarConstancia(constanciaId: string) {
 }
 
 export async function rechazarConstancia(constanciaId: string, observaciones: string) {
-  const supabase = await createClient();
-  const { data: { user } } = await supabase.auth.getUser();
-  if (!user || user.user_metadata?.rol !== "ADMIN_OFICINA") {
+  const authUser = await getAuthUser();
+  if (!authUser || authUser.rol !== "ADMIN_OFICINA") {
     return { error: "No autorizado." };
   }
 
-  const { error } = await supabase
+  let adminClient;
+  try {
+    adminClient = createAdminClient();
+  } catch (e) {
+    return { error: "Error de configuración del sistema." };
+  }
+
+  const { error } = await adminClient
     .from("constancias")
-    .update({ estado: "RECHAZADA", observaciones, generado_por: user.id })
+    .update({ estado: "RECHAZADA", observaciones, generado_por: authUser.id })
     .eq("id", constanciaId);
 
   if (error) return { error: "Error al rechazar la constancia." };
@@ -125,13 +151,19 @@ export async function rechazarConstancia(constanciaId: string, observaciones: st
 }
 
 export async function marcarConstanciaEntregada(constanciaId: string) {
-  const supabase = await createClient();
-  const { data: { user } } = await supabase.auth.getUser();
-  if (!user || user.user_metadata?.rol !== "ADMIN_OFICINA") {
+  const authUser = await getAuthUser();
+  if (!authUser || authUser.rol !== "ADMIN_OFICINA") {
     return { error: "No autorizado." };
   }
 
-  const { error } = await supabase
+  let adminClient;
+  try {
+    adminClient = createAdminClient();
+  } catch (e) {
+    return { error: "Error de configuración del sistema." };
+  }
+
+  const { error } = await adminClient
     .from("constancias")
     .update({ estado: "ENTREGADA" })
     .eq("id", constanciaId);

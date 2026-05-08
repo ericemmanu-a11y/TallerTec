@@ -1,8 +1,9 @@
 "use client";
 
 import { useState, useEffect, useTransition, useCallback } from "react";
-import { CalendarPlus, BookOpen, Edit2, Plus, Loader2, X, ToggleLeft, ToggleRight, Save } from "lucide-react";
+import { CalendarPlus, BookOpen, Edit2, Plus, Loader2, X, ToggleLeft, ToggleRight, Save, ArrowLeft } from "lucide-react";
 import { crearTaller, editarTaller, toggleTallerActivo } from "@/app/actions/talleres";
+import Link from "next/link";
 
 type Taller = {
   id: string; nombre: string; descripcion?: string;
@@ -144,6 +145,9 @@ export default function TalleresAdminPage() {
     <div className="container mx-auto p-4 md:p-8 space-y-8 animate-fade-in">
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
+          <Link href="/admin" className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors mb-4">
+            <ArrowLeft className="w-4 h-4" /> Volver al panel
+          </Link>
           <h1 className="text-3xl font-extrabold tracking-tight">Catálogo de Talleres</h1>
           <p className="text-muted-foreground mt-1">Crea y gestiona los talleres deportivos y culturales del período.</p>
         </div>

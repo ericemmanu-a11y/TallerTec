@@ -1,12 +1,14 @@
 import { createClient } from "@/lib/supabase/server";
+import { getAuthUser } from "@/lib/auth/get-user-role";
 import { LogOut, LayoutDashboard, Users, UserCog, CalendarPlus, Award, Calendar } from "lucide-react";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 
 export default async function AdminLayout({ children }: { children: React.ReactNode }) {
   const supabase = await createClient();
-  const { data: { user } } = await supabase.auth.getUser();
-  if (!user || user.user_metadata?.rol !== "ADMIN_OFICINA") redirect("/login");
+  const user = await getAuthUser();
+  if (!user) redirect("/login");
+  if (user.rol !== "ADMIN_OFICINA") redirect("/login");
 
   const { data: pendientes } = await supabase
     .from("constancias")

@@ -1,5 +1,5 @@
 import { createClient } from "@/lib/supabase/server";
-import { Users, Download, CheckCircle2, Clock, Search } from "lucide-react";
+import { Users, Download, CheckCircle2, Clock, Search, ArrowLeft } from "lucide-react";
 import Link from "next/link";
 
 export const metadata = { title: "Registros de Alumnos | Admin TallerTec" };
@@ -38,6 +38,9 @@ export default async function AlumnosPage({
     <div className="container mx-auto p-4 md:p-8 space-y-8 animate-fade-in">
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
+          <Link href="/admin" className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors mb-4">
+            <ArrowLeft className="w-4 h-4" /> Volver al panel
+          </Link>
           <h1 className="text-3xl font-extrabold tracking-tight">Registro de Alumnos</h1>
           <p className="text-muted-foreground mt-1">Vista global de estudiantes inscritos y progreso de horas.</p>
         </div>

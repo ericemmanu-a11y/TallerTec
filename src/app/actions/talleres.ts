@@ -1,25 +1,49 @@
 "use server";
 
-import { createClient } from "@/lib/supabase/server";
+import { createAdminClient } from "@/lib/supabase/admin";
+import { getAuthUser } from "@/lib/auth/get-user-role";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 
 export async function inscribirTaller(tallerId: string) {
-  const supabase = await createClient();
-  const { data: { user }, error: authError } = await supabase.auth.getUser();
-  if (!user || authError) redirect("/login");
+  const authUser = await getAuthUser();
+  if (!authUser) redirect("/login");
+  const user = { id: authUser.id };
 
-  const { data: usuario } = await supabase
+  let adminClient;
+  try {
+    adminClient = createAdminClient();
+  } catch (e) {
+    return { error: "Error de configuración del sistema." };
+  }
+
+  // Check if user exists in usuarios table
+  const { data: usuario } = await adminClient
     .from("usuarios")
     .select("id")
     .eq("id", user.id)
     .single();
 
+  // If user doesn't exist, create them automatically
   if (!usuario) {
-    return { error: "Usuario no encontrado en el sistema." };
+    const { error: syncError } = await adminClient.from("usuarios").insert({
+      id: authUser.id,
+      email: authUser.email,
+      nombre_completo: authUser.nombre_completo,
+      numero_control: authUser.numero_control || null,
+      carrera: authUser.carrera || null,
+      semestre: authUser.semestre || null,
+      telefono: authUser.telefono || null,
+      rol: "ESTUDIANTE",
+    });
+
+    if (syncError) {
+      console.error("Error syncing user:", syncError);
+      return { error: "Error al sincronizar tu cuenta. Intenta de nuevo." };
+    }
   }
 
-  const { data: taller } = await supabase
+  const { data: taller } = await adminClient
     .from("talleres")
     .select("id, cupo_disponible, nombre")
     .eq("id", tallerId)
@@ -29,7 +53,7 @@ export async function inscribirTaller(tallerId: string) {
   if (!taller) return { error: "El taller no existe o no está disponible." };
   if (taller.cupo_disponible <= 0) return { error: "El cupo del taller está lleno." };
 
-  const { data: existing } = await supabase
+  const { data: existing } = await adminClient
     .from("inscripciones")
     .select("id, estado")
     .eq("estudiante_id", user.id)
@@ -38,7 +62,7 @@ export async function inscribirTaller(tallerId: string) {
 
   if (existing) {
     if (existing.estado === "BAJA") {
-      const { error } = await supabase
+      const { error } = await adminClient
         .from("inscripciones")
         .update({ estado: "ACTIVA" })
         .eq("id", existing.id);
@@ -49,7 +73,7 @@ export async function inscribirTaller(tallerId: string) {
     return { error: "Ya estás inscrito en este taller." };
   }
 
-  const { error } = await supabase.from("inscripciones").insert({
+  const { error } = await adminClient.from("inscripciones").insert({
     estudiante_id: user.id,
     taller_id: tallerId,
   });
@@ -62,11 +86,18 @@ export async function inscribirTaller(tallerId: string) {
 }
 
 export async function darBajaTaller(inscripcionId: string) {
-  const supabase = await createClient();
-  const { data: { user } } = await supabase.auth.getUser();
-  if (!user) redirect("/login");
+  const authUser = await getAuthUser();
+  if (!authUser) redirect("/login");
+  const user = { id: authUser.id };
 
-  const { error } = await supabase
+  let adminClient;
+  try {
+    adminClient = createAdminClient();
+  } catch (e) {
+    return { error: "Error de configuración del sistema." };
+  }
+
+  const { error } = await adminClient
     .from("inscripciones")
     .update({ estado: "BAJA" })
     .eq("id", inscripcionId)
@@ -78,15 +109,21 @@ export async function darBajaTaller(inscripcionId: string) {
 }
 
 export async function crearTaller(formData: FormData) {
-  const supabase = await createClient();
-  const { data: { user } } = await supabase.auth.getUser();
-  if (!user || user.user_metadata?.rol !== "ADMIN_OFICINA") {
+  const authUser = await getAuthUser();
+  if (!authUser || authUser.rol !== "ADMIN_OFICINA") {
     return { error: "No autorizado." };
+  }
+
+  let adminClient;
+  try {
+    adminClient = createAdminClient();
+  } catch (e) {
+    return { error: "Configuración incompleta." };
   }
 
   const cupoMax = parseInt(formData.get("cupo_maximo") as string);
 
-  const { error } = await supabase.from("talleres").insert({
+  const { error } = await adminClient.from("talleres").insert({
     nombre: formData.get("nombre") as string,
     descripcion: formData.get("descripcion") as string,
     categoria: formData.get("categoria") as string,
@@ -104,13 +141,19 @@ export async function crearTaller(formData: FormData) {
 }
 
 export async function editarTaller(tallerId: string, formData: FormData) {
-  const supabase = await createClient();
-  const { data: { user } } = await supabase.auth.getUser();
-  if (!user || user.user_metadata?.rol !== "ADMIN_OFICINA") {
+  const authUser = await getAuthUser();
+  if (!authUser || authUser.rol !== "ADMIN_OFICINA") {
     return { error: "No autorizado." };
   }
 
-  const { error } = await supabase
+  let adminClient;
+  try {
+    adminClient = createAdminClient();
+  } catch (e) {
+    return { error: "Configuración incompleta." };
+  }
+
+  const { error } = await adminClient
     .from("talleres")
     .update({
       nombre: formData.get("nombre") as string,
@@ -128,13 +171,19 @@ export async function editarTaller(tallerId: string, formData: FormData) {
 }
 
 export async function toggleTallerActivo(tallerId: string, activo: boolean) {
-  const supabase = await createClient();
-  const { data: { user } } = await supabase.auth.getUser();
-  if (!user || user.user_metadata?.rol !== "ADMIN_OFICINA") {
+  const authUser = await getAuthUser();
+  if (!authUser || authUser.rol !== "ADMIN_OFICINA") {
     return { error: "No autorizado." };
   }
 
-  const { error } = await supabase
+  let adminClient;
+  try {
+    adminClient = createAdminClient();
+  } catch (e) {
+    return { error: "Configuración incompleta." };
+  }
+
+  const { error } = await adminClient
     .from("talleres")
     .update({ activo })
     .eq("id", tallerId);

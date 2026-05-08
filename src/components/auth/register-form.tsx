@@ -7,14 +7,11 @@ import { UserPlus, Mail, Lock, User, Loader2, ArrowRight, Hash, GraduationCap } 
 import Link from "next/link";
 
 const CARRERAS = [
-  "Ing. en Sistemas Computacionales",
-  "Ing. Industrial",
-  "Ing. en Gestión Empresarial",
-  "Ing. en Administración",
-  "Lic. en Administración",
-  "Ing. Mecatrónica",
-  "Ing. en Tecnologías de la Información",
-  "Otra carrera",
+  "Ingeniería en Sistemas Computacionales",
+  "Ingeniería Civil",
+  "Ingeniería Industrial",
+  "Ingeniería en Gestión Empresarial",
+  "Contador Público",
 ];
 
 export default function RegisterForm() {
@@ -42,11 +39,6 @@ export default function RegisterForm() {
     setLoading(true);
     setError(null);
 
-    if (!form.email.endsWith("@matehuala.tecnm.mx")) {
-      setError("Debes usar tu correo institucional (@matehuala.tecnm.mx)");
-      setLoading(false);
-      return;
-    }
     if (form.password !== form.confirmPassword) {
       setError("Las contraseñas no coinciden.");
       setLoading(false);
@@ -69,7 +61,7 @@ export default function RegisterForm() {
       options: {
         data: {
           nombre_completo: form.nombre_completo.trim(),
-          numero_control: form.numero_control.trim().toUpperCase(),
+          numero_control: form.numero_control.trim(),
           carrera: form.carrera,
           semestre: form.semestre ? parseInt(form.semestre) : null,
           telefono: form.telefono.trim(),
@@ -170,7 +162,7 @@ export default function RegisterForm() {
             <div className="relative">
               <Hash className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
               <input type="text" value={form.numero_control} onChange={set("numero_control")}
-                className="glass-input w-full pl-10 pr-4 py-3 rounded-xl text-sm" placeholder="L20230001" required />
+                className="glass-input w-full pl-10 pr-4 py-3 rounded-xl text-sm" placeholder="23660151" required />
             </div>
           </div>
           <div className="space-y-1">
@@ -200,11 +192,11 @@ export default function RegisterForm() {
 
         {/* Email */}
         <div className="space-y-1">
-          <label className="text-sm font-medium text-foreground/80 ml-1">Correo Institucional</label>
+          <label className="text-sm font-medium text-foreground/80 ml-1">Correo Electrónico</label>
           <div className="relative">
             <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
             <input type="email" value={form.email} onChange={set("email")}
-              className="glass-input w-full pl-10 pr-4 py-3 rounded-xl text-sm" placeholder="l20230001@matehuala.tecnm.mx" required />
+              className="glass-input w-full pl-10 pr-4 py-3 rounded-xl text-sm" placeholder="tucorreo@ejemplo.com" required />
           </div>
         </div>
 

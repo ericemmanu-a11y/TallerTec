@@ -1,7 +1,9 @@
 import { createClient } from "@/lib/supabase/server";
-import { Bell, Trophy, ClipboardCheck, Award, CheckCircle2, AlertCircle } from "lucide-react";
+import { createAdminClient } from "@/lib/supabase/admin";
+import { Bell, Trophy, ClipboardCheck, Award, CheckCircle2, AlertCircle, ArrowLeft } from "lucide-react";
 import { marcarNotificacionLeida } from "@/app/actions/usuarios";
 import { redirect } from "next/navigation";
+import Link from "next/link";
 
 export const metadata = { title: "Notificaciones | TallerTec" };
 
@@ -19,7 +21,21 @@ export default async function NotificacionesPage() {
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) redirect("/login");
 
-  const { data: notificaciones } = await supabase
+  let adminClient;
+  try {
+    adminClient = createAdminClient();
+  } catch (e) {
+    return (
+      <div className="flex items-center justify-center min-h-[50vh]">
+        <div className="text-center">
+          <h1 className="text-2xl font-bold mb-2">Error de Configuración</h1>
+          <p className="text-muted-foreground">El sistema no está configurado correctamente.</p>
+        </div>
+      </div>
+    );
+  }
+
+  const { data: notificaciones } = await adminClient
     .from("notificaciones")
     .select("*")
     .eq("usuario_id", user.id)
@@ -30,7 +46,12 @@ export default async function NotificacionesPage() {
     const sb = await createClient();
     const { data: { user: u } } = await sb.auth.getUser();
     if (!u) return;
-    await sb.from("notificaciones").update({ leida: true }).eq("usuario_id", u.id);
+    try {
+      const admin = createAdminClient();
+      await admin.from("notificaciones").update({ leida: true }).eq("usuario_id", u.id);
+    } catch (e) {
+      // ignore
+    }
   }
 
   const noLeidas = notificaciones?.filter((n) => !n.leida).length ?? 0;
@@ -39,6 +60,9 @@ export default async function NotificacionesPage() {
     <div className="space-y-6 animate-fade-in">
       <div className="flex items-center justify-between">
         <div>
+          <Link href="/dashboard" className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors mb-4">
+            <ArrowLeft className="w-4 h-4" /> Volver al inicio
+          </Link>
           <h1 className="text-3xl font-extrabold tracking-tight">Notificaciones</h1>
           <p className="text-muted-foreground mt-1">
             {noLeidas > 0 ? `${noLeidas} notificaciones sin leer` : "Todo al día"}

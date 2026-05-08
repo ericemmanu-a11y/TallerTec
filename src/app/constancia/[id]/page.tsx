@@ -319,21 +319,6 @@ export default async function ConstanciaPage({ params }: { params: Promise<{ id:
           </p>
         </footer>
       </article>
-
-      <style jsx global>{`
-        @media print {
-          .no-print { display: none !important; }
-          body { background: white !important; margin: 0; padding: 0; }
-          .print-page {
-            box-shadow: none !important;
-            border-radius: 0 !important;
-            max-width: 100% !important;
-            margin-bottom: 0 !important;
-            width: 100% !important;
-          }
-          .print-page + .print-page { page-break-before: always; }
-        }
-      `}</style>
     </div>
   );
 }

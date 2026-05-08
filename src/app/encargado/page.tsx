@@ -1,4 +1,5 @@
 import { createClient } from "@/lib/supabase/server";
+import { createAdminClient } from "@/lib/supabase/admin";
 import { QrCode, Users, Clock, BarChart2, ArrowRight, BookOpen } from "lucide-react";
 import Link from "next/link";
 
@@ -9,9 +10,30 @@ export default async function EncargadoPage() {
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return null;
 
-  const nombre = user.user_metadata?.nombre_completo ?? user.email;
+  let adminClient;
+  try {
+    adminClient = createAdminClient();
+  } catch (e) {
+    return (
+      <div className="flex items-center justify-center min-h-[50vh]">
+        <div className="text-center">
+          <h1 className="text-2xl font-bold mb-2">Error de Configuración</h1>
+          <p className="text-muted-foreground">El sistema no está configurado correctamente.</p>
+        </div>
+      </div>
+    );
+  }
 
-  const { data: talleres } = await supabase
+  // Get user data from usuarios table
+  const { data: userData } = await adminClient
+    .from("usuarios")
+    .select("nombre_completo")
+    .eq("id", user.id)
+    .single();
+
+  const nombre = userData?.nombre_completo ?? user.user_metadata?.nombre_completo ?? user.email;
+
+  const { data: talleres } = await adminClient
     .from("talleres")
     .select("id, nombre, horario_texto, ubicacion, categoria, cupo_maximo, cupo_disponible, periodos(nombre)")
     .eq("responsable_id", user.id)
@@ -19,19 +41,19 @@ export default async function EncargadoPage() {
 
   const talleresConStats = await Promise.all(
     (talleres ?? []).map(async (t) => {
-      const { count: inscritos } = await supabase
+      const { count: inscritos } = await adminClient
         .from("inscripciones")
         .select("id", { count: "exact", head: true })
         .eq("taller_id", t.id)
         .eq("estado", "ACTIVA");
 
       const hoy = new Date().toISOString().split("T")[0];
-      const { count: asistenciaHoy } = await supabase
+      const { count: asistenciaHoy } = await adminClient
         .from("asistencias")
         .select("id", { count: "exact", head: true })
         .eq("fecha", hoy)
         .in("inscripcion_id",
-          (await supabase.from("inscripciones").select("id").eq("taller_id", t.id).eq("estado", "ACTIVA")).data?.map(i => i.id) ?? []
+          (await adminClient.from("inscripciones").select("id").eq("taller_id", t.id).eq("estado", "ACTIVA")).data?.map(i => i.id) ?? []
         );
 
       return { ...t, inscritos: inscritos ?? 0, asistenciaHoy: asistenciaHoy ?? 0 };
