@@ -1,20 +1,14 @@
-import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
-import { redirect, notFound } from "next/navigation";
+import { redirect } from "next/navigation";
+import { createClient } from "@/lib/supabase/server";
 import Link from "next/link";
-import { ArrowLeft, AlertCircle } from "lucide-react";
+import { ArrowLeft, Eye } from "lucide-react";
 import PrintButton from "@/components/ui/print-button";
 import { CONFIG_DEFAULTS } from "@/lib/constancias-config";
 
-export const metadata = { title: "Constancia de Actividad | TallerTec" };
+export const metadata = { title: "Previsualización de Constancia | TallerTec" };
 
-const NIVEL_LABEL: Record<string, string> = {
-  INSUFICIENTE: "insuficiente", SUFICIENTE: "suficiente",
-  BUENO: "bueno", NOTABLE: "notable", EXCELENTE: "excelente",
-};
-const NIVEL_VALOR: Record<string, number> = {
-  INSUFICIENTE: 0, SUFICIENTE: 1, BUENO: 2, NOTABLE: 3, EXCELENTE: 4,
-};
+const NIVEL_COLS = ["Insuficiente", "Suficiente", "Bueno", "Notable", "Excelente"];
 const CRITERIOS = [
   "Cumple en tiempo y forma con las actividades encomendadas alcanzando los objetivos.",
   "Trabaja en equipo y se adapta a nuevas situaciones.",
@@ -24,38 +18,53 @@ const CRITERIOS = [
   "Realiza sugerencias innovadoras para beneficio o mejora del programa en el que participa.",
   "Tiene iniciativa para ayudar en las actividades encomendadas y muestra espíritu de servicio.",
 ];
-const NIVEL_COLS = ["Insuficiente", "Suficiente", "Bueno", "Notable", "Excelente"];
 
 function numToMes(n: number) {
   return ["enero","febrero","marzo","abril","mayo","junio","julio","agosto","septiembre","octubre","noviembre","diciembre"][n];
 }
 
-export default async function ConstanciaPage({ params }: { params: Promise<{ id: string }> }) {
-  const { id } = await params;
+export default async function PreviewPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ periodo?: string }>;
+}) {
+  const { periodo: periodoId } = await searchParams;
+
+  // Verificar autenticación y rol
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) redirect("/login");
 
-  const { data: c } = await supabase
-    .from("constancias")
-    .select(`*, usuarios(nombre_completo, numero_control, carrera, semestre), periodos(nombre, fecha_inicio, fecha_fin), talleres(nombre, categoria)`)
-    .eq("id", id)
-    .single();
-
-  if (!c) notFound();
-
   const isAdmin = user.user_metadata?.rol === "ADMIN_OFICINA";
-  const isOwner = c.estudiante_id === user.id;
-  if (!isAdmin && !isOwner) redirect("/dashboard");
+  if (!isAdmin) redirect("/admin");
+
+  if (!periodoId) {
+    redirect("/admin/constancias/configuracion");
+  }
 
   // Cargar configuración del período
   let cfg = { ...CONFIG_DEFAULTS };
+  let periodoNombre = "Período de Ejemplo";
+
   try {
     const adminClient = createAdminClient();
+
+    // Obtener nombre del período
+    const { data: periodo } = await adminClient
+      .from("periodos")
+      .select("nombre")
+      .eq("id", periodoId)
+      .single();
+
+    if (periodo) {
+      periodoNombre = periodo.nombre;
+    }
+
+    // Obtener configuración
     const { data: config } = await adminClient
       .from("configuracion_constancias")
       .select("*")
-      .eq("periodo_id", c.periodo_id)
+      .eq("periodo_id", periodoId)
       .single();
 
     if (config) {
@@ -72,58 +81,47 @@ export default async function ConstanciaPage({ params }: { params: Promise<{ id:
       };
     }
   } catch {
-    // Si falla, usar valores por defecto
+    // Usar valores por defecto
   }
 
-  const alumno = c.usuarios as unknown as {
-    nombre_completo: string; numero_control: string | null;
-    carrera: string | null; semestre: number | null;
-  } | null;
-  const periodo = c.periodos as unknown as { nombre: string; fecha_inicio: string; fecha_fin: string } | null;
-  const taller  = c.talleres  as unknown as { nombre: string; categoria: string } | null;
+  // Datos de ejemplo
+  const alumno = {
+    nombre_completo: "JUAN EJEMPLO LÓPEZ GARCÍA",
+    numero_control: "EST00000",
+    carrera: "Ingeniería en Sistemas Computacionales",
+  };
+  const tallerNombre = "Futbol";
+  const tallerCat = "deportiva";
+  const nivelLabel = "notable";
+  const valorNumerico = 3;
+  const criterios = [3, 3, 3, 3, 3, 3, 3]; // Todos NOTABLE
+  const folio = "TALL-0000-0-00000";
 
-  const criterios: number[] = Array.isArray(c.criterios_evaluacion)
-    ? (c.criterios_evaluacion as number[])
-    : Array(7).fill(-1);
-
-  const nivelKey: string  = c.nivel_desempeno ?? "";
-  const nivelLabel        = NIVEL_LABEL[nivelKey] ?? "________";
-  const valorNumerico     = nivelKey in NIVEL_VALOR ? NIVEL_VALOR[nivelKey] : "___";
-  const hasEvaluacion     = Boolean(c.evaluado_en);
-
-  const fechaDoc  = new Date(c.evaluado_en ?? c.created_at);
-  const dia       = fechaDoc.getDate().toString().padStart(2, "0");
-  const mes       = numToMes(fechaDoc.getMonth());
-  const anio      = fechaDoc.getFullYear();
-
-  const periodoLabel  = periodo?.nombre ?? "_________________________";
-  const tallerNombre  = taller?.nombre  ?? "_________________________";
-  const tallerCat     = taller?.categoria === "CULTURAL" ? "cultural" : "deportiva";
-
-  const backHref = isAdmin ? "/admin/constancias" : "/dashboard/constancias";
+  const fechaDoc = new Date();
+  const dia = fechaDoc.getDate().toString().padStart(2, "0");
+  const mes = numToMes(fechaDoc.getMonth());
+  const anio = fechaDoc.getFullYear();
 
   return (
     <div className="min-h-screen bg-background flex flex-col items-center p-4 py-8">
 
-      {/* ── Action bar ── */}
+      {/* Action bar */}
       <div className="no-print w-full max-w-3xl flex items-center justify-between mb-6">
-        <Link href={backHref}
-          className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors">
-          <ArrowLeft className="w-4 h-4" /> Volver
+        <Link
+          href="/admin/constancias/configuracion"
+          className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors"
+        >
+          <ArrowLeft className="w-4 h-4" /> Volver a Configuración
         </Link>
-        <div className="flex items-center gap-3 flex-wrap justify-end">
-          {!hasEvaluacion && (
-            <span className="flex items-center gap-1.5 text-xs text-yellow-500 bg-yellow-500/10 border border-yellow-500/20 px-3 py-1.5 rounded-lg">
-              <AlertCircle className="w-3.5 h-3.5" /> Pendiente de evaluación — rúbrica en blanco
-            </span>
-          )}
+        <div className="flex items-center gap-3">
+          <span className="flex items-center gap-1.5 text-xs text-primary bg-primary/10 border border-primary/20 px-3 py-1.5 rounded-lg">
+            <Eye className="w-3.5 h-3.5" /> Vista previa con datos de ejemplo
+          </span>
           <PrintButton label="Imprimir / Guardar PDF" />
         </div>
       </div>
 
-      {/* ══════════════════════════════════════════════════════════
-          HOJA 1 — CARTA OFICIAL
-      ══════════════════════════════════════════════════════════ */}
+      {/* HOJA 1 — CARTA OFICIAL */}
       <article className="print-page w-full max-w-3xl bg-white text-gray-900 shadow-2xl rounded-2xl overflow-hidden mb-8 print:mb-0 print:shadow-none print:rounded-none">
 
         {/* Encabezado institucional */}
@@ -143,18 +141,18 @@ export default async function ConstanciaPage({ params }: { params: Promise<{ id:
           <div className="w-14 h-14 md:w-16 md:h-16 border-2 border-[#003087] rounded-lg flex flex-col items-center justify-center shrink-0 text-center">
             <p className="text-[6px] md:text-[7px] font-bold text-[#003087] leading-tight">Verificado</p>
             <p className="text-[6px] md:text-[7px] font-black text-[#003087] leading-tight">TallerTec</p>
-            <p className="text-[6px] md:text-[7px] font-bold text-[#003087] leading-tight">{c.folio ?? ""}</p>
+            <p className="text-[6px] md:text-[7px] font-bold text-[#003087] leading-tight">{folio}</p>
           </div>
         </header>
 
-        {/* Título del documento */}
+        {/* Título */}
         <div className="px-4 md:px-10 pt-4 md:pt-5 pb-2 text-center">
           <h1 className="text-[12px] md:text-[13px] font-extrabold text-[#003087] uppercase tracking-wider leading-snug">
             Constancia de Cumplimiento de Actividad<br/>Cultural, Deportiva y Cívica
           </h1>
         </div>
 
-        {/* Destinatario - DINÁMICO */}
+        {/* Destinatario */}
         <div className="px-4 md:px-10 pt-4 pb-2">
           <p className="text-[11px] md:text-[12px] font-bold text-gray-800 uppercase leading-snug">
             {cfg.destinatario_nombre}
@@ -163,24 +161,22 @@ export default async function ConstanciaPage({ params }: { params: Promise<{ id:
           <p className="text-[10px] md:text-[11px] text-gray-500 mt-1 font-semibold">Presente</p>
         </div>
 
-        {/* Cuerpo de la carta - DINÁMICO */}
+        {/* Cuerpo */}
         <div className="px-4 md:px-10 py-4 space-y-4 text-[11px] md:text-[12px] text-gray-800 leading-relaxed text-justify">
           <p>
             El que suscribe <span className="font-bold">{cfg.firmante1_nombre}</span>, por este
             medio se permite hacer de su conocimiento que al estudiante{" "}
-            <span className="font-extrabold text-[#003087] uppercase">
-              {alumno?.nombre_completo ?? "___________________________"}
-            </span>
+            <span className="font-extrabold text-[#003087] uppercase">{alumno.nombre_completo}</span>
             ., con número de control{" "}
-            <span className="font-bold font-mono">{alumno?.numero_control ?? "__________"}</span>{" "}
+            <span className="font-bold font-mono">{alumno.numero_control}</span>{" "}
             de la carrera de{" "}
-            <span className="font-bold">{alumno?.carrera ?? "_________________________"}</span>,
+            <span className="font-bold">{alumno.carrera}</span>,
             {" "}ha cumplido su actividad {tallerCat} (Taller de{" "}
             <span className="font-bold uppercase">{tallerNombre}</span>) con el nivel de desempeño{" "}
             <span className="font-bold">{nivelLabel}</span> y un valor numérico de{" "}
             <span className="font-extrabold text-[#003087]">{valorNumerico}</span>{" "}
             durante el periodo escolar{" "}
-            <span className="font-bold">{periodoLabel}</span> con un valor curricular de{" "}
+            <span className="font-bold">{periodoNombre}</span> con un valor curricular de{" "}
             <span className="font-bold">{cfg.valor_curricular}</span>.
           </p>
 
@@ -194,7 +190,7 @@ export default async function ConstanciaPage({ params }: { params: Promise<{ id:
 
         <p className="px-4 md:px-10 text-right text-[11px] md:text-[12px] font-bold text-gray-800">ATENTAMENTE</p>
 
-        {/* Firmas hoja 1 - DINÁMICO */}
+        {/* Firmas */}
         <div className="px-4 md:px-10 pb-10 pt-0">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-10 mt-8 md:mt-12">
             <div className="text-center">
@@ -228,12 +224,9 @@ export default async function ConstanciaPage({ params }: { params: Promise<{ id:
         </div>
       </article>
 
-      {/* ══════════════════════════════════════════════════════════
-          HOJA 2 — RÚBRICA DE EVALUACIÓN
-      ══════════════════════════════════════════════════════════ */}
+      {/* HOJA 2 — RÚBRICA */}
       <article className="print-page w-full max-w-3xl bg-white text-gray-900 shadow-2xl rounded-2xl overflow-hidden print:shadow-none print:rounded-none">
 
-        {/* Encabezado institucional */}
         <header className="flex flex-col md:flex-row items-center gap-3 md:gap-4 px-4 md:px-10 py-3 md:py-4 border-b-[3px] border-[#003087]">
           <div className="w-12 h-12 md:w-14 md:h-14 border-2 border-[#003087] rounded-lg flex flex-col items-center justify-center shrink-0 text-center">
             <p className="text-[6px] md:text-[7px] font-black text-[#003087] leading-tight uppercase">TecNM</p>
@@ -250,12 +243,11 @@ export default async function ConstanciaPage({ params }: { params: Promise<{ id:
           </div>
         </header>
 
-        {/* Datos del estudiante */}
         <div className="px-4 md:px-8 py-3 border-b border-gray-200 grid grid-cols-1 md:grid-cols-3 gap-x-4 gap-y-2 text-[11px]">
           <div className="md:col-span-2">
             <span className="text-gray-500 font-semibold">Nombre del estudiante: </span>
             <span className="font-bold border-b border-gray-400 inline-block w-full md:w-auto md:min-w-[200px] pb-0.5">
-              {alumno?.nombre_completo ?? ""}
+              {alumno.nombre_completo}
             </span>
           </div>
           <div>
@@ -267,7 +259,7 @@ export default async function ConstanciaPage({ params }: { params: Promise<{ id:
           <div className="md:col-span-2">
             <span className="text-gray-500 font-semibold">Periodo de realización: </span>
             <span className="font-bold border-b border-gray-400 inline-block w-full md:w-auto md:min-w-[160px] pb-0.5">
-              {periodoLabel}
+              {periodoNombre}
             </span>
           </div>
           <div>
@@ -276,7 +268,6 @@ export default async function ConstanciaPage({ params }: { params: Promise<{ id:
           </div>
         </div>
 
-        {/* Tabla de criterios */}
         <div className="px-2 md:px-6 py-4 overflow-x-auto">
           <table className="w-full text-[10px] md:text-[11px] border-collapse border border-gray-400 min-w-[600px]">
             <thead>
@@ -297,7 +288,7 @@ export default async function ConstanciaPage({ params }: { params: Promise<{ id:
                   <td className="border border-gray-300 px-3 py-2 leading-snug">{criterio}</td>
                   {[0, 1, 2, 3, 4].map((val) => (
                     <td key={val} className="border border-gray-300 px-2 py-2 text-center text-sm">
-                      {hasEvaluacion && criterios[i] === val
+                      {criterios[i] === val
                         ? <strong className="text-[#003087] text-base">X</strong>
                         : <span className="text-gray-300 text-xs">○</span>}
                     </td>
@@ -308,17 +299,15 @@ export default async function ConstanciaPage({ params }: { params: Promise<{ id:
           </table>
         </div>
 
-        {/* Observaciones */}
         <div className="px-4 md:px-8 py-2 border-t border-gray-200">
           <p className="text-[11px] text-gray-700">
             <span className="font-semibold">Observaciones: </span>
             <span className="border-b border-gray-400 inline-block w-full md:w-auto md:min-w-[380px] pb-0.5 md:ml-1 align-bottom">
-              {c.observaciones ?? ""}
+              El estudiante ha mostrado un desempeño notable durante todo el período.
             </span>
           </p>
         </div>
 
-        {/* Resumen */}
         <div className="px-4 md:px-8 py-3 border-t border-gray-200 flex flex-wrap gap-4 md:gap-6 text-[10px] md:text-[11px]">
           <p>
             <span className="font-semibold">Valor numérico de la actividad {tallerCat}: </span>
@@ -330,13 +319,13 @@ export default async function ConstanciaPage({ params }: { params: Promise<{ id:
           </p>
         </div>
 
-        {/* Fecha y firmas hoja 2 - DINÁMICO */}
         <div className="px-4 md:px-8 pt-1 pb-2">
           <p className="text-[10px] md:text-[11px] text-gray-700">
             Lugar y fecha: Matehuala S.L.P. a los <strong>{dia}</strong> días del mes de{" "}
             <strong>{mes}</strong> de <strong>{anio}</strong>.
           </p>
         </div>
+
         <div className="px-4 md:px-10 pb-8">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-10 mt-6 md:mt-8">
             <div className="text-center">
@@ -368,11 +357,10 @@ export default async function ConstanciaPage({ params }: { params: Promise<{ id:
           </div>
         </div>
 
-        {/* Pie de página */}
         <footer className="bg-[#003087] px-8 py-2 text-center">
           <p className="text-[10px] text-white/70">
             Carretera 57 Km 5, Matehuala, S.L.P. • (488) 882-1314 • matehuala.tecnm.mx •
-            Folio: {c.folio ?? "PENDIENTE"} • Verificado digitalmente — TallerTec
+            Folio: {folio} • Verificado digitalmente — TallerTec
           </p>
         </footer>
       </article>

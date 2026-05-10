@@ -1,5 +1,5 @@
 import { createAdminClient } from "@/lib/supabase/admin";
-import { Award, CheckCircle2, XCircle, Clock, FileText, AlertCircle, ExternalLink, ClipboardCheck, ArrowLeft, Search, Filter } from "lucide-react";
+import { Award, CheckCircle2, XCircle, Clock, FileText, AlertCircle, ExternalLink, ClipboardCheck, ArrowLeft, Search, Filter, Settings } from "lucide-react";
 import Link from "next/link";
 import { aprobarConstancia, rechazarConstancia, marcarConstanciaEntregada } from "@/app/actions/constancias";
 
@@ -99,14 +99,22 @@ export default async function AdminConstanciasPage({
 
   return (
     <main className="container mx-auto p-4 md:p-8 space-y-6 animate-fade-in">
-      <div>
-        <Link href="/admin" className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors mb-4">
-          <ArrowLeft className="w-4 h-4" /> Volver al panel
+      <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-4">
+        <div>
+          <Link href="/admin" className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors mb-4">
+            <ArrowLeft className="w-4 h-4" /> Volver al panel
+          </Link>
+          <h1 className="text-2xl md:text-3xl font-extrabold tracking-tight">Gestión de Constancias</h1>
+          <p className="text-muted-foreground mt-1">
+            Busca, filtra y gestiona las constancias del sistema.
+          </p>
+        </div>
+        <Link
+          href="/admin/constancias/configuracion"
+          className="shrink-0 flex items-center gap-2 py-2.5 px-5 rounded-xl text-sm font-semibold bg-white/5 hover:bg-white/10 transition-all border border-border/50 hover:border-primary/30 hover:text-primary"
+        >
+          <Settings className="w-4 h-4" /> Configurar Formato
         </Link>
-        <h1 className="text-2xl md:text-3xl font-extrabold tracking-tight">Gestión de Constancias</h1>
-        <p className="text-muted-foreground mt-1">
-          Busca, filtra y gestiona las constancias del sistema.
-        </p>
       </div>
 
       {/* Estadísticas rápidas */}
