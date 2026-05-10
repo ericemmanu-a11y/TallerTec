@@ -3,10 +3,24 @@
 import { createAdminClient } from "@/lib/supabase/admin";
 import { getAuthUser } from "@/lib/auth/get-user-role";
 import { revalidatePath } from "next/cache";
-import { CONFIG_DEFAULTS, type ConfiguracionConstancia } from "@/lib/constancias-config";
+import { CONFIG_DEFAULTS } from "@/lib/constancias-config";
 
-// Re-exportar para conveniencia (solo tipos, no objetos)
-export type { ConfiguracionConstancia };
+// Tipo local para evitar problemas de bundling con "use server"
+interface ConfiguracionConstancia {
+  id: string;
+  periodo_id: string;
+  destinatario_nombre: string;
+  destinatario_puesto: string;
+  firmante1_nombre: string;
+  firmante1_puesto: string;
+  firmante1_firma_url: string | null;
+  firmante2_nombre: string;
+  firmante2_puesto: string;
+  firmante2_firma_url: string | null;
+  valor_curricular: string;
+  created_at: string;
+  updated_at: string;
+}
 
 export async function obtenerConfiguracion(periodoId: string): Promise<ConfiguracionConstancia | null> {
   let adminClient;
