@@ -1,4 +1,4 @@
-import { createClient } from "@/lib/supabase/server";
+import { createAdminClient } from "@/lib/supabase/admin";
 import { Users, Download, CheckCircle2, Clock, Search, ArrowLeft } from "lucide-react";
 import Link from "next/link";
 
@@ -10,9 +10,22 @@ export default async function AlumnosPage({
   searchParams: Promise<{ q?: string; estado?: string }>;
 }) {
   const { q, estado } = await searchParams;
-  const supabase = await createClient();
 
-  let query = supabase
+  let adminClient;
+  try {
+    adminClient = createAdminClient();
+  } catch {
+    return (
+      <div className="flex items-center justify-center min-h-[50vh]">
+        <div className="text-center">
+          <h1 className="text-2xl font-bold mb-2">Error de Configuración</h1>
+          <p className="text-muted-foreground">El sistema no está configurado correctamente.</p>
+        </div>
+      </div>
+    );
+  }
+
+  let query = adminClient
     .from("inscripciones")
     .select("id, horas_acumuladas, estado, talleres(nombre, categoria), usuarios(nombre_completo, numero_control, carrera, semestre, email)")
     .in("estado", ["ACTIVA", "COMPLETADA"])

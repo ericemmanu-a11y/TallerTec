@@ -1,5 +1,5 @@
-import { createClient } from "@/lib/supabase/server";
-import { Award, CheckCircle2, XCircle, Clock, FileText, AlertCircle, ExternalLink, ClipboardCheck, ArrowLeft } from "lucide-react";
+import { createAdminClient } from "@/lib/supabase/admin";
+import { Award, CheckCircle2, XCircle, Clock, FileText, AlertCircle, ExternalLink, ClipboardCheck, ArrowLeft, Search, Filter } from "lucide-react";
 import Link from "next/link";
 import { aprobarConstancia, rechazarConstancia, marcarConstanciaEntregada } from "@/app/actions/constancias";
 
@@ -22,30 +22,172 @@ const NIVEL_LABEL: Record<string, string> = {
   BUENO: "Bueno", NOTABLE: "Notable", EXCELENTE: "Excelente",
 };
 
-export default async function AdminConstanciasPage() {
-  const supabase = await createClient();
+export default async function AdminConstanciasPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ q?: string; estado?: string; periodo?: string }>;
+}) {
+  const { q, estado, periodo } = await searchParams;
 
-  const { data: constancias } = await supabase
+  let adminClient;
+  try {
+    adminClient = createAdminClient();
+  } catch {
+    return (
+      <div className="flex items-center justify-center min-h-[50vh]">
+        <div className="text-center">
+          <h1 className="text-2xl font-bold mb-2">Error de Configuración</h1>
+          <p className="text-muted-foreground">El sistema no está configurado correctamente.</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Obtener períodos para el filtro
+  const { data: periodos } = await adminClient
+    .from("periodos")
+    .select("id, nombre")
+    .order("fecha_inicio", { ascending: false });
+
+  // Obtener constancias
+  const { data: constancias } = await adminClient
     .from("constancias")
-    .select("*, usuarios(nombre_completo, numero_control, carrera, email), periodos(nombre), talleres(nombre, categoria)")
+    .select("*, usuarios(nombre_completo, numero_control, carrera, email), periodos(id, nombre), talleres(nombre, categoria)")
     .order("created_at", { ascending: false });
 
-  const pendientes = constancias?.filter((c) => c.estado === "PENDIENTE") ?? [];
-  const resto      = constancias?.filter((c) => c.estado !== "PENDIENTE") ?? [];
+  // Aplicar filtros
+  let filtered = constancias ?? [];
+
+  // Filtrar por búsqueda (nombre o número de control)
+  if (q) {
+    const searchTerm = q.toLowerCase();
+    filtered = filtered.filter((c) => {
+      const alumno = c.usuarios as unknown as { nombre_completo: string; numero_control: string | null } | null;
+      const folio = c.folio?.toLowerCase() ?? "";
+      return (
+        alumno?.nombre_completo.toLowerCase().includes(searchTerm) ||
+        alumno?.numero_control?.toLowerCase().includes(searchTerm) ||
+        folio.includes(searchTerm)
+      );
+    });
+  }
+
+  // Filtrar por estado
+  if (estado && estado !== "todos") {
+    filtered = filtered.filter((c) => c.estado === estado.toUpperCase());
+  }
+
+  // Filtrar por período
+  if (periodo && periodo !== "todos") {
+    filtered = filtered.filter((c) => {
+      const per = c.periodos as unknown as { id: string } | null;
+      return per?.id === periodo;
+    });
+  }
+
+  // Separar pendientes del resto para mostrar primero
+  const pendientes = filtered.filter((c) => c.estado === "PENDIENTE");
+  const resto = filtered.filter((c) => c.estado !== "PENDIENTE");
+
+  // Estadísticas
+  const stats = {
+    total: constancias?.length ?? 0,
+    pendientes: constancias?.filter((c) => c.estado === "PENDIENTE").length ?? 0,
+    aprobadas: constancias?.filter((c) => c.estado === "APROBADA").length ?? 0,
+    entregadas: constancias?.filter((c) => c.estado === "ENTREGADA").length ?? 0,
+  };
 
   return (
-    <main className="container mx-auto p-4 md:p-8 space-y-8 animate-fade-in">
+    <main className="container mx-auto p-4 md:p-8 space-y-6 animate-fade-in">
       <div>
         <Link href="/admin" className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors mb-4">
           <ArrowLeft className="w-4 h-4" /> Volver al panel
         </Link>
-        <h1 className="text-3xl font-extrabold tracking-tight">Gestión de Constancias</h1>
+        <h1 className="text-2xl md:text-3xl font-extrabold tracking-tight">Gestión de Constancias</h1>
         <p className="text-muted-foreground mt-1">
-          Aprueba solicitudes una vez que el encargado haya completado la evaluación del estudiante.
+          Busca, filtra y gestiona las constancias del sistema.
         </p>
       </div>
 
-      {/* ── Solicitudes pendientes ── */}
+      {/* Estadísticas rápidas */}
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+        <div className="glass-card p-4 rounded-xl text-center">
+          <p className="text-2xl font-bold text-primary">{stats.total}</p>
+          <p className="text-xs text-muted-foreground">Total</p>
+        </div>
+        <div className="glass-card p-4 rounded-xl text-center">
+          <p className="text-2xl font-bold text-yellow-500">{stats.pendientes}</p>
+          <p className="text-xs text-muted-foreground">Pendientes</p>
+        </div>
+        <div className="glass-card p-4 rounded-xl text-center">
+          <p className="text-2xl font-bold text-green-500">{stats.aprobadas}</p>
+          <p className="text-xs text-muted-foreground">Aprobadas</p>
+        </div>
+        <div className="glass-card p-4 rounded-xl text-center">
+          <p className="text-2xl font-bold text-purple-500">{stats.entregadas}</p>
+          <p className="text-xs text-muted-foreground">Entregadas</p>
+        </div>
+      </div>
+
+      {/* Barra de búsqueda y filtros */}
+      <div className="glass-card p-4 rounded-2xl">
+        <form className="flex flex-col md:flex-row gap-3">
+          <div className="relative flex-1">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+            <input
+              type="text"
+              name="q"
+              defaultValue={q}
+              className="glass-input w-full pl-10 pr-4 py-2.5 rounded-xl text-sm"
+              placeholder="Buscar por nombre, no. control o folio..."
+            />
+          </div>
+          <div className="flex gap-3">
+            <select
+              name="estado"
+              defaultValue={estado ?? "todos"}
+              className="glass-input px-4 py-2.5 rounded-xl text-sm min-w-[140px]"
+            >
+              <option value="todos">Todos los estados</option>
+              <option value="pendiente">Pendientes</option>
+              <option value="aprobada">Aprobadas</option>
+              <option value="rechazada">Rechazadas</option>
+              <option value="entregada">Entregadas</option>
+            </select>
+            <select
+              name="periodo"
+              defaultValue={periodo ?? "todos"}
+              className="glass-input px-4 py-2.5 rounded-xl text-sm min-w-[180px]"
+            >
+              <option value="todos">Todos los períodos</option>
+              {periodos?.map((p) => (
+                <option key={p.id} value={p.id}>{p.nombre}</option>
+              ))}
+            </select>
+            <button
+              type="submit"
+              className="flex items-center gap-2 py-2.5 px-5 rounded-xl text-sm font-semibold bg-primary/20 text-primary hover:bg-primary/30 transition-colors"
+            >
+              <Filter className="w-4 h-4" /> Filtrar
+            </button>
+          </div>
+        </form>
+        {(q || estado || periodo) && (
+          <div className="mt-3 flex items-center gap-2">
+            <span className="text-xs text-muted-foreground">
+              {filtered.length} resultado{filtered.length !== 1 ? "s" : ""}
+            </span>
+            <Link
+              href="/admin/constancias"
+              className="text-xs text-primary hover:underline"
+            >
+              Limpiar filtros
+            </Link>
+          </div>
+        )}
+      </div>
+
+      {/* Solicitudes pendientes */}
       {pendientes.length > 0 && (
         <section>
           <h2 className="text-lg font-bold mb-4 flex items-center gap-2">
@@ -53,15 +195,15 @@ export default async function AdminConstanciasPage() {
             Solicitudes Pendientes
             <span className="bg-yellow-500/20 text-yellow-500 px-2 py-0.5 rounded-full text-xs font-bold">{pendientes.length}</span>
           </h2>
-          <div className="glass-card rounded-3xl overflow-hidden divide-y divide-border/50">
+          <div className="glass-card rounded-2xl overflow-hidden divide-y divide-border/50">
             {pendientes.map((c) => {
               const alumno  = c.usuarios as unknown as { nombre_completo: string; numero_control: string | null; carrera: string | null; email: string } | null;
-              const periodo = c.periodos as unknown as { nombre: string } | null;
+              const periodoData = c.periodos as unknown as { nombre: string } | null;
               const taller  = c.talleres as unknown as { nombre: string; categoria: string } | null;
               const evaluado = Boolean(c.evaluado_en);
 
               return (
-                <div key={c.id} className="p-6 flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+                <div key={c.id} className="p-4 md:p-6 flex flex-col lg:flex-row lg:items-center justify-between gap-4">
                   <div className="flex items-start gap-4">
                     <div className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 ${evaluado ? "bg-green-500/10 text-green-500" : "bg-yellow-500/10 text-yellow-500"}`}>
                       <Award className="w-5 h-5" />
@@ -72,11 +214,10 @@ export default async function AdminConstanciasPage() {
                         {alumno?.numero_control} • {alumno?.carrera}
                       </p>
                       <p className="text-xs text-muted-foreground mt-1">
-                        {c.horas_totales} hrs • {periodo?.nombre}
+                        {c.horas_totales} hrs • {periodoData?.nombre}
                         {taller && <span> • <span className={`font-semibold ${taller.categoria === "DEPORTIVO" ? "text-primary" : "text-accent"}`}>{taller.nombre}</span></span>}
                         {" "}• Solicitado: {new Date(c.created_at).toLocaleDateString("es-MX")}
                       </p>
-                      {/* Evaluation badge */}
                       {evaluado ? (
                         <p className="text-xs mt-1.5 flex items-center gap-1.5">
                           <ClipboardCheck className="w-3.5 h-3.5 text-green-500" />
@@ -108,13 +249,13 @@ export default async function AdminConstanciasPage() {
                         className={`px-4 py-2 rounded-xl text-sm font-bold transition-colors ${evaluado ? "bg-green-500/20 text-green-500 hover:bg-green-500/30" : "bg-white/5 text-muted-foreground cursor-not-allowed opacity-60"}`}
                         disabled={!evaluado}
                         title={!evaluado ? "El encargado debe evaluar primero" : undefined}>
-                        ✓ Aprobar
+                        Aprobar
                       </button>
                     </form>
                     <form action={async () => { "use server"; await rechazarConstancia(c.id, "Solicitud no cumple los requisitos."); }}>
                       <button type="submit"
                         className="px-4 py-2 bg-red-500/20 text-red-500 hover:bg-red-500/30 rounded-xl text-sm font-bold transition-colors">
-                        ✗ Rechazar
+                        Rechazar
                       </button>
                     </form>
                   </div>
@@ -125,50 +266,52 @@ export default async function AdminConstanciasPage() {
         </section>
       )}
 
-      {pendientes.length === 0 && (
-        <div className="glass-card p-10 rounded-3xl text-center">
-          <CheckCircle2 className="w-12 h-12 text-green-500/30 mx-auto mb-3" />
-          <p className="text-muted-foreground font-medium">No hay solicitudes pendientes.</p>
+      {filtered.length === 0 && (
+        <div className="glass-card p-10 rounded-2xl text-center">
+          <Search className="w-12 h-12 text-muted-foreground/30 mx-auto mb-3" />
+          <p className="text-muted-foreground font-medium">No se encontraron constancias con los filtros aplicados.</p>
         </div>
       )}
 
-      {/* ── Historial ── */}
-      <section>
-        <h2 className="text-lg font-bold mb-4">Historial</h2>
-        {resto.length > 0 ? (
-          <div className="glass-card rounded-3xl overflow-hidden">
+      {/* Historial / Resultados de búsqueda */}
+      {resto.length > 0 && (
+        <section>
+          <h2 className="text-lg font-bold mb-4">
+            {q || estado || periodo ? "Resultados" : "Historial"}
+          </h2>
+          <div className="glass-card rounded-2xl overflow-hidden">
             <div className="overflow-x-auto">
               <table className="w-full text-sm text-left">
                 <thead className="text-xs text-muted-foreground uppercase bg-white/5">
                   <tr>
-                    <th className="px-5 py-4 font-medium">Alumno</th>
-                    <th className="px-5 py-4 font-medium">Período / Taller</th>
-                    <th className="px-5 py-4 font-medium text-center">Horas</th>
-                    <th className="px-5 py-4 font-medium">Nivel</th>
-                    <th className="px-5 py-4 font-medium">Folio</th>
-                    <th className="px-5 py-4 font-medium text-center">Estado</th>
-                    <th className="px-5 py-4 font-medium text-center">Acción</th>
+                    <th className="px-4 md:px-5 py-4 font-medium">Alumno</th>
+                    <th className="px-4 md:px-5 py-4 font-medium">Período / Taller</th>
+                    <th className="px-4 md:px-5 py-4 font-medium text-center">Horas</th>
+                    <th className="px-4 md:px-5 py-4 font-medium">Nivel</th>
+                    <th className="px-4 md:px-5 py-4 font-medium">Folio</th>
+                    <th className="px-4 md:px-5 py-4 font-medium text-center">Estado</th>
+                    <th className="px-4 md:px-5 py-4 font-medium text-center">Acción</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-border/50">
                   {resto.map((c) => {
                     const alumno  = c.usuarios as unknown as { nombre_completo: string; numero_control: string | null } | null;
-                    const periodo = c.periodos as unknown as { nombre: string } | null;
+                    const periodoData = c.periodos as unknown as { nombre: string } | null;
                     const taller  = c.talleres as unknown as { nombre: string } | null;
                     const config  = ESTADO_CONFIG[c.estado as keyof typeof ESTADO_CONFIG];
                     const Icon    = config.icon;
                     return (
                       <tr key={c.id} className="hover:bg-white/5 transition-colors">
-                        <td className="px-5 py-4">
+                        <td className="px-4 md:px-5 py-4">
                           <p className="font-semibold">{alumno?.nombre_completo}</p>
                           <p className="text-xs text-muted-foreground">{alumno?.numero_control}</p>
                         </td>
-                        <td className="px-5 py-4 text-sm">
-                          <p className="text-muted-foreground">{periodo?.nombre}</p>
+                        <td className="px-4 md:px-5 py-4 text-sm">
+                          <p className="text-muted-foreground">{periodoData?.nombre}</p>
                           {taller && <p className="text-xs font-medium text-primary/70">{taller.nombre}</p>}
                         </td>
-                        <td className="px-5 py-4 text-center font-bold text-primary">{c.horas_totales}</td>
-                        <td className="px-5 py-4">
+                        <td className="px-4 md:px-5 py-4 text-center font-bold text-primary">{c.horas_totales}</td>
+                        <td className="px-4 md:px-5 py-4">
                           {c.nivel_desempeno ? (
                             <span className={`text-xs font-bold ${NIVEL_COLOR[c.nivel_desempeno] ?? "text-muted-foreground"}`}>
                               {NIVEL_LABEL[c.nivel_desempeno]}
@@ -177,13 +320,13 @@ export default async function AdminConstanciasPage() {
                             <span className="text-xs text-muted-foreground/50">—</span>
                           )}
                         </td>
-                        <td className="px-5 py-4 font-mono text-xs text-muted-foreground">{c.folio ?? "—"}</td>
-                        <td className="px-5 py-4 text-center">
+                        <td className="px-4 md:px-5 py-4 font-mono text-xs text-muted-foreground">{c.folio ?? "—"}</td>
+                        <td className="px-4 md:px-5 py-4 text-center">
                           <span className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-bold border ${config.color}`}>
                             <Icon className="w-3 h-3" /> {config.label}
                           </span>
                         </td>
-                        <td className="px-5 py-4 text-center">
+                        <td className="px-4 md:px-5 py-4 text-center">
                           <div className="flex flex-col items-center gap-1.5">
                             <Link href={`/constancia/${c.id}`}
                               className="inline-flex items-center gap-1 text-xs text-primary hover:underline font-medium">
@@ -205,13 +348,8 @@ export default async function AdminConstanciasPage() {
               </table>
             </div>
           </div>
-        ) : (
-          <div className="glass-card p-10 rounded-3xl text-center">
-            <AlertCircle className="w-10 h-10 text-muted-foreground/30 mx-auto mb-3" />
-            <p className="text-muted-foreground">No hay constancias procesadas aún.</p>
-          </div>
-        )}
-      </section>
+        </section>
+      )}
     </main>
   );
 }
