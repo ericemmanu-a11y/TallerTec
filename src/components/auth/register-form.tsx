@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
-import { UserPlus, Mail, Lock, User, Loader2, ArrowRight, Hash, GraduationCap } from "lucide-react";
+import { UserPlus, Mail, Lock, User, Loader2, ArrowRight, Hash, GraduationCap, ArrowLeft, Home } from "lucide-react";
 import Link from "next/link";
 
 const CARRERAS = [
@@ -133,16 +133,27 @@ export default function RegisterForm() {
   }
 
   return (
-    <div className="w-full max-w-lg mx-auto glass-card rounded-2xl p-8 animate-slide-up">
-      <div className="flex flex-col items-center mb-8">
-        <div className="w-16 h-16 bg-accent/20 rounded-2xl flex items-center justify-center mb-4 border border-accent/30">
-          <UserPlus className="w-8 h-8 text-accent" />
+    <div className="w-full max-w-lg mx-auto">
+      {/* Enlace para volver al inicio */}
+      <Link
+        href="/"
+        className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors mb-4"
+      >
+        <ArrowLeft className="w-4 h-4" />
+        <Home className="w-4 h-4" />
+        Volver al inicio
+      </Link>
+
+      <div className="glass-card rounded-2xl p-8 animate-slide-up">
+        <div className="flex flex-col items-center mb-8">
+          <div className="w-16 h-16 bg-accent/20 rounded-2xl flex items-center justify-center mb-4 border border-accent/30">
+            <UserPlus className="w-8 h-8 text-accent" />
+          </div>
+          <h2 className="text-2xl font-bold text-center">Crea tu cuenta</h2>
+          <p className="text-muted-foreground mt-1 text-center text-sm">
+            Estudiantes del TecNM Campus Matehuala
+          </p>
         </div>
-        <h2 className="text-2xl font-bold text-center">Crea tu cuenta</h2>
-        <p className="text-muted-foreground mt-1 text-center text-sm">
-          Estudiantes del TecNM Campus Matehuala
-        </p>
-      </div>
 
       <form onSubmit={handleRegister} className="space-y-4">
         {/* Nombre */}
@@ -234,12 +245,13 @@ export default function RegisterForm() {
         </button>
       </form>
 
-      <p className="mt-6 text-center text-sm text-muted-foreground">
-        ¿Ya tienes cuenta?{" "}
-        <Link href="/login" className="font-medium text-accent hover:text-accent/80 transition-colors">
-          Inicia Sesión
-        </Link>
-      </p>
+        <p className="mt-6 text-center text-sm text-muted-foreground">
+          ¿Ya tienes cuenta?{" "}
+          <Link href="/login" className="font-medium text-accent hover:text-accent/80 transition-colors">
+            Inicia Sesión
+          </Link>
+        </p>
+      </div>
     </div>
   );
 }

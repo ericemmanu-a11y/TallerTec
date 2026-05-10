@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
-import { LogIn, Mail, Lock, Loader2, ArrowRight } from "lucide-react";
+import { LogIn, Mail, Lock, Loader2, ArrowRight, ArrowLeft, Home } from "lucide-react";
 import Link from "next/link";
 
 export default function LoginForm() {
@@ -45,8 +45,19 @@ export default function LoginForm() {
   };
 
   return (
-    <div className="w-full max-w-md mx-auto glass-card rounded-2xl p-8 animate-slide-up">
-      <div className="flex flex-col items-center mb-8">
+    <div className="w-full max-w-md mx-auto">
+      {/* Enlace para volver al inicio */}
+      <Link
+        href="/"
+        className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors mb-4"
+      >
+        <ArrowLeft className="w-4 h-4" />
+        <Home className="w-4 h-4" />
+        Volver al inicio
+      </Link>
+
+      <div className="glass-card rounded-2xl p-8 animate-slide-up">
+        <div className="flex flex-col items-center mb-8">
         <div className="w-16 h-16 bg-primary/20 rounded-2xl flex items-center justify-center mb-4 border border-primary/30">
           <LogIn className="w-8 h-8 text-primary" />
         </div>
@@ -127,14 +138,15 @@ export default function LoginForm() {
         </button>
       </form>
 
-      <div className="mt-8 text-center text-sm text-muted-foreground">
-        ¿No tienes cuenta?{" "}
-        <Link
-          href="/register"
-          className="font-medium text-primary hover:text-primary/80 transition-colors"
-        >
-          Regístrate aquí
-        </Link>
+        <div className="mt-8 text-center text-sm text-muted-foreground">
+          ¿No tienes cuenta?{" "}
+          <Link
+            href="/register"
+            className="font-medium text-primary hover:text-primary/80 transition-colors"
+          >
+            Regístrate aquí
+          </Link>
+        </div>
       </div>
     </div>
   );

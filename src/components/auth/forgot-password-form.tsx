@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { createClient } from "@/lib/supabase/client";
-import { Mail, Loader2, ArrowRight, ArrowLeft, CheckCircle2 } from "lucide-react";
+import { Mail, Loader2, ArrowRight, ArrowLeft, CheckCircle2, Home } from "lucide-react";
 import Link from "next/link";
 
 export default function ForgotPasswordForm() {
@@ -51,16 +51,27 @@ export default function ForgotPasswordForm() {
   }
 
   return (
-    <div className="w-full max-w-md mx-auto glass-card rounded-2xl p-8 animate-slide-up">
-      <div className="flex flex-col items-center mb-8">
-        <div className="w-16 h-16 bg-primary/20 rounded-2xl flex items-center justify-center mb-4 border border-primary/30">
-          <Mail className="w-8 h-8 text-primary" />
+    <div className="w-full max-w-md mx-auto">
+      {/* Enlace para volver al inicio */}
+      <Link
+        href="/"
+        className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors mb-4"
+      >
+        <ArrowLeft className="w-4 h-4" />
+        <Home className="w-4 h-4" />
+        Volver al inicio
+      </Link>
+
+      <div className="glass-card rounded-2xl p-8 animate-slide-up">
+        <div className="flex flex-col items-center mb-8">
+          <div className="w-16 h-16 bg-primary/20 rounded-2xl flex items-center justify-center mb-4 border border-primary/30">
+            <Mail className="w-8 h-8 text-primary" />
+          </div>
+          <h2 className="text-2xl font-bold text-center">Recuperar Contraseña</h2>
+          <p className="text-muted-foreground mt-2 text-center text-sm">
+            Te enviaremos un enlace para restablecer tu acceso.
+          </p>
         </div>
-        <h2 className="text-2xl font-bold text-center">Recuperar Contraseña</h2>
-        <p className="text-muted-foreground mt-2 text-center text-sm">
-          Te enviaremos un enlace para restablecer tu acceso.
-        </p>
-      </div>
 
       <form onSubmit={handleSubmit} className="space-y-5">
         <div className="space-y-1">
@@ -102,11 +113,12 @@ export default function ForgotPasswordForm() {
         </button>
       </form>
 
-      <div className="mt-6 text-center">
-        <Link href="/login"
-          className="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors">
-          <ArrowLeft className="w-4 h-4" /> Volver al inicio de sesión
-        </Link>
+        <div className="mt-6 text-center">
+          <Link href="/login"
+            className="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors">
+            <ArrowLeft className="w-4 h-4" /> Volver al inicio de sesión
+          </Link>
+        </div>
       </div>
     </div>
   );
