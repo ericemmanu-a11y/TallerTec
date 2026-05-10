@@ -1,6 +1,6 @@
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
-import { QrCode, Users, Clock, BarChart2, ArrowRight, BookOpen } from "lucide-react";
+import { QrCode, Users, Clock, BarChart2, ArrowRight, BookOpen, Settings } from "lucide-react";
 import Link from "next/link";
 
 export const metadata = { title: "Mis Talleres | Encargado TallerTec" };
@@ -121,6 +121,12 @@ export default async function EncargadoPage() {
                   <Link href={`/encargado/alumnos?taller=${taller.id}`}
                     className="flex-1 flex items-center justify-center gap-2 py-3 px-4 rounded-xl text-sm font-semibold bg-white/5 hover:bg-white/10 transition-colors border border-border/50">
                     <Users className="w-4 h-4" /> Ver Lista
+                  </Link>
+                </div>
+                <div className="mt-3 relative z-10">
+                  <Link href={`/encargado/editar/${taller.id}`}
+                    className="w-full flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl text-sm font-medium text-muted-foreground hover:text-foreground bg-white/5 hover:bg-white/10 transition-colors border border-border/30">
+                    <Settings className="w-4 h-4" /> Editar Taller
                   </Link>
                 </div>
               </div>

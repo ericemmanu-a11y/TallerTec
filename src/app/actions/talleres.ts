@@ -192,3 +192,59 @@ export async function toggleTallerActivo(tallerId: string, activo: boolean) {
   revalidatePath("/admin/talleres");
   return { success: true };
 }
+
+export async function editarTallerEncargado(tallerId: string, formData: FormData) {
+  const authUser = await getAuthUser();
+  if (!authUser || authUser.rol !== "RESPONSABLE_TALLER") {
+    return { error: "No autorizado." };
+  }
+
+  let adminClient;
+  try {
+    adminClient = createAdminClient();
+  } catch (e) {
+    return { error: "Configuración incompleta." };
+  }
+
+  // Verificar que el encargado sea el responsable del taller
+  const { data: taller } = await adminClient
+    .from("talleres")
+    .select("responsable_id, cupo_maximo, cupo_disponible")
+    .eq("id", tallerId)
+    .single();
+
+  if (!taller) {
+    return { error: "Taller no encontrado." };
+  }
+
+  if (taller.responsable_id !== authUser.id) {
+    return { error: "No tienes permiso para editar este taller." };
+  }
+
+  // Validar cupo_maximo
+  const nuevoCupoMaximo = parseInt(formData.get("cupo_maximo") as string);
+  const inscritosActuales = taller.cupo_maximo - taller.cupo_disponible;
+
+  if (nuevoCupoMaximo < inscritosActuales) {
+    return { error: `El cupo máximo no puede ser menor a los inscritos actuales (${inscritosActuales}).` };
+  }
+
+  // Calcular nuevo cupo disponible
+  const nuevoCupoDisponible = nuevoCupoMaximo - inscritosActuales;
+
+  const { error } = await adminClient
+    .from("talleres")
+    .update({
+      descripcion: formData.get("descripcion") as string,
+      horario_texto: formData.get("horario_texto") as string,
+      ubicacion: formData.get("ubicacion") as string,
+      cupo_maximo: nuevoCupoMaximo,
+      cupo_disponible: nuevoCupoDisponible,
+    })
+    .eq("id", tallerId);
+
+  if (error) return { error: "Error al actualizar el taller." };
+  revalidatePath("/encargado");
+  revalidatePath("/encargado/editar/" + tallerId);
+  return { success: true };
+}

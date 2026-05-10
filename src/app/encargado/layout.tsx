@@ -1,5 +1,5 @@
 import { getAuthUser } from "@/lib/auth/get-user-role";
-import { LogOut, QrCode, ClipboardList, KeyRound, Users } from "lucide-react";
+import { LogOut, QrCode, ClipboardList, KeyRound, Users, CalendarDays } from "lucide-react";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 
@@ -42,6 +42,10 @@ export default async function EncargadoLayout({
           <Link href="/encargado/alumnos" className="flex items-center gap-3 px-3 py-2 rounded-xl hover:bg-white/5 transition-colors text-muted-foreground hover:text-foreground">
             <Users className="w-5 h-5" />
             <span className="font-medium whitespace-nowrap">Mis Alumnos</span>
+          </Link>
+          <Link href="/encargado/seguimiento" className="flex items-center gap-3 px-3 py-2 rounded-xl hover:bg-white/5 transition-colors text-muted-foreground hover:text-foreground">
+            <CalendarDays className="w-5 h-5" />
+            <span className="font-medium whitespace-nowrap">Seguimiento</span>
           </Link>
         </nav>
 

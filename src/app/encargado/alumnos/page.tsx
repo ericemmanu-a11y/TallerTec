@@ -1,6 +1,6 @@
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
-import { Users, CheckCircle2, Clock, ArrowLeft, AlertCircle, BookOpen, ClipboardCheck } from "lucide-react";
+import { Users, CheckCircle2, Clock, ArrowLeft, AlertCircle, BookOpen, ClipboardCheck, CalendarDays } from "lucide-react";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 
@@ -138,12 +138,19 @@ export default async function AlumnosEncargadoPage({
       </div>
 
       <div className="glass-card rounded-3xl overflow-hidden">
-        <div className="p-5 border-b border-border/50 flex items-center gap-2">
+        <div className="p-5 border-b border-border/50 flex items-center gap-2 flex-wrap">
           <Users className="w-5 h-5 text-primary" />
           <h3 className="font-bold">Lista de Inscritos</h3>
-          <span className="ml-auto bg-white/10 text-xs px-2 py-0.5 rounded-full font-medium">
+          <span className="bg-white/10 text-xs px-2 py-0.5 rounded-full font-medium">
             Hoy: {presentesHoy.size} presentes
           </span>
+          <Link
+            href={`/encargado/seguimiento?taller=${tallerId}`}
+            className="ml-auto flex items-center gap-2 px-3 py-1.5 text-xs font-medium bg-accent/20 text-accent rounded-lg hover:bg-accent/30 transition-colors"
+          >
+            <CalendarDays className="w-4 h-4" />
+            Ver Seguimiento Semanal
+          </Link>
         </div>
 
         {inscripciones && inscripciones.length > 0 ? (
