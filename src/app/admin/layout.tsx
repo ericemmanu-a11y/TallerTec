@@ -10,12 +10,21 @@ export default async function AdminLayout({ children }: { children: React.ReactN
   if (!user) redirect("/login");
   if (user.rol !== "ADMIN_OFICINA") redirect("/login");
 
-  const { data: pendientes } = await supabase
-    .from("constancias")
-    .select("id", { count: "exact", head: true })
-    .eq("estado", "PENDIENTE");
+  // Obtener conteo de constancias pendientes con manejo de errores
+  let pendientesCount = 0;
+  try {
+    const { count, error } = await supabase
+      .from("constancias")
+      .select("*", { count: "exact", head: true })
+      .eq("estado", "PENDIENTE");
 
-  const pendientesCount = (pendientes as unknown as { count: number } | null)?.count ?? 0;
+    if (!error && count !== null) {
+      pendientesCount = count;
+    }
+  } catch {
+    // Si falla, simplemente no mostramos el badge
+    pendientesCount = 0;
+  }
 
   const navItems = [
     { href: "/admin", label: "Dashboard", icon: LayoutDashboard },
