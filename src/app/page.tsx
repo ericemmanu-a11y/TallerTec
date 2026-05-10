@@ -5,15 +5,15 @@ export default function Home() {
   return (
     <main className="min-h-screen flex flex-col relative overflow-hidden">
       {/* Background Glows */}
-      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-3xl h-[400px] bg-primary/20 blur-[120px] rounded-full pointer-events-none" />
+      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-3xl h-[250px] md:h-[400px] bg-primary/20 blur-[80px] md:blur-[120px] rounded-full pointer-events-none" />
       
       {/* Header */}
-      <header className="w-full max-w-6xl mx-auto p-6 flex items-center justify-between z-10 relative">
+      <header className="w-full max-w-6xl mx-auto p-4 md:p-6 flex items-center justify-between z-10 relative">
         <div className="flex items-center gap-2">
-          <div className="w-10 h-10 bg-primary rounded-xl flex items-center justify-center text-primary-foreground font-bold text-xl">
+          <div className="w-9 h-9 md:w-10 md:h-10 bg-primary rounded-xl flex items-center justify-center text-primary-foreground font-bold text-lg md:text-xl">
             T
           </div>
-          <span className="font-bold text-xl tracking-tight">TallerTec</span>
+          <span className="font-bold text-lg md:text-xl tracking-tight">TallerTec</span>
         </div>
         <nav className="hidden md:flex items-center gap-6">
           <Link href="/sobre-nosotros" className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors">
@@ -33,7 +33,7 @@ export default function Home() {
       </header>
 
       {/* Hero Section */}
-      <div className="flex-1 flex flex-col items-center justify-center p-6 text-center z-10 relative mt-12 mb-24">
+      <div className="flex-1 flex flex-col items-center justify-center p-4 md:p-6 text-center z-10 relative mt-8 md:mt-12 mb-16 md:mb-24">
         <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full glass-card border-primary/20 text-primary text-sm font-medium mb-8 animate-fade-in">
           <span className="relative flex h-2 w-2">
             <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75"></span>
@@ -42,7 +42,7 @@ export default function Home() {
           Sistema Oficial TecNM Campus Matehuala
         </div>
         
-        <h1 className="text-5xl md:text-7xl font-extrabold tracking-tight max-w-4xl mb-6 animate-slide-up" style={{ animationDelay: "0.1s" }}>
+        <h1 className="text-3xl sm:text-5xl md:text-7xl font-extrabold tracking-tight max-w-4xl mb-4 md:mb-6 animate-slide-up" style={{ animationDelay: "0.1s" }}>
           El Deporte Universitario, <br />
           <span className="text-gradient">Digitalizado</span>
         </h1>
@@ -61,44 +61,46 @@ export default function Home() {
           </Link>
         </div>
         
-        <div className="mt-8 flex items-center gap-6 text-sm text-muted-foreground animate-slide-up" style={{ animationDelay: "0.4s" }}>
-          <span>Accesos rápidos:</span>
-          <Link href="/login" className="hover:text-primary transition-colors font-medium">Alumnos</Link>
-          <span className="w-1 h-1 rounded-full bg-border/50" />
-          <Link href="/login" className="hover:text-primary transition-colors font-medium">Encargados</Link>
-          <span className="w-1 h-1 rounded-full bg-border/50" />
-          <Link href="/login" className="hover:text-primary transition-colors font-medium">Administrador</Link>
+        <div className="mt-6 md:mt-8 flex flex-wrap items-center justify-center gap-3 md:gap-6 text-sm text-muted-foreground animate-slide-up" style={{ animationDelay: "0.4s" }}>
+          <span className="w-full md:w-auto text-center mb-2 md:mb-0">Accesos rápidos:</span>
+          <div className="flex items-center gap-3 md:gap-6">
+            <Link href="/login" className="hover:text-primary transition-colors font-medium">Alumnos</Link>
+            <span className="w-1 h-1 rounded-full bg-border/50" />
+            <Link href="/login" className="hover:text-primary transition-colors font-medium">Encargados</Link>
+            <span className="w-1 h-1 rounded-full bg-border/50" />
+            <Link href="/login" className="hover:text-primary transition-colors font-medium">Admin</Link>
+          </div>
         </div>
       </div>
 
       {/* Features Section */}
-      <div className="w-full max-w-6xl mx-auto p-6 grid grid-cols-1 md:grid-cols-3 gap-6 mb-24 relative z-10">
-        <div className="glass-card p-8 rounded-3xl">
-          <div className="w-12 h-12 bg-primary/20 text-primary rounded-2xl flex items-center justify-center mb-6">
-            <Activity className="w-6 h-6" />
+      <div className="w-full max-w-6xl mx-auto p-4 md:p-6 grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6 mb-16 md:mb-24 relative z-10">
+        <div className="glass-card p-6 md:p-8 rounded-2xl md:rounded-3xl">
+          <div className="w-10 h-10 md:w-12 md:h-12 bg-primary/20 text-primary rounded-xl md:rounded-2xl flex items-center justify-center mb-4 md:mb-6">
+            <Activity className="w-5 h-5 md:w-6 md:h-6" />
           </div>
-          <h3 className="text-xl font-bold mb-3">Registro Instantáneo</h3>
-          <p className="text-muted-foreground leading-relaxed">
+          <h3 className="text-lg md:text-xl font-bold mb-2 md:mb-3">Registro Instantáneo</h3>
+          <p className="text-sm md:text-base text-muted-foreground leading-relaxed">
             Olvídate de las filas. Inscríbete a tus talleres favoritos con un par de clics desde cualquier dispositivo.
           </p>
         </div>
 
-        <div className="glass-card p-8 rounded-3xl">
-          <div className="w-12 h-12 bg-accent/20 text-accent rounded-2xl flex items-center justify-center mb-6">
-            <Trophy className="w-6 h-6" />
+        <div className="glass-card p-6 md:p-8 rounded-2xl md:rounded-3xl">
+          <div className="w-10 h-10 md:w-12 md:h-12 bg-accent/20 text-accent rounded-xl md:rounded-2xl flex items-center justify-center mb-4 md:mb-6">
+            <Trophy className="w-5 h-5 md:w-6 md:h-6" />
           </div>
-          <h3 className="text-xl font-bold mb-3">Asistencia con QR</h3>
-          <p className="text-muted-foreground leading-relaxed">
+          <h3 className="text-lg md:text-xl font-bold mb-2 md:mb-3">Asistencia con QR</h3>
+          <p className="text-sm md:text-base text-muted-foreground leading-relaxed">
             Control exacto de tus horas mediante códigos QR únicos. Sin listas de papel ni firmas perdidas.
           </p>
         </div>
 
-        <div className="glass-card p-8 rounded-3xl">
-          <div className="w-12 h-12 bg-purple-500/20 text-purple-400 rounded-2xl flex items-center justify-center mb-6">
-            <Award className="w-6 h-6" />
+        <div className="glass-card p-6 md:p-8 rounded-2xl md:rounded-3xl">
+          <div className="w-10 h-10 md:w-12 md:h-12 bg-purple-500/20 text-purple-400 rounded-xl md:rounded-2xl flex items-center justify-center mb-4 md:mb-6">
+            <Award className="w-5 h-5 md:w-6 md:h-6" />
           </div>
-          <h3 className="text-xl font-bold mb-3">Constancias PDF</h3>
-          <p className="text-muted-foreground leading-relaxed">
+          <h3 className="text-lg md:text-xl font-bold mb-2 md:mb-3">Constancias PDF</h3>
+          <p className="text-sm md:text-base text-muted-foreground leading-relaxed">
             Al cumplir tus 20 horas, solicita y descarga tu constancia oficial directamente desde la plataforma.
           </p>
         </div>

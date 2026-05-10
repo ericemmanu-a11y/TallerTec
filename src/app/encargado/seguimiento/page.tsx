@@ -301,17 +301,17 @@ export default function SeguimientoPage() {
                   {diasSemana.map((dia) => (
                     <th
                       key={dia.fecha}
-                      className={`p-3 text-center min-w-[80px] ${
+                      className={`p-2 md:p-3 text-center min-w-[60px] md:min-w-[80px] ${
                         dia.esHoy ? "bg-accent/10" : ""
                       }`}
                     >
-                      <p className="text-xs text-muted-foreground uppercase">{dia.nombreCorto}</p>
-                      <p className={`text-lg font-bold ${dia.esHoy ? "text-accent" : ""}`}>
+                      <p className="text-[10px] md:text-xs text-muted-foreground uppercase">{dia.nombreCorto}</p>
+                      <p className={`text-base md:text-lg font-bold ${dia.esHoy ? "text-accent" : ""}`}>
                         {dia.numero}
                       </p>
                     </th>
                   ))}
-                  <th className="p-3 text-center min-w-[80px]">
+                  <th className="p-2 md:p-3 text-center min-w-[60px] md:min-w-[80px]">
                     <p className="text-xs text-muted-foreground">TOTAL</p>
                     <p className="text-sm font-semibold">Semana</p>
                   </th>

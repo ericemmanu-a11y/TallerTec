@@ -95,9 +95,9 @@ export default async function AdminPage() {
         </div>
 
         {/* Accesos rápidos */}
-        <div className="glass-card p-6 rounded-3xl">
-          <h3 className="font-bold text-xl mb-6">Acciones Rápidas</h3>
-          <div className="grid grid-cols-2 gap-3">
+        <div className="glass-card p-4 md:p-6 rounded-2xl md:rounded-3xl">
+          <h3 className="font-bold text-lg md:text-xl mb-4 md:mb-6">Acciones Rápidas</h3>
+          <div className="grid grid-cols-2 sm:grid-cols-2 gap-2 md:gap-3">
             {[
               { href: "/admin/talleres", label: "Crear Taller", color: "bg-primary/20 text-primary" },
               { href: "/admin/periodos", label: "Gestionar Períodos", color: "bg-accent/20 text-accent" },

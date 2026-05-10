@@ -98,44 +98,44 @@ export default async function ConstanciaPage({ params }: { params: Promise<{ id:
       <article className="print-page w-full max-w-3xl bg-white text-gray-900 shadow-2xl rounded-2xl overflow-hidden mb-8 print:mb-0 print:shadow-none print:rounded-none">
 
         {/* Encabezado institucional */}
-        <header className="flex items-center gap-4 px-10 py-5 border-b-[3px] border-[#003087]">
-          <div className="w-16 h-16 border-2 border-[#003087] rounded-lg flex flex-col items-center justify-center shrink-0 text-center">
-            <p className="text-[7px] font-black text-[#003087] leading-tight uppercase">TecNM</p>
-            <p className="text-[7px] font-bold text-[#003087] leading-tight">Campus</p>
-            <p className="text-[8px] font-black text-[#003087] leading-tight uppercase">Matehuala</p>
+        <header className="flex flex-col md:flex-row items-center gap-3 md:gap-4 px-4 md:px-10 py-4 md:py-5 border-b-[3px] border-[#003087]">
+          <div className="w-14 h-14 md:w-16 md:h-16 border-2 border-[#003087] rounded-lg flex flex-col items-center justify-center shrink-0 text-center">
+            <p className="text-[6px] md:text-[7px] font-black text-[#003087] leading-tight uppercase">TecNM</p>
+            <p className="text-[6px] md:text-[7px] font-bold text-[#003087] leading-tight">Campus</p>
+            <p className="text-[7px] md:text-[8px] font-black text-[#003087] leading-tight uppercase">Matehuala</p>
           </div>
           <div className="flex-1 text-center">
-            <p className="text-[10px] font-bold text-gray-500 tracking-widest uppercase">Tecnológico Nacional de México</p>
-            <h2 className="text-[17px] font-extrabold text-[#003087] leading-tight mt-0.5">
+            <p className="text-[9px] md:text-[10px] font-bold text-gray-500 tracking-widest uppercase">Tecnológico Nacional de México</p>
+            <h2 className="text-[14px] md:text-[17px] font-extrabold text-[#003087] leading-tight mt-0.5">
               Instituto Tecnológico de Matehuala
             </h2>
-            <p className="text-[11px] text-gray-500 mt-0.5">Subdirección de Planeación y Vinculación</p>
+            <p className="text-[10px] md:text-[11px] text-gray-500 mt-0.5">Subdirección de Planeación y Vinculación</p>
           </div>
-          <div className="w-16 h-16 border-2 border-[#003087] rounded-lg flex flex-col items-center justify-center shrink-0 text-center">
-            <p className="text-[7px] font-bold text-[#003087] leading-tight">Verificado</p>
-            <p className="text-[7px] font-black text-[#003087] leading-tight">TallerTec</p>
-            <p className="text-[7px] font-bold text-[#003087] leading-tight">{c.folio ?? ""}</p>
+          <div className="w-14 h-14 md:w-16 md:h-16 border-2 border-[#003087] rounded-lg flex flex-col items-center justify-center shrink-0 text-center">
+            <p className="text-[6px] md:text-[7px] font-bold text-[#003087] leading-tight">Verificado</p>
+            <p className="text-[6px] md:text-[7px] font-black text-[#003087] leading-tight">TallerTec</p>
+            <p className="text-[6px] md:text-[7px] font-bold text-[#003087] leading-tight">{c.folio ?? ""}</p>
           </div>
         </header>
 
         {/* Título del documento */}
-        <div className="px-10 pt-5 pb-2 text-center">
-          <h1 className="text-[13px] font-extrabold text-[#003087] uppercase tracking-wider leading-snug">
+        <div className="px-4 md:px-10 pt-4 md:pt-5 pb-2 text-center">
+          <h1 className="text-[12px] md:text-[13px] font-extrabold text-[#003087] uppercase tracking-wider leading-snug">
             Constancia de Cumplimiento de Actividad<br/>Cultural, Deportiva y Cívica
           </h1>
         </div>
 
         {/* Destinatario */}
-        <div className="px-10 pt-4 pb-2">
-          <p className="text-[12px] font-bold text-gray-800 uppercase leading-snug">
+        <div className="px-4 md:px-10 pt-4 pb-2">
+          <p className="text-[11px] md:text-[12px] font-bold text-gray-800 uppercase leading-snug">
             Lic. Martha Beatriz Coronado Rosales
           </p>
-          <p className="text-[11px] text-gray-600">Jefa del Departamento de Servicios Escolares</p>
-          <p className="text-[11px] text-gray-500 mt-1 font-semibold">Presente</p>
+          <p className="text-[10px] md:text-[11px] text-gray-600">Jefa del Departamento de Servicios Escolares</p>
+          <p className="text-[10px] md:text-[11px] text-gray-500 mt-1 font-semibold">Presente</p>
         </div>
 
         {/* Cuerpo de la carta */}
-        <div className="px-10 py-4 space-y-4 text-[12px] text-gray-800 leading-relaxed text-justify">
+        <div className="px-4 md:px-10 py-4 space-y-4 text-[11px] md:text-[12px] text-gray-800 leading-relaxed text-justify">
           <p>
             El que suscribe <span className="font-bold">Ing. Mario Mata Ontiveros</span>, por este
             medio se permite hacer de su conocimiento que al estudiante{" "}
@@ -163,20 +163,20 @@ export default async function ConstanciaPage({ params }: { params: Promise<{ id:
           </p>
         </div>
 
-        <p className="px-10 text-right text-[12px] font-bold text-gray-800">ATENTAMENTE</p>
+        <p className="px-4 md:px-10 text-right text-[11px] md:text-[12px] font-bold text-gray-800">ATENTAMENTE</p>
 
         {/* Firmas hoja 1 */}
-        <div className="px-10 pb-10 pt-0">
-          <div className="grid grid-cols-2 gap-10 mt-12">
+        <div className="px-4 md:px-10 pb-10 pt-0">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-10 mt-8 md:mt-12">
             <div className="text-center">
               <p className="text-[10px] text-gray-500 mb-1">Vo. Bo.</p>
-              <div className="border-t border-gray-400 pt-2 mt-10">
+              <div className="border-t border-gray-400 pt-2 mt-6 md:mt-10">
                 <p className="text-[11px] font-bold text-gray-800">Ing. Mario Mata Ontiveros.</p>
                 <p className="text-[10px] text-gray-500">Jefe del Depto. de Actividades Extraescolares</p>
               </div>
             </div>
             <div className="text-center">
-              <div className="border-t border-gray-400 pt-2 mt-[52px]">
+              <div className="border-t border-gray-400 pt-2 mt-6 md:mt-[52px]">
                 <p className="text-[11px] font-bold text-gray-800">Lic. Miguel Ángel Vargas Zapata.</p>
                 <p className="text-[10px] text-gray-500">Jefe de la Oficina de Promoción Deportiva</p>
               </div>
@@ -191,39 +191,39 @@ export default async function ConstanciaPage({ params }: { params: Promise<{ id:
       <article className="print-page w-full max-w-3xl bg-white text-gray-900 shadow-2xl rounded-2xl overflow-hidden print:shadow-none print:rounded-none">
 
         {/* Encabezado institucional */}
-        <header className="flex items-center gap-4 px-10 py-4 border-b-[3px] border-[#003087]">
-          <div className="w-14 h-14 border-2 border-[#003087] rounded-lg flex flex-col items-center justify-center shrink-0 text-center">
-            <p className="text-[7px] font-black text-[#003087] leading-tight uppercase">TecNM</p>
-            <p className="text-[7px] font-bold text-[#003087] leading-tight">Matehuala</p>
+        <header className="flex flex-col md:flex-row items-center gap-3 md:gap-4 px-4 md:px-10 py-3 md:py-4 border-b-[3px] border-[#003087]">
+          <div className="w-12 h-12 md:w-14 md:h-14 border-2 border-[#003087] rounded-lg flex flex-col items-center justify-center shrink-0 text-center">
+            <p className="text-[6px] md:text-[7px] font-black text-[#003087] leading-tight uppercase">TecNM</p>
+            <p className="text-[6px] md:text-[7px] font-bold text-[#003087] leading-tight">Matehuala</p>
           </div>
           <div className="flex-1 text-center">
-            <p className="text-[10px] font-bold text-gray-500 tracking-widest uppercase">Tecnológico Nacional de México</p>
-            <h2 className="text-[15px] font-extrabold text-[#003087] leading-tight mt-0.5">
+            <p className="text-[9px] md:text-[10px] font-bold text-gray-500 tracking-widest uppercase">Tecnológico Nacional de México</p>
+            <h2 className="text-[13px] md:text-[15px] font-extrabold text-[#003087] leading-tight mt-0.5">
               Instituto Tecnológico de Matehuala
             </h2>
-            <p className="text-[10px] text-gray-500">Subdirección de Planeación y Vinculación</p>
-            <p className="text-[10px] text-gray-500">Departamento de Actividades Extraescolares</p>
-            <p className="text-[10px] font-semibold text-gray-600">Oficina de Promoción Cultural, Deportiva y Cívica</p>
+            <p className="text-[9px] md:text-[10px] text-gray-500">Subdirección de Planeación y Vinculación</p>
+            <p className="text-[9px] md:text-[10px] text-gray-500">Departamento de Actividades Extraescolares</p>
+            <p className="text-[9px] md:text-[10px] font-semibold text-gray-600">Oficina de Promoción Cultural, Deportiva y Cívica</p>
           </div>
         </header>
 
         {/* Datos del estudiante */}
-        <div className="px-8 py-3 border-b border-gray-200 grid grid-cols-3 gap-x-4 gap-y-1 text-[11px]">
-          <div className="col-span-2">
+        <div className="px-4 md:px-8 py-3 border-b border-gray-200 grid grid-cols-1 md:grid-cols-3 gap-x-4 gap-y-2 text-[11px]">
+          <div className="md:col-span-2">
             <span className="text-gray-500 font-semibold">Nombre del estudiante: </span>
-            <span className="font-bold border-b border-gray-400 inline-block min-w-[200px] pb-0.5">
+            <span className="font-bold border-b border-gray-400 inline-block w-full md:w-auto md:min-w-[200px] pb-0.5">
               {alumno?.nombre_completo ?? ""}
             </span>
           </div>
           <div>
             <span className="text-gray-500 font-semibold">Actividad: </span>
-            <span className="font-bold border-b border-gray-400 inline-block min-w-[80px] pb-0.5 capitalize">
+            <span className="font-bold border-b border-gray-400 inline-block pb-0.5 capitalize">
               {tallerCat}
             </span>
           </div>
-          <div className="col-span-2">
+          <div className="md:col-span-2">
             <span className="text-gray-500 font-semibold">Periodo de realización: </span>
-            <span className="font-bold border-b border-gray-400 inline-block min-w-[160px] pb-0.5">
+            <span className="font-bold border-b border-gray-400 inline-block w-full md:w-auto md:min-w-[160px] pb-0.5">
               {periodoLabel}
             </span>
           </div>
@@ -234,14 +234,14 @@ export default async function ConstanciaPage({ params }: { params: Promise<{ id:
         </div>
 
         {/* Tabla de criterios */}
-        <div className="px-6 py-4">
-          <table className="w-full text-[11px] border-collapse border border-gray-400">
+        <div className="px-2 md:px-6 py-4 overflow-x-auto">
+          <table className="w-full text-[10px] md:text-[11px] border-collapse border border-gray-400 min-w-[600px]">
             <thead>
               <tr>
-                <th className="border border-gray-400 bg-[#003087] text-white px-2 py-2 w-8 text-center">No.</th>
-                <th className="border border-gray-400 bg-[#003087] text-white px-3 py-2 text-left">Criterios a evaluar</th>
+                <th className="border border-gray-400 bg-[#003087] text-white px-1 md:px-2 py-2 w-8 text-center">No.</th>
+                <th className="border border-gray-400 bg-[#003087] text-white px-2 md:px-3 py-2 text-left">Criterios a evaluar</th>
                 {NIVEL_COLS.map((n) => (
-                  <th key={n} className="border border-gray-400 bg-[#003087] text-white px-1 py-2 text-center w-[78px] leading-tight">
+                  <th key={n} className="border border-gray-400 bg-[#003087] text-white px-1 py-2 text-center w-16 md:w-20 leading-tight text-[9px] md:text-[11px]">
                     {n}
                   </th>
                 ))}
@@ -266,17 +266,17 @@ export default async function ConstanciaPage({ params }: { params: Promise<{ id:
         </div>
 
         {/* Observaciones */}
-        <div className="px-8 py-2 border-t border-gray-200">
+        <div className="px-4 md:px-8 py-2 border-t border-gray-200">
           <p className="text-[11px] text-gray-700">
             <span className="font-semibold">Observaciones: </span>
-            <span className="border-b border-gray-400 inline-block min-w-[380px] pb-0.5 ml-1 align-bottom">
+            <span className="border-b border-gray-400 inline-block w-full md:w-auto md:min-w-[380px] pb-0.5 md:ml-1 align-bottom">
               {c.observaciones ?? ""}
             </span>
           </p>
         </div>
 
         {/* Resumen */}
-        <div className="px-8 py-3 border-t border-gray-200 flex flex-wrap gap-6 text-[11px]">
+        <div className="px-4 md:px-8 py-3 border-t border-gray-200 flex flex-wrap gap-4 md:gap-6 text-[10px] md:text-[11px]">
           <p>
             <span className="font-semibold">Valor numérico de la actividad {tallerCat}: </span>
             <strong className="text-[#003087] text-sm">{valorNumerico}</strong>
@@ -288,22 +288,22 @@ export default async function ConstanciaPage({ params }: { params: Promise<{ id:
         </div>
 
         {/* Fecha y firmas hoja 2 */}
-        <div className="px-8 pt-1 pb-2">
-          <p className="text-[11px] text-gray-700">
+        <div className="px-4 md:px-8 pt-1 pb-2">
+          <p className="text-[10px] md:text-[11px] text-gray-700">
             Lugar y fecha: Matehuala S.L.P. a los <strong>{dia}</strong> días del mes de{" "}
             <strong>{mes}</strong> de <strong>{anio}</strong>.
           </p>
         </div>
-        <div className="px-10 pb-8">
-          <div className="grid grid-cols-2 gap-10 mt-8">
+        <div className="px-4 md:px-10 pb-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-10 mt-6 md:mt-8">
             <div className="text-center">
-              <div className="border-t border-gray-400 pt-2 mt-12">
+              <div className="border-t border-gray-400 pt-2 mt-8 md:mt-12">
                 <p className="text-[11px] font-bold text-gray-800">Ing. Mario Mata Ontiveros.</p>
                 <p className="text-[10px] text-gray-500">Jefe del Depto. de Actividades Extraescolares</p>
               </div>
             </div>
             <div className="text-center">
-              <div className="border-t border-gray-400 pt-2 mt-12">
+              <div className="border-t border-gray-400 pt-2 mt-8 md:mt-12">
                 <p className="text-[11px] font-bold text-gray-800">Lic. Miguel Ángel Vargas Zapata.</p>
                 <p className="text-[10px] text-gray-500">Promotor</p>
               </div>

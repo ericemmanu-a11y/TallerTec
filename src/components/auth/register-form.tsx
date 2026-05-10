@@ -155,8 +155,8 @@ export default function RegisterForm() {
           </div>
         </div>
 
-        {/* No. Control + Carrera */}
-        <div className="grid grid-cols-2 gap-3">
+        {/* No. Control + Semestre */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           <div className="space-y-1">
             <label className="text-sm font-medium text-foreground/80 ml-1">No. Control</label>
             <div className="relative">
@@ -201,7 +201,7 @@ export default function RegisterForm() {
         </div>
 
         {/* Password + Confirm */}
-        <div className="grid grid-cols-2 gap-3">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           <div className="space-y-1">
             <label className="text-sm font-medium text-foreground/80 ml-1">Contraseña</label>
             <div className="relative">

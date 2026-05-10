@@ -89,7 +89,7 @@ export default async function EncargadoPage() {
                 </div>
                 {periodo && <p className="text-xs text-muted-foreground mb-4 relative z-10">{periodo.nombre}</p>}
 
-                <div className="grid grid-cols-3 gap-3 mb-6 relative z-10">
+                <div className="grid grid-cols-3 gap-2 md:gap-3 mb-4 md:mb-6 relative z-10">
                   <div className="text-center p-3 bg-white/5 rounded-xl">
                     <p className="text-2xl font-extrabold text-primary">{taller.inscritos}</p>
                     <p className="text-xs text-muted-foreground mt-0.5">Inscritos</p>
