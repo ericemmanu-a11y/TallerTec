@@ -56,6 +56,14 @@ export default function RegisterForm() {
       return;
     }
 
+    // Validar que el correo sea institucional del TecNM
+    const emailLower = form.email.toLowerCase().trim();
+    if (!emailLower.endsWith("@matehuala.tecnm.mx")) {
+      setError("Debes usar tu correo institucional (@matehuala.tecnm.mx)");
+      setLoading(false);
+      return;
+    }
+
     const { data, error: signUpError } = await supabase.auth.signUp({
       email: form.email,
       password: form.password,
@@ -228,12 +236,15 @@ export default function RegisterForm() {
 
         {/* Email */}
         <div className="space-y-1">
-          <label className="text-sm font-medium text-foreground/80 ml-1">Correo Electrónico</label>
+          <label className="text-sm font-medium text-foreground/80 ml-1">Correo Institucional</label>
           <div className="relative">
             <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
             <input type="email" value={form.email} onChange={set("email")}
-              className="glass-input w-full pl-10 pr-4 py-3 rounded-xl text-sm" placeholder="tucorreo@ejemplo.com" required />
+              className="glass-input w-full pl-10 pr-4 py-3 rounded-xl text-sm" placeholder="L23660151@matehuala.tecnm.mx" required />
           </div>
+          <p className="text-xs text-muted-foreground ml-1">
+            Solo correos @matehuala.tecnm.mx
+          </p>
         </div>
 
         {/* Password + Confirm */}
