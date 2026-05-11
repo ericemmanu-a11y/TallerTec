@@ -88,14 +88,25 @@ export default async function Home() {
 
       {/* Hero Section */}
       <div className="flex-1 flex flex-col items-center justify-center p-4 md:p-6 text-center z-10 relative mt-8 md:mt-12 mb-16 md:mb-20">
-        {/* Logo institucional grande */}
-        <div className="mb-6 md:mb-8 animate-fade-in">
+        {/* Logos institucionales */}
+        <div className="mb-6 md:mb-8 animate-fade-in flex flex-col md:flex-row items-center justify-center gap-4 md:gap-8">
+          {/* Logo TecNM horizontal (principal) */}
           <Image
-            src="/logo-tecnm.png"
-            alt="TecNM"
-            width={200}
-            height={200}
-            className="w-36 h-36 md:w-48 md:h-48 object-contain mx-auto"
+            src="/logo-tecnm-horizontal.jpg"
+            alt="Tecnológico Nacional de México"
+            width={400}
+            height={120}
+            className="h-16 md:h-20 w-auto object-contain"
+          />
+          {/* Separador */}
+          <div className="hidden md:block w-px h-16 bg-border/50" />
+          {/* Logo ITMH */}
+          <Image
+            src="/logo-itmh-grande.jpg"
+            alt="Instituto Tecnológico de Matehuala"
+            width={100}
+            height={100}
+            className="h-16 md:h-20 w-auto object-contain"
           />
         </div>
 
