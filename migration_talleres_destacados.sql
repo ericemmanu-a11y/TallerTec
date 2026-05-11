@@ -3,13 +3,34 @@
 -- Ejecutar en Supabase SQL Editor
 -- ============================================
 
--- PASO 1: Crear bucket en Storage (ejecutar en Dashboard > Storage)
--- Nombre: "talleres-fotos"
--- Public: Sí
--- Allowed MIME types: image/png, image/jpeg, image/webp
--- Max file size: 2MB
+-- =============================================
+-- INSTRUCCIONES - LEER ANTES DE EJECUTAR
+-- =============================================
+--
+-- PASO 1: Ejecutar este SQL completo en Supabase Dashboard > SQL Editor
+--
+-- PASO 2: Crear bucket de Storage manualmente:
+--         1. Ir a Supabase Dashboard > Storage
+--         2. Click "New bucket"
+--         3. Nombre: talleres-fotos
+--         4. Public bucket: ACTIVAR
+--         5. Click "Create bucket"
+--
+-- PASO 3: Configurar políticas del bucket:
+--         1. En Storage, click en el bucket "talleres-fotos"
+--         2. Click en "Policies" (arriba a la derecha)
+--         3. Agregar política SELECT: "Allow public read"
+--            - Policy name: public_read
+--            - Target roles: (dejar vacío para public)
+--            - Policy: true
+--         4. Agregar política INSERT: "Allow authenticated uploads"
+--            - Policy name: authenticated_upload
+--            - Target roles: authenticated
+--            - Policy: true
+--
+-- =============================================
 
--- PASO 2: Crear tabla de talleres destacados
+-- Crear tabla de talleres destacados
 CREATE TABLE IF NOT EXISTS talleres_destacados (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
 
@@ -19,8 +40,8 @@ CREATE TABLE IF NOT EXISTS talleres_destacados (
   -- Datos para mostrar en la página principal
   nombre VARCHAR(100) NOT NULL,
   descripcion TEXT NOT NULL,
-  imagen_url TEXT, -- URL de la imagen en Storage
-  color VARCHAR(20) DEFAULT 'blue', -- Color del gradiente: blue, orange, purple, green, pink, red, yellow
+  imagen_url TEXT,
+  color VARCHAR(20) DEFAULT 'blue',
 
   -- Control de visualización
   orden INTEGER NOT NULL DEFAULT 0,
@@ -31,7 +52,7 @@ CREATE TABLE IF NOT EXISTS talleres_destacados (
   updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 
--- Índice para ordenamiento
+-- Índices
 CREATE INDEX IF NOT EXISTS idx_talleres_destacados_orden ON talleres_destacados(orden);
 CREATE INDEX IF NOT EXISTS idx_talleres_destacados_activo ON talleres_destacados(activo);
 
@@ -53,14 +74,13 @@ CREATE TRIGGER trg_talleres_destacados_updated
 -- Habilitar RLS
 ALTER TABLE talleres_destacados ENABLE ROW LEVEL SECURITY;
 
--- Política: lectura pública (para la página principal)
+-- Políticas de la tabla
 DROP POLICY IF EXISTS "Lectura publica talleres destacados" ON talleres_destacados;
 CREATE POLICY "Lectura publica talleres destacados"
   ON talleres_destacados
   FOR SELECT
   USING (true);
 
--- Política: solo admin puede modificar
 DROP POLICY IF EXISTS "Admin puede modificar talleres destacados" ON talleres_destacados;
 CREATE POLICY "Admin puede modificar talleres destacados"
   ON talleres_destacados
@@ -68,7 +88,7 @@ CREATE POLICY "Admin puede modificar talleres destacados"
   USING (true)
   WITH CHECK (true);
 
--- ============================================
--- VERIFICACIÓN
--- ============================================
--- SELECT * FROM talleres_destacados ORDER BY orden;
+-- =============================================
+-- VERIFICACIÓN - Ejecutar después para confirmar
+-- =============================================
+-- SELECT table_name FROM information_schema.tables WHERE table_name = 'talleres_destacados';
