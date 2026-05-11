@@ -110,6 +110,17 @@ export default async function Home() {
               height={120}
               className="h-20 md:h-28 w-auto object-contain"
             />
+            {/* Separador */}
+            <div className="hidden md:block w-px h-20 bg-gray-300" />
+            <div className="md:hidden w-32 h-px bg-gray-300" />
+            {/* Mascota ITMH */}
+            <Image
+              src="/mascota-itmh.png"
+              alt="Mascota ITMH"
+              width={120}
+              height={120}
+              className="h-24 md:h-32 w-auto object-contain"
+            />
           </div>
         </div>
 
