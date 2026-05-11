@@ -89,25 +89,28 @@ export default async function Home() {
       {/* Hero Section */}
       <div className="flex-1 flex flex-col items-center justify-center p-4 md:p-6 text-center z-10 relative mt-8 md:mt-12 mb-16 md:mb-20">
         {/* Logos institucionales */}
-        <div className="mb-6 md:mb-8 animate-fade-in flex flex-col md:flex-row items-center justify-center gap-4 md:gap-8">
-          {/* Logo TecNM horizontal (principal) */}
-          <Image
-            src="/logo-tecnm-horizontal.jpg"
-            alt="Tecnológico Nacional de México"
-            width={400}
-            height={120}
-            className="h-16 md:h-20 w-auto object-contain"
-          />
-          {/* Separador */}
-          <div className="hidden md:block w-px h-16 bg-border/50" />
-          {/* Logo ITMH */}
-          <Image
-            src="/logo-itmh-grande.jpg"
-            alt="Instituto Tecnológico de Matehuala"
-            width={100}
-            height={100}
-            className="h-16 md:h-20 w-auto object-contain"
-          />
+        <div className="mb-8 md:mb-10 animate-fade-in">
+          <div className="flex flex-col md:flex-row items-center justify-center gap-6 md:gap-10 bg-white/95 backdrop-blur-sm rounded-2xl md:rounded-3xl px-8 py-6 md:px-12 md:py-8 shadow-xl shadow-black/10">
+            {/* Logo TecNM horizontal (principal) */}
+            <Image
+              src="/logo-tecnm-horizontal.jpg"
+              alt="Tecnológico Nacional de México"
+              width={500}
+              height={150}
+              className="h-20 md:h-28 w-auto object-contain"
+            />
+            {/* Separador */}
+            <div className="hidden md:block w-px h-20 bg-gray-300" />
+            <div className="md:hidden w-32 h-px bg-gray-300" />
+            {/* Logo ITMH */}
+            <Image
+              src="/logo-itmh-grande.jpg"
+              alt="Instituto Tecnológico de Matehuala"
+              width={120}
+              height={120}
+              className="h-20 md:h-28 w-auto object-contain"
+            />
+          </div>
         </div>
 
         <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full glass-card border-primary/20 text-primary text-sm font-medium mb-6 animate-fade-in">
