@@ -1,8 +1,50 @@
 import Link from "next/link";
 import Image from "next/image";
-import { ArrowRight, Trophy, Activity, Award, Camera, Users, Star } from "lucide-react";
+import { ArrowRight, Trophy, Activity, Award, Camera, ImageIcon } from "lucide-react";
+import { createAdminClient } from "@/lib/supabase/admin";
 
-export default function Home() {
+interface TallerDestacado {
+  id: string;
+  nombre: string;
+  descripcion: string;
+  imagen_url: string | null;
+  color: string;
+}
+
+async function getTalleresDestacados(): Promise<TallerDestacado[]> {
+  try {
+    const adminClient = createAdminClient();
+    const { data, error } = await adminClient
+      .from("talleres_destacados")
+      .select("id, nombre, descripcion, imagen_url, color")
+      .eq("activo", true)
+      .order("orden", { ascending: true });
+
+    if (error) {
+      console.error("Error obteniendo talleres destacados:", error);
+      return [];
+    }
+
+    return (data ?? []) as TallerDestacado[];
+  } catch {
+    return [];
+  }
+}
+
+const colorClasses: Record<string, { gradient: string; icon: string; iconBg: string }> = {
+  blue: { gradient: "from-blue-500/20 to-blue-600/10", icon: "text-blue-400", iconBg: "bg-blue-500/20" },
+  orange: { gradient: "from-orange-500/20 to-orange-600/10", icon: "text-orange-400", iconBg: "bg-orange-500/20" },
+  purple: { gradient: "from-purple-500/20 to-purple-600/10", icon: "text-purple-400", iconBg: "bg-purple-500/20" },
+  green: { gradient: "from-green-500/20 to-green-600/10", icon: "text-green-400", iconBg: "bg-green-500/20" },
+  pink: { gradient: "from-pink-500/20 to-pink-600/10", icon: "text-pink-400", iconBg: "bg-pink-500/20" },
+  red: { gradient: "from-red-500/20 to-red-600/10", icon: "text-red-400", iconBg: "bg-red-500/20" },
+  yellow: { gradient: "from-yellow-500/20 to-yellow-600/10", icon: "text-yellow-400", iconBg: "bg-yellow-500/20" },
+  cyan: { gradient: "from-cyan-500/20 to-cyan-600/10", icon: "text-cyan-400", iconBg: "bg-cyan-500/20" },
+};
+
+export default async function Home() {
+  const talleres = await getTalleresDestacados();
+
   return (
     <main className="min-h-screen flex flex-col relative overflow-hidden">
       {/* Background Glows */}
@@ -12,11 +54,11 @@ export default function Home() {
       <header className="w-full max-w-6xl mx-auto p-4 md:p-6 flex items-center justify-between z-10 relative">
         <div className="flex items-center gap-3">
           <Image
-            src="/logo-tecnm.png"
-            alt="TecNM"
-            width={40}
-            height={40}
-            className="w-9 h-9 md:w-10 md:h-10 object-contain"
+            src="/logo-itmh.png"
+            alt="TecNM Campus Matehuala"
+            width={56}
+            height={56}
+            className="w-12 h-12 md:w-14 md:h-14 object-contain"
           />
           <div className="flex flex-col">
             <span className="font-bold text-lg md:text-xl tracking-tight leading-tight">TallerTec</span>
@@ -49,8 +91,8 @@ export default function Home() {
         {/* Logo institucional grande */}
         <div className="mb-6 md:mb-8 animate-fade-in">
           <Image
-            src="/logo-itmh.png"
-            alt="Instituto Tecnológico de Matehuala"
+            src="/logo-tecnm.png"
+            alt="TecNM"
             width={120}
             height={120}
             className="w-24 h-24 md:w-32 md:h-32 object-contain mx-auto"
@@ -119,176 +161,86 @@ export default function Home() {
       </div>
 
       {/* Conoce Nuestros Talleres Section */}
-      <section className="w-full bg-gradient-to-b from-transparent via-primary/5 to-transparent py-16 md:py-24 relative z-10">
-        <div className="max-w-6xl mx-auto px-4 md:px-6">
-          <div className="text-center mb-10 md:mb-14">
-            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-accent/10 text-accent text-sm font-medium mb-4">
-              <Camera className="w-4 h-4" />
-              Explora y Elige
+      {talleres.length > 0 && (
+        <section className="w-full bg-gradient-to-b from-transparent via-primary/5 to-transparent py-16 md:py-24 relative z-10">
+          <div className="max-w-6xl mx-auto px-4 md:px-6">
+            <div className="text-center mb-10 md:mb-14">
+              <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-accent/10 text-accent text-sm font-medium mb-4">
+                <Camera className="w-4 h-4" />
+                Explora y Elige
+              </div>
+              <h2 className="text-2xl sm:text-3xl md:text-4xl font-extrabold tracking-tight mb-4">
+                Conoce Nuestros Talleres
+              </h2>
+              <p className="text-muted-foreground max-w-2xl mx-auto">
+                Descubre las actividades deportivas y culturales que tenemos para ti.
+                Cada taller es una oportunidad de crecer, aprender y formar parte de una comunidad.
+              </p>
             </div>
-            <h2 className="text-2xl sm:text-3xl md:text-4xl font-extrabold tracking-tight mb-4">
-              Conoce Nuestros Talleres
-            </h2>
-            <p className="text-muted-foreground max-w-2xl mx-auto">
-              Descubre las actividades deportivas y culturales que tenemos para ti.
-              Cada taller es una oportunidad de crecer, aprender y formar parte de una comunidad.
-            </p>
+
+            {/* Talleres Grid */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+              {talleres.map((taller) => {
+                const colors = colorClasses[taller.color] || colorClasses.blue;
+                return (
+                  <div
+                    key={taller.id}
+                    className="group glass-card rounded-2xl overflow-hidden hover:scale-[1.02] transition-all duration-300"
+                  >
+                    <div className={`aspect-[4/3] bg-gradient-to-br ${colors.gradient} flex items-center justify-center relative`}>
+                      {taller.imagen_url ? (
+                        <Image
+                          src={taller.imagen_url}
+                          alt={taller.nombre}
+                          fill
+                          className="object-cover"
+                        />
+                      ) : (
+                        <div className="text-center p-6">
+                          <div className={`w-16 h-16 ${colors.iconBg} rounded-2xl flex items-center justify-center mx-auto mb-3`}>
+                            <Activity className={`w-8 h-8 ${colors.icon}`} />
+                          </div>
+                        </div>
+                      )}
+                      <div className="absolute inset-0 bg-gradient-to-t from-background/80 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+                    </div>
+                    <div className="p-5">
+                      <h3 className="font-bold text-lg mb-1">{taller.nombre}</h3>
+                      <p className="text-sm text-muted-foreground line-clamp-2">
+                        {taller.descripcion}
+                      </p>
+                    </div>
+                  </div>
+                );
+              })}
+
+              {/* Ver más */}
+              <Link href="/talleres" className="group glass-card rounded-2xl overflow-hidden hover:scale-[1.02] transition-all duration-300 flex items-center justify-center min-h-[280px]">
+                <div className="text-center p-6">
+                  <div className="w-16 h-16 bg-primary/20 rounded-2xl flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform">
+                    <ArrowRight className="w-8 h-8 text-primary" />
+                  </div>
+                  <h3 className="font-bold text-lg mb-2">Ver Todos los Talleres</h3>
+                  <p className="text-sm text-muted-foreground">
+                    Explora el catálogo completo de actividades disponibles
+                  </p>
+                </div>
+              </Link>
+            </div>
           </div>
-
-          {/* Talleres Grid - Placeholder para futuras fotos */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {/* Taller Card 1 */}
-            <div className="group glass-card rounded-2xl overflow-hidden hover:scale-[1.02] transition-all duration-300">
-              <div className="aspect-[4/3] bg-gradient-to-br from-blue-500/20 to-blue-600/10 flex items-center justify-center relative">
-                <div className="text-center p-6">
-                  <div className="w-16 h-16 bg-blue-500/20 rounded-2xl flex items-center justify-center mx-auto mb-3">
-                    <Trophy className="w-8 h-8 text-blue-400" />
-                  </div>
-                  <p className="text-sm text-muted-foreground">Foto próximamente</p>
-                </div>
-                <div className="absolute inset-0 bg-gradient-to-t from-background/80 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
-              </div>
-              <div className="p-5">
-                <h3 className="font-bold text-lg mb-1">Fútbol</h3>
-                <p className="text-sm text-muted-foreground mb-3">
-                  Entrena con el equipo representativo y participa en torneos interuniversitarios.
-                </p>
-                <div className="flex items-center gap-4 text-xs text-muted-foreground">
-                  <span className="flex items-center gap-1">
-                    <Users className="w-3.5 h-3.5" /> +50 inscritos
-                  </span>
-                  <span className="flex items-center gap-1">
-                    <Star className="w-3.5 h-3.5 text-yellow-500" /> Popular
-                  </span>
-                </div>
-              </div>
-            </div>
-
-            {/* Taller Card 2 */}
-            <div className="group glass-card rounded-2xl overflow-hidden hover:scale-[1.02] transition-all duration-300">
-              <div className="aspect-[4/3] bg-gradient-to-br from-orange-500/20 to-orange-600/10 flex items-center justify-center relative">
-                <div className="text-center p-6">
-                  <div className="w-16 h-16 bg-orange-500/20 rounded-2xl flex items-center justify-center mx-auto mb-3">
-                    <Activity className="w-8 h-8 text-orange-400" />
-                  </div>
-                  <p className="text-sm text-muted-foreground">Foto próximamente</p>
-                </div>
-                <div className="absolute inset-0 bg-gradient-to-t from-background/80 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
-              </div>
-              <div className="p-5">
-                <h3 className="font-bold text-lg mb-1">Básquetbol</h3>
-                <p className="text-sm text-muted-foreground mb-3">
-                  Desarrolla tus habilidades en la cancha con entrenamientos profesionales.
-                </p>
-                <div className="flex items-center gap-4 text-xs text-muted-foreground">
-                  <span className="flex items-center gap-1">
-                    <Users className="w-3.5 h-3.5" /> +30 inscritos
-                  </span>
-                </div>
-              </div>
-            </div>
-
-            {/* Taller Card 3 */}
-            <div className="group glass-card rounded-2xl overflow-hidden hover:scale-[1.02] transition-all duration-300">
-              <div className="aspect-[4/3] bg-gradient-to-br from-purple-500/20 to-purple-600/10 flex items-center justify-center relative">
-                <div className="text-center p-6">
-                  <div className="w-16 h-16 bg-purple-500/20 rounded-2xl flex items-center justify-center mx-auto mb-3">
-                    <Award className="w-8 h-8 text-purple-400" />
-                  </div>
-                  <p className="text-sm text-muted-foreground">Foto próximamente</p>
-                </div>
-                <div className="absolute inset-0 bg-gradient-to-t from-background/80 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
-              </div>
-              <div className="p-5">
-                <h3 className="font-bold text-lg mb-1">Voleibol</h3>
-                <p className="text-sm text-muted-foreground mb-3">
-                  Únete al equipo y vive la emoción de las competencias deportivas.
-                </p>
-                <div className="flex items-center gap-4 text-xs text-muted-foreground">
-                  <span className="flex items-center gap-1">
-                    <Users className="w-3.5 h-3.5" /> +25 inscritos
-                  </span>
-                </div>
-              </div>
-            </div>
-
-            {/* Taller Card 4 */}
-            <div className="group glass-card rounded-2xl overflow-hidden hover:scale-[1.02] transition-all duration-300">
-              <div className="aspect-[4/3] bg-gradient-to-br from-green-500/20 to-green-600/10 flex items-center justify-center relative">
-                <div className="text-center p-6">
-                  <div className="w-16 h-16 bg-green-500/20 rounded-2xl flex items-center justify-center mx-auto mb-3">
-                    <Activity className="w-8 h-8 text-green-400" />
-                  </div>
-                  <p className="text-sm text-muted-foreground">Foto próximamente</p>
-                </div>
-                <div className="absolute inset-0 bg-gradient-to-t from-background/80 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
-              </div>
-              <div className="p-5">
-                <h3 className="font-bold text-lg mb-1">Atletismo</h3>
-                <p className="text-sm text-muted-foreground mb-3">
-                  Mejora tu condición física y compite en las diferentes disciplinas del atletismo.
-                </p>
-                <div className="flex items-center gap-4 text-xs text-muted-foreground">
-                  <span className="flex items-center gap-1">
-                    <Users className="w-3.5 h-3.5" /> +20 inscritos
-                  </span>
-                </div>
-              </div>
-            </div>
-
-            {/* Taller Card 5 */}
-            <div className="group glass-card rounded-2xl overflow-hidden hover:scale-[1.02] transition-all duration-300">
-              <div className="aspect-[4/3] bg-gradient-to-br from-pink-500/20 to-pink-600/10 flex items-center justify-center relative">
-                <div className="text-center p-6">
-                  <div className="w-16 h-16 bg-pink-500/20 rounded-2xl flex items-center justify-center mx-auto mb-3">
-                    <Star className="w-8 h-8 text-pink-400" />
-                  </div>
-                  <p className="text-sm text-muted-foreground">Foto próximamente</p>
-                </div>
-                <div className="absolute inset-0 bg-gradient-to-t from-background/80 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
-              </div>
-              <div className="p-5">
-                <h3 className="font-bold text-lg mb-1">Danza</h3>
-                <p className="text-sm text-muted-foreground mb-3">
-                  Expresa tu creatividad a través del baile y representa al Tecnológico en eventos culturales.
-                </p>
-                <div className="flex items-center gap-4 text-xs text-muted-foreground">
-                  <span className="flex items-center gap-1">
-                    <Users className="w-3.5 h-3.5" /> +35 inscritos
-                  </span>
-                  <span className="flex items-center gap-1">
-                    <Star className="w-3.5 h-3.5 text-yellow-500" /> Popular
-                  </span>
-                </div>
-              </div>
-            </div>
-
-            {/* Taller Card 6 - Ver más */}
-            <Link href="/talleres" className="group glass-card rounded-2xl overflow-hidden hover:scale-[1.02] transition-all duration-300 flex items-center justify-center min-h-[280px]">
-              <div className="text-center p-6">
-                <div className="w-16 h-16 bg-primary/20 rounded-2xl flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform">
-                  <ArrowRight className="w-8 h-8 text-primary" />
-                </div>
-                <h3 className="font-bold text-lg mb-2">Ver Todos los Talleres</h3>
-                <p className="text-sm text-muted-foreground">
-                  Explora el catálogo completo de actividades disponibles
-                </p>
-              </div>
-            </Link>
-          </div>
-        </div>
-      </section>
+        </section>
+      )}
 
       {/* Footer */}
       <footer className="w-full border-t border-border/40 bg-background/50 backdrop-blur mt-auto">
         <div className="max-w-6xl mx-auto px-6 py-8 flex flex-col md:flex-row items-center justify-between gap-4">
           <div className="flex items-center gap-3">
             <Image
-              src="/logo-tecnm.png"
-              alt="TecNM"
-              width={28}
-              height={28}
-              className="w-7 h-7 object-contain"
+              src="/logo-itmh.png"
+              alt="TecNM Campus Matehuala"
+              width={32}
+              height={32}
+              className="w-8 h-8 object-contain"
             />
             <span className="font-bold text-sm tracking-tight text-muted-foreground">TallerTec © 2026</span>
           </div>

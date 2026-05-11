@@ -1,6 +1,6 @@
 import { createClient } from "@/lib/supabase/server";
 import { getAuthUser } from "@/lib/auth/get-user-role";
-import { LogOut, LayoutDashboard, Users, UserCog, CalendarPlus, Award, Calendar } from "lucide-react";
+import { LogOut, LayoutDashboard, Users, UserCog, CalendarPlus, Award, Calendar, Image as ImageIcon } from "lucide-react";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 
@@ -29,6 +29,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
   const navItems = [
     { href: "/admin", label: "Dashboard", icon: LayoutDashboard },
     { href: "/admin/talleres", label: "Talleres", icon: CalendarPlus },
+    { href: "/admin/talleres-destacados", label: "Página Principal", icon: ImageIcon },
     { href: "/admin/periodos", label: "Períodos", icon: Calendar },
     { href: "/admin/encargados", label: "Encargados", icon: UserCog },
     { href: "/admin/alumnos", label: "Alumnos", icon: Users },
