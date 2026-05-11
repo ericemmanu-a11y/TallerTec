@@ -93,9 +93,9 @@ export default async function Home() {
           <Image
             src="/logo-tecnm.png"
             alt="TecNM"
-            width={120}
-            height={120}
-            className="w-24 h-24 md:w-32 md:h-32 object-contain mx-auto"
+            width={200}
+            height={200}
+            className="w-36 h-36 md:w-48 md:h-48 object-contain mx-auto"
           />
         </div>
 
