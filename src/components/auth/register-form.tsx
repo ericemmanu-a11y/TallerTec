@@ -3,8 +3,9 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
-import { UserPlus, Mail, Lock, User, Loader2, ArrowRight, Hash, GraduationCap, ArrowLeft, Home } from "lucide-react";
+import { Mail, Lock, User, Loader2, ArrowRight, Hash, GraduationCap, ArrowLeft, Home } from "lucide-react";
 import Link from "next/link";
+import Image from "next/image";
 
 const CARRERAS = [
   "Ingeniería en Sistemas Computacionales",
@@ -145,10 +146,34 @@ export default function RegisterForm() {
       </Link>
 
       <div className="glass-card rounded-2xl p-8 animate-slide-up">
-        <div className="flex flex-col items-center mb-8">
-          <div className="w-16 h-16 bg-accent/20 rounded-2xl flex items-center justify-center mb-4 border border-accent/30">
-            <UserPlus className="w-8 h-8 text-accent" />
-          </div>
+        {/* Logos institucionales con mascota */}
+        <div className="flex items-center justify-center gap-4 mb-6 bg-white rounded-xl p-4">
+          <Image
+            src="/logo-tecnm-horizontal.jpg"
+            alt="Tecnológico Nacional de México"
+            width={160}
+            height={50}
+            className="h-12 w-auto object-contain"
+          />
+          <div className="w-px h-10 bg-gray-300" />
+          <Image
+            src="/logo-itmh.png"
+            alt="Instituto Tecnológico de Matehuala"
+            width={50}
+            height={50}
+            className="h-12 w-auto object-contain"
+          />
+          <div className="w-px h-10 bg-gray-300" />
+          <Image
+            src="/mascota-itmh.png"
+            alt="Mascota ITMH"
+            width={50}
+            height={50}
+            className="h-14 w-auto object-contain"
+          />
+        </div>
+
+        <div className="flex flex-col items-center mb-6">
           <h2 className="text-2xl font-bold text-center">Crea tu cuenta</h2>
           <p className="text-muted-foreground mt-1 text-center text-sm">
             Estudiantes del TecNM Campus Matehuala
