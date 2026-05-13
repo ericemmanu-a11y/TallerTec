@@ -60,10 +60,10 @@ export default async function AdminConstanciasPage({
     .from("constancias")
     .select("id, estado, estudiante_id");
 
-  // Obtener constancias con JOINs
+  // Obtener constancias con JOINs - especificar FK explícitamente
   const { data: constancias, error: constanciasError } = await adminClient
     .from("constancias")
-    .select("*, usuarios(nombre_completo, numero_control, carrera, email), periodos(id, nombre), talleres(nombre, categoria)")
+    .select("*, estudiante:usuarios!estudiante_id(nombre_completo, numero_control, carrera, email), periodos(id, nombre), talleres(nombre, categoria)")
     .order("created_at", { ascending: false });
 
   // Debug: log si hay error
@@ -84,7 +84,7 @@ export default async function AdminConstanciasPage({
   if (q) {
     const searchTerm = q.toLowerCase();
     filtered = filtered.filter((c) => {
-      const alumno = c.usuarios as unknown as { nombre_completo: string; numero_control: string | null } | null;
+      const alumno = c.estudiante as unknown as { nombre_completo: string; numero_control: string | null } | null;
       const folio = c.folio?.toLowerCase() ?? "";
       return (
         alumno?.nombre_completo.toLowerCase().includes(searchTerm) ||
@@ -129,7 +129,7 @@ export default async function AdminConstanciasPage({
     constanciasSimpleCount: constanciasSimple?.length ?? 0,
     constanciasSimple: constanciasSimple ?? [],
     totalConstancias: constancias?.length ?? 0,
-    constanciasRaw: constancias?.map(c => ({ id: c.id?.slice(0,8), estado: c.estado, usuario: (c.usuarios as {nombre_completo?: string} | null)?.nombre_completo ?? "NULL" })) ?? [],
+    constanciasRaw: constancias?.map(c => ({ id: c.id?.slice(0,8), estado: c.estado, usuario: (c.estudiante as {nombre_completo?: string} | null)?.nombre_completo ?? "NULL" })) ?? [],
     filteredCount: filtered.length,
     pendientesCount: pendientes.length,
     searchParams: { q: q ?? "null", estado: estado ?? "null", periodo: periodo ?? "null" },
@@ -257,7 +257,7 @@ export default async function AdminConstanciasPage({
           </h2>
           <div className="glass-card rounded-2xl overflow-hidden divide-y divide-border/50">
             {pendientes.map((c) => {
-              const alumno  = c.usuarios as unknown as { nombre_completo: string; numero_control: string | null; carrera: string | null; email: string } | null;
+              const alumno  = c.estudiante as unknown as { nombre_completo: string; numero_control: string | null; carrera: string | null; email: string } | null;
               const periodoData = c.periodos as unknown as { nombre: string } | null;
               const taller  = c.talleres as unknown as { nombre: string; categoria: string } | null;
               const evaluado = Boolean(c.evaluado_en);
@@ -355,7 +355,7 @@ export default async function AdminConstanciasPage({
                 </thead>
                 <tbody className="divide-y divide-border/50">
                   {resto.map((c) => {
-                    const alumno  = c.usuarios as unknown as { nombre_completo: string; numero_control: string | null } | null;
+                    const alumno  = c.estudiante as unknown as { nombre_completo: string; numero_control: string | null } | null;
                     const periodoData = c.periodos as unknown as { nombre: string } | null;
                     const taller  = c.talleres as unknown as { nombre: string } | null;
                     const config  = ESTADO_CONFIG[c.estado as keyof typeof ESTADO_CONFIG];
