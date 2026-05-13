@@ -1,5 +1,5 @@
-import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
+import { getAuthUser } from "@/lib/auth/get-user-role";
 import { redirect, notFound } from "next/navigation";
 import Link from "next/link";
 import { ArrowLeft, AlertCircle } from "lucide-react";
@@ -32,18 +32,12 @@ function numToMes(n: number) {
 
 export default async function ConstanciaPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
-  const supabase = await createClient();
-  const { data: { user } } = await supabase.auth.getUser();
+
+  // Obtener usuario autenticado con rol verificado
+  const user = await getAuthUser();
   if (!user) redirect("/login");
 
-  // Verificar rol del usuario
-  const { data: userData } = await supabase
-    .from("usuarios")
-    .select("rol")
-    .eq("id", user.id)
-    .single();
-
-  const isAdmin = userData?.rol === "ADMIN_OFICINA";
+  const isAdmin = user.rol === "ADMIN_OFICINA";
 
   // Usar admin client para obtener la constancia (bypasea RLS)
   let adminClient;
