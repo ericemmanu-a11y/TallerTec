@@ -61,6 +61,12 @@ export default async function AdminConstanciasPage({
     console.error("Error fetching constancias:", constanciasError);
   }
 
+  // Debug: ver qué datos llegaron
+  console.log("=== DEBUG CONSTANCIAS ===");
+  console.log("Total constancias:", constancias?.length);
+  console.log("Constancias raw:", JSON.stringify(constancias?.map(c => ({ id: c.id, estado: c.estado, estudiante_id: c.estudiante_id })), null, 2));
+  console.log("Search params:", { q, estado, periodo });
+
   // Aplicar filtros
   let filtered = constancias ?? [];
 
@@ -91,9 +97,13 @@ export default async function AdminConstanciasPage({
     });
   }
 
+  console.log("Filtered después de todos los filtros:", filtered.length);
+
   // Separar pendientes del resto para mostrar primero
   const pendientes = filtered.filter((c) => c.estado === "PENDIENTE");
   const resto = filtered.filter((c) => c.estado !== "PENDIENTE");
+
+  console.log("Pendientes:", pendientes.length, "Resto:", resto.length);
 
   // Estadísticas
   const stats = {
