@@ -1,19 +1,19 @@
-import { createClient } from "@/lib/supabase/server";
+import { createAdminClient } from "@/lib/supabase/admin";
 import { getAuthUser } from "@/lib/auth/get-user-role";
 import { LogOut, LayoutDashboard, Users, UserCog, CalendarPlus, Award, Calendar, Image as ImageIcon } from "lucide-react";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 
 export default async function AdminLayout({ children }: { children: React.ReactNode }) {
-  const supabase = await createClient();
   const user = await getAuthUser();
   if (!user) redirect("/login");
   if (user.rol !== "ADMIN_OFICINA") redirect("/login");
 
-  // Obtener conteo de constancias pendientes con manejo de errores
+  // Obtener conteo de constancias pendientes con cliente admin (bypassa RLS)
   let pendientesCount = 0;
   try {
-    const { count, error } = await supabase
+    const adminClient = createAdminClient();
+    const { count, error } = await adminClient
       .from("constancias")
       .select("*", { count: "exact", head: true })
       .eq("estado", "PENDIENTE");
