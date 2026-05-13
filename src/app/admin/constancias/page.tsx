@@ -4,6 +4,7 @@ import Link from "next/link";
 import { aprobarConstancia, rechazarConstancia, marcarConstanciaEntregada } from "@/app/actions/constancias";
 
 export const metadata = { title: "Gestión de Constancias | Admin TallerTec" };
+export const dynamic = "force-dynamic";
 
 const ESTADO_CONFIG = {
   PENDIENTE:  { label: "Pendiente",  icon: Clock,         color: "text-yellow-500 bg-yellow-500/10 border-yellow-500/20" },
@@ -50,10 +51,15 @@ export default async function AdminConstanciasPage({
     .order("fecha_inicio", { ascending: false });
 
   // Obtener constancias
-  const { data: constancias } = await adminClient
+  const { data: constancias, error: constanciasError } = await adminClient
     .from("constancias")
     .select("*, usuarios(nombre_completo, numero_control, carrera, email), periodos(id, nombre), talleres(nombre, categoria)")
     .order("created_at", { ascending: false });
+
+  // Debug: log si hay error
+  if (constanciasError) {
+    console.error("Error fetching constancias:", constanciasError);
+  }
 
   // Aplicar filtros
   let filtered = constancias ?? [];
