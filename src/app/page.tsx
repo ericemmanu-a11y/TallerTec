@@ -89,38 +89,66 @@ export default async function Home() {
       {/* Hero Section */}
       <div className="flex-1 flex flex-col items-center justify-center p-4 md:p-6 text-center z-10 relative mt-8 md:mt-12 mb-16 md:mb-20">
         {/* Logos institucionales */}
-        <div className="mb-8 md:mb-10 animate-fade-in">
-          <div className="flex flex-col md:flex-row items-center justify-center gap-6 md:gap-10 bg-white/95 backdrop-blur-sm rounded-2xl md:rounded-3xl px-8 py-6 md:px-12 md:py-8 shadow-xl shadow-black/10">
-            {/* Logo TecNM horizontal (principal) */}
-            <Image
-              src="/logo-tecnm-horizontal.jpg"
-              alt="Tecnológico Nacional de México"
-              width={500}
-              height={150}
-              className="h-20 md:h-28 w-auto object-contain"
-            />
-            {/* Separador */}
-            <div className="hidden md:block w-px h-20 bg-gray-300" />
-            <div className="md:hidden w-32 h-px bg-gray-300" />
-            {/* Logo ITMH */}
-            <Image
-              src="/logo-itmh-grande.jpg"
-              alt="Instituto Tecnológico de Matehuala"
-              width={120}
-              height={120}
-              className="h-20 md:h-28 w-auto object-contain"
-            />
-            {/* Separador */}
-            <div className="hidden md:block w-px h-20 bg-gray-300" />
-            <div className="md:hidden w-32 h-px bg-gray-300" />
-            {/* Mascota ITMH */}
-            <Image
-              src="/mascota-itmh.png"
-              alt="Mascota ITMH"
-              width={120}
-              height={120}
-              className="h-24 md:h-32 w-auto object-contain"
-            />
+        <div className="mb-8 md:mb-10 animate-fade-in w-full max-w-4xl mx-auto px-4">
+          <div className="bg-white/95 backdrop-blur-sm rounded-2xl md:rounded-3xl px-6 py-6 md:px-12 md:py-8 shadow-xl shadow-black/10">
+            {/* Desktop: Todo en una fila */}
+            <div className="hidden md:flex items-center justify-center gap-8">
+              <Image
+                src="/logo-tecnm-horizontal.jpg"
+                alt="Tecnológico Nacional de México"
+                width={500}
+                height={150}
+                className="h-28 w-auto object-contain"
+              />
+              <div className="w-px h-20 bg-gray-300" />
+              <Image
+                src="/logo-itmh-grande.jpg"
+                alt="Instituto Tecnológico de Matehuala"
+                width={120}
+                height={120}
+                className="h-28 w-auto object-contain"
+              />
+              <div className="w-px h-20 bg-gray-300" />
+              <Image
+                src="/mascota-itmh.png"
+                alt="Mascota ITMH"
+                width={120}
+                height={120}
+                className="h-32 w-auto object-contain"
+              />
+            </div>
+
+            {/* Mobile: Logo TecNM arriba, ITMH y mascota abajo lado a lado */}
+            <div className="flex md:hidden flex-col items-center gap-4">
+              {/* Logo TecNM centrado arriba */}
+              <Image
+                src="/logo-tecnm-horizontal.jpg"
+                alt="Tecnológico Nacional de México"
+                width={400}
+                height={120}
+                className="h-16 w-auto object-contain"
+              />
+              {/* Separador horizontal */}
+              <div className="w-full h-px bg-gray-200" />
+              {/* ITMH y Mascota lado a lado */}
+              <div className="flex items-center justify-center gap-6">
+                <Image
+                  src="/logo-itmh-grande.jpg"
+                  alt="Instituto Tecnológico de Matehuala"
+                  width={80}
+                  height={80}
+                  className="h-16 w-auto object-contain"
+                />
+                <div className="w-px h-14 bg-gray-300" />
+                <Image
+                  src="/mascota-itmh.png"
+                  alt="Mascota ITMH"
+                  width={80}
+                  height={80}
+                  className="h-18 w-auto object-contain"
+                />
+              </div>
+            </div>
           </div>
         </div>
 

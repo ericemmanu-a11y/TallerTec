@@ -155,30 +155,61 @@ export default function RegisterForm() {
 
       <div className="glass-card rounded-2xl p-8 animate-slide-up">
         {/* Logos institucionales con mascota */}
-        <div className="flex items-center justify-center gap-4 mb-6 bg-white rounded-xl p-4">
-          <Image
-            src="/logo-tecnm-horizontal.jpg"
-            alt="Tecnológico Nacional de México"
-            width={160}
-            height={50}
-            className="h-12 w-auto object-contain"
-          />
-          <div className="w-px h-10 bg-gray-300" />
-          <Image
-            src="/logo-itmh.png"
-            alt="Instituto Tecnológico de Matehuala"
-            width={50}
-            height={50}
-            className="h-12 w-auto object-contain"
-          />
-          <div className="w-px h-10 bg-gray-300" />
-          <Image
-            src="/mascota-itmh.png"
-            alt="Mascota ITMH"
-            width={50}
-            height={50}
-            className="h-14 w-auto object-contain"
-          />
+        <div className="mb-6 bg-white rounded-xl p-4">
+          {/* Desktop */}
+          <div className="hidden sm:flex items-center justify-center gap-4">
+            <Image
+              src="/logo-tecnm-horizontal.jpg"
+              alt="Tecnológico Nacional de México"
+              width={160}
+              height={50}
+              className="h-12 w-auto object-contain"
+            />
+            <div className="w-px h-10 bg-gray-300" />
+            <Image
+              src="/logo-itmh.png"
+              alt="Instituto Tecnológico de Matehuala"
+              width={50}
+              height={50}
+              className="h-12 w-auto object-contain"
+            />
+            <div className="w-px h-10 bg-gray-300" />
+            <Image
+              src="/mascota-itmh.png"
+              alt="Mascota ITMH"
+              width={50}
+              height={50}
+              className="h-14 w-auto object-contain"
+            />
+          </div>
+          {/* Mobile */}
+          <div className="flex sm:hidden flex-col items-center gap-3">
+            <Image
+              src="/logo-tecnm-horizontal.jpg"
+              alt="Tecnológico Nacional de México"
+              width={200}
+              height={60}
+              className="h-10 w-auto object-contain"
+            />
+            <div className="w-full h-px bg-gray-200" />
+            <div className="flex items-center justify-center gap-4">
+              <Image
+                src="/logo-itmh.png"
+                alt="Instituto Tecnológico de Matehuala"
+                width={40}
+                height={40}
+                className="h-10 w-auto object-contain"
+              />
+              <div className="w-px h-8 bg-gray-300" />
+              <Image
+                src="/mascota-itmh.png"
+                alt="Mascota ITMH"
+                width={40}
+                height={40}
+                className="h-11 w-auto object-contain"
+              />
+            </div>
+          </div>
         </div>
 
         <div className="flex flex-col items-center mb-6">
