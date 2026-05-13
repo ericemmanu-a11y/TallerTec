@@ -50,32 +50,11 @@ export default async function AdminConstanciasPage({
     .select("id, nombre")
     .order("fecha_inicio", { ascending: false });
 
-  // Conteo directo (mismo query que el layout)
-  const { count: countDirect } = await adminClient
-    .from("constancias")
-    .select("*", { count: "exact", head: true });
-
-  // Query simple sin JOINs
-  const { data: constanciasSimple } = await adminClient
-    .from("constancias")
-    .select("id, estado, estudiante_id");
-
   // Obtener constancias con JOINs - especificar FK explícitamente
-  const { data: constancias, error: constanciasError } = await adminClient
+  const { data: constancias } = await adminClient
     .from("constancias")
     .select("*, estudiante:usuarios!estudiante_id(nombre_completo, numero_control, carrera, email), periodos(id, nombre), talleres(nombre, categoria)")
     .order("created_at", { ascending: false });
-
-  // Debug: log si hay error
-  if (constanciasError) {
-    console.error("Error fetching constancias:", constanciasError);
-  }
-
-  // Debug: ver qué datos llegaron
-  console.log("=== DEBUG CONSTANCIAS ===");
-  console.log("Total constancias:", constancias?.length);
-  console.log("Constancias raw:", JSON.stringify(constancias?.map(c => ({ id: c.id, estado: c.estado, estudiante_id: c.estudiante_id })), null, 2));
-  console.log("Search params:", { q, estado, periodo });
 
   // Aplicar filtros
   let filtered = constancias ?? [];
@@ -107,13 +86,9 @@ export default async function AdminConstanciasPage({
     });
   }
 
-  console.log("Filtered después de todos los filtros:", filtered.length);
-
   // Separar pendientes del resto para mostrar primero
   const pendientes = filtered.filter((c) => c.estado === "PENDIENTE");
   const resto = filtered.filter((c) => c.estado !== "PENDIENTE");
-
-  console.log("Pendientes:", pendientes.length, "Resto:", resto.length);
 
   // Estadísticas
   const stats = {
@@ -123,34 +98,8 @@ export default async function AdminConstanciasPage({
     entregadas: constancias?.filter((c) => c.estado === "ENTREGADA").length ?? 0,
   };
 
-  // Debug data para mostrar en UI
-  const debugData = {
-    countDirect: countDirect ?? 0,
-    constanciasSimpleCount: constanciasSimple?.length ?? 0,
-    constanciasSimple: constanciasSimple ?? [],
-    totalConstancias: constancias?.length ?? 0,
-    constanciasRaw: constancias?.map(c => ({ id: c.id?.slice(0,8), estado: c.estado, usuario: (c.estudiante as {nombre_completo?: string} | null)?.nombre_completo ?? "NULL" })) ?? [],
-    filteredCount: filtered.length,
-    pendientesCount: pendientes.length,
-    searchParams: { q: q ?? "null", estado: estado ?? "null", periodo: periodo ?? "null" },
-    error: constanciasError ? constanciasError.message : "ninguno",
-  };
-
   return (
     <main className="container mx-auto p-4 md:p-8 space-y-6 animate-fade-in">
-      {/* DEBUG TEMPORAL - BORRAR DESPUÉS */}
-      <div className="bg-red-500/20 border border-red-500 rounded-xl p-4 text-xs font-mono">
-        <p className="font-bold text-red-400 mb-2">DEBUG (temporal):</p>
-        <p>Count directo (head:true): <span className="text-yellow-400 font-bold">{debugData.countDirect}</span></p>
-        <p>Query simple (sin JOINs): <span className="text-yellow-400 font-bold">{debugData.constanciasSimpleCount}</span></p>
-        <p>Query con JOINs: <span className="text-yellow-400 font-bold">{debugData.totalConstancias}</span></p>
-        <p>Error de consulta: <span className={debugData.error !== "ninguno" ? "text-red-400 font-bold" : "text-green-400"}>{debugData.error}</span></p>
-        <p className="mt-2">Datos query simple:</p>
-        <pre className="text-[10px] overflow-x-auto bg-black/30 p-2 rounded">{JSON.stringify(debugData.constanciasSimple, null, 1)}</pre>
-        <p className="mt-2">Datos query con JOINs:</p>
-        <pre className="text-[10px] overflow-x-auto bg-black/30 p-2 rounded">{JSON.stringify(debugData.constanciasRaw, null, 1)}</pre>
-      </div>
-
       <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-4">
         <div>
           <Link href="/admin" className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors mb-4">
