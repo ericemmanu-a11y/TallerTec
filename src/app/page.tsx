@@ -119,33 +119,33 @@ export default async function Home() {
             </div>
 
             {/* Mobile: Logo TecNM arriba, ITMH y mascota abajo lado a lado */}
-            <div className="flex md:hidden flex-col items-center gap-4">
+            <div className="flex md:hidden flex-col items-center gap-5">
               {/* Logo TecNM centrado arriba */}
               <Image
                 src="/logo-tecnm-horizontal.jpg"
                 alt="Tecnológico Nacional de México"
                 width={400}
                 height={120}
-                className="h-16 w-auto object-contain"
+                className="h-20 w-auto object-contain"
               />
               {/* Separador horizontal */}
               <div className="w-full h-px bg-gray-200" />
               {/* ITMH y Mascota lado a lado */}
-              <div className="flex items-center justify-center gap-6">
+              <div className="flex items-center justify-center gap-8">
                 <Image
                   src="/logo-itmh-grande.jpg"
                   alt="Instituto Tecnológico de Matehuala"
-                  width={80}
-                  height={80}
-                  className="h-16 w-auto object-contain"
+                  width={100}
+                  height={100}
+                  className="h-20 w-auto object-contain"
                 />
-                <div className="w-px h-14 bg-gray-300" />
+                <div className="w-px h-16 bg-gray-300" />
                 <Image
                   src="/mascota-itmh.png"
                   alt="Mascota ITMH"
-                  width={80}
-                  height={80}
-                  className="h-18 w-auto object-contain"
+                  width={100}
+                  height={100}
+                  className="h-24 w-auto object-contain"
                 />
               </div>
             </div>
