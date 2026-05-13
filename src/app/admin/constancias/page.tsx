@@ -50,7 +50,17 @@ export default async function AdminConstanciasPage({
     .select("id, nombre")
     .order("fecha_inicio", { ascending: false });
 
-  // Obtener constancias
+  // Conteo directo (mismo query que el layout)
+  const { count: countDirect } = await adminClient
+    .from("constancias")
+    .select("*", { count: "exact", head: true });
+
+  // Query simple sin JOINs
+  const { data: constanciasSimple } = await adminClient
+    .from("constancias")
+    .select("id, estado, estudiante_id");
+
+  // Obtener constancias con JOINs
   const { data: constancias, error: constanciasError } = await adminClient
     .from("constancias")
     .select("*, usuarios(nombre_completo, numero_control, carrera, email), periodos(id, nombre), talleres(nombre, categoria)")
@@ -115,11 +125,15 @@ export default async function AdminConstanciasPage({
 
   // Debug data para mostrar en UI
   const debugData = {
+    countDirect: countDirect ?? 0,
+    constanciasSimpleCount: constanciasSimple?.length ?? 0,
+    constanciasSimple: constanciasSimple ?? [],
     totalConstancias: constancias?.length ?? 0,
     constanciasRaw: constancias?.map(c => ({ id: c.id?.slice(0,8), estado: c.estado, usuario: (c.usuarios as {nombre_completo?: string} | null)?.nombre_completo ?? "NULL" })) ?? [],
     filteredCount: filtered.length,
     pendientesCount: pendientes.length,
     searchParams: { q: q ?? "null", estado: estado ?? "null", periodo: periodo ?? "null" },
+    error: constanciasError ? constanciasError.message : "ninguno",
   };
 
   return (
@@ -127,12 +141,14 @@ export default async function AdminConstanciasPage({
       {/* DEBUG TEMPORAL - BORRAR DESPUÉS */}
       <div className="bg-red-500/20 border border-red-500 rounded-xl p-4 text-xs font-mono">
         <p className="font-bold text-red-400 mb-2">DEBUG (temporal):</p>
-        <p>Total en BD: {debugData.totalConstancias}</p>
-        <p>Filtered: {debugData.filteredCount}</p>
-        <p>Pendientes finales: {debugData.pendientesCount}</p>
-        <p>SearchParams: q={debugData.searchParams.q}, estado={debugData.searchParams.estado}, periodo={debugData.searchParams.periodo}</p>
-        <p className="mt-2">Constancias:</p>
-        <pre className="text-[10px] overflow-x-auto">{JSON.stringify(debugData.constanciasRaw, null, 1)}</pre>
+        <p>Count directo (head:true): <span className="text-yellow-400 font-bold">{debugData.countDirect}</span></p>
+        <p>Query simple (sin JOINs): <span className="text-yellow-400 font-bold">{debugData.constanciasSimpleCount}</span></p>
+        <p>Query con JOINs: <span className="text-yellow-400 font-bold">{debugData.totalConstancias}</span></p>
+        <p>Error de consulta: <span className={debugData.error !== "ninguno" ? "text-red-400 font-bold" : "text-green-400"}>{debugData.error}</span></p>
+        <p className="mt-2">Datos query simple:</p>
+        <pre className="text-[10px] overflow-x-auto bg-black/30 p-2 rounded">{JSON.stringify(debugData.constanciasSimple, null, 1)}</pre>
+        <p className="mt-2">Datos query con JOINs:</p>
+        <pre className="text-[10px] overflow-x-auto bg-black/30 p-2 rounded">{JSON.stringify(debugData.constanciasRaw, null, 1)}</pre>
       </div>
 
       <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-4">
