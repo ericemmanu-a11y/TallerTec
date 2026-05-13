@@ -36,15 +36,31 @@ export default async function ConstanciaPage({ params }: { params: Promise<{ id:
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) redirect("/login");
 
-  const { data: c } = await supabase
+  // Verificar rol del usuario
+  const { data: userData } = await supabase
+    .from("usuarios")
+    .select("rol")
+    .eq("id", user.id)
+    .single();
+
+  const isAdmin = userData?.rol === "ADMIN_OFICINA";
+
+  // Usar admin client para obtener la constancia (bypasea RLS)
+  let adminClient;
+  try {
+    adminClient = createAdminClient();
+  } catch {
+    notFound();
+  }
+
+  const { data: c } = await adminClient
     .from("constancias")
-    .select(`*, usuarios(nombre_completo, numero_control, carrera, semestre), periodos(nombre, fecha_inicio, fecha_fin), talleres(nombre, categoria)`)
+    .select(`*, estudiante:usuarios!estudiante_id(nombre_completo, numero_control, carrera, semestre), periodos(nombre, fecha_inicio, fecha_fin), talleres(nombre, categoria)`)
     .eq("id", id)
     .single();
 
   if (!c) notFound();
 
-  const isAdmin = user.user_metadata?.rol === "ADMIN_OFICINA";
   const isOwner = c.estudiante_id === user.id;
   if (!isAdmin && !isOwner) redirect("/dashboard");
 
@@ -75,7 +91,7 @@ export default async function ConstanciaPage({ params }: { params: Promise<{ id:
     // Si falla, usar valores por defecto
   }
 
-  const alumno = c.usuarios as unknown as {
+  const alumno = c.estudiante as unknown as {
     nombre_completo: string; numero_control: string | null;
     carrera: string | null; semestre: number | null;
   } | null;
