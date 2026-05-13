@@ -113,8 +113,28 @@ export default async function AdminConstanciasPage({
     entregadas: constancias?.filter((c) => c.estado === "ENTREGADA").length ?? 0,
   };
 
+  // Debug data para mostrar en UI
+  const debugData = {
+    totalConstancias: constancias?.length ?? 0,
+    constanciasRaw: constancias?.map(c => ({ id: c.id?.slice(0,8), estado: c.estado, usuario: (c.usuarios as {nombre_completo?: string} | null)?.nombre_completo ?? "NULL" })) ?? [],
+    filteredCount: filtered.length,
+    pendientesCount: pendientes.length,
+    searchParams: { q: q ?? "null", estado: estado ?? "null", periodo: periodo ?? "null" },
+  };
+
   return (
     <main className="container mx-auto p-4 md:p-8 space-y-6 animate-fade-in">
+      {/* DEBUG TEMPORAL - BORRAR DESPUÉS */}
+      <div className="bg-red-500/20 border border-red-500 rounded-xl p-4 text-xs font-mono">
+        <p className="font-bold text-red-400 mb-2">DEBUG (temporal):</p>
+        <p>Total en BD: {debugData.totalConstancias}</p>
+        <p>Filtered: {debugData.filteredCount}</p>
+        <p>Pendientes finales: {debugData.pendientesCount}</p>
+        <p>SearchParams: q={debugData.searchParams.q}, estado={debugData.searchParams.estado}, periodo={debugData.searchParams.periodo}</p>
+        <p className="mt-2">Constancias:</p>
+        <pre className="text-[10px] overflow-x-auto">{JSON.stringify(debugData.constanciasRaw, null, 1)}</pre>
+      </div>
+
       <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-4">
         <div>
           <Link href="/admin" className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors mb-4">
